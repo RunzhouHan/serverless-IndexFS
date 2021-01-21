@@ -127,11 +127,9 @@ class Config {
   //
   int GetSrvId() { return IsServer() ? instance_id_ : -1; }
 
-  // Runzhou <<
-  // Returns the server id, or -1 for non-server instances.
+  // Returns the metadb id, or -1 for non-metadb instances.
   //
-  int GetMetaDBId() { return IsDBServer() ? instance_id_ : -1; }
-  // >> Runzhou
+  int GetMetaDBId() { return IsMetaDB() ? instance_id_ : -1; } // by runzhou
 
   // Returns the client id, or -1 if not running as a normal client.
   //
@@ -171,15 +169,17 @@ class Config {
   //
   int GetSrvNum() { return srv_addrs_.size(); }
 
-  // Runzhou <<
   // Returns the total number of metadbs
   //
-  int GetMetaDBNum() { return metadb_addrs_.size(); }
-  // >> Runzhou
+  int GetMetaDBNum() { return metadb_addrs_.size(); } // by runzhou
 
   // Returns the default port number.
   //
   int GetDefaultSrvPort() { return DEFAULT_SRV_PORT; }
+
+  // Returns the default port number.
+  //
+  int GetDefaultMetaDBPort() { return DEFAULT_METADB_PORT; } // by runzhou
 
   // Returns the IP address of a given server.
   //
@@ -196,17 +196,15 @@ class Config {
   int GetSrvPort(int srv_id) { return srv_addrs_[srv_id].second; }
 
   // Returns the port number of a given metadb. by runzhou
-  int GetSrvPort(int metadb_id) { return srv_addrs_[metadb_id].second; }
+  int GetMetaDBPort(int metadb_id) { return metadb_addrs_[metadb_id].second; }
   
   // Returns the IP address and port number of a given server.
   //
-  const std::pair<std::string, int>& GetSrvAddr(int srv_id) { return srv_addrs_[srv_id]; 
+  const std::pair<std::string, int>& GetSrvAddr(int srv_id) { return srv_addrs_[srv_id]; }
 
-  // Runzhou <<
   // Returns the IP address and port number of a given metadb.
   //
-  const std::pair<std::string, int>& GetMetaDBAddr(int metadb_id) { return srv_addrs_[metadb_id]; }
-  // >> Runzhou 
+  const std::pair<std::string, int>& GetMetaDBAddr(int metadb_id) { return srv_addrs_[metadb_id]; } // by runzhou
 
   // Returns the storage directory for user file data
   //
@@ -274,9 +272,7 @@ class Config {
     return result > 0 ? result : DEFAULT_DENT_CACHE_SIZE;
   }
 
-  Status VerifyInstanceInfoAndServerList();
-
-  Status VerifyInstanceInfoAndMetaDBList(); // Runzhou
+  Status VerifyInstanceInfoAndServerList(); // added kmetadb in case switch. by runzhou
   Status LoadNetworkInfo();
   Status LoadServerList(const char* server_list);
   Status LoadMetaDBList(const char* metadb_list); // Runzhou
@@ -290,7 +286,7 @@ class Config {
   // Runzhou <<
   Status SetMetaDBId(int metadb_id);
   Status SetMetaDBs(const std::vector<std::string>& metadbs);
-  Status SetServers(const std::vector<std::pair<std::string, int> >& metadbs);
+  Status SetMetaDBs(const std::vector<std::pair<std::string, int> >& metadbs);
   // >> Runzhou
 };
 

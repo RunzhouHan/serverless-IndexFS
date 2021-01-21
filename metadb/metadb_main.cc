@@ -5,7 +5,7 @@
 #include <signal.h>
 
 #include "common/logging.h"
-// #include "metadb/metadb.h"
+#include "metadb/metadb.h"
 #include "metadb/metadb_driver.h"
 
 

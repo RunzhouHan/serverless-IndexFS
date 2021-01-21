@@ -24,15 +24,17 @@ static const char* DEFAULT_LOG_FILE = "indexfs";
 // Default log directory
 static const char* DEFAULT_LOG_DIR = "/tmp/indexfs/logs";
 // Default server list file
-static const char* DEFAULT_SERVER_LIST = "/tmp/indexfs/servers";
-// Default server list file
-static const char* DEFAULT_SERVER_LIST = "/tmp/indexfs/metadb"; // Runzhou 
+// static const char* DEFAULT_SERVER_LIST = "/tmp/indexfs/servers"; // by runzhou
+// Default metadb list file
+static const char* DEFAULT_SERVER_LIST = "/tmp/indexfs/metadb"; // list of ip address of each metadb. by runzhou 
 // Default configuration file
 static const char* DEFAULT_CONFIG_FILE = "/tmp/indexfs/config";
 // Legacy server list file used in old releases
-static const char* LEGACY_SERVER_LIST = "/tmp/giga_conf";
+// static const char* LEGACY_SERVER_LIST = "/tmp/giga_conf"; // by Runzhou
+// Legacy server list file used in old releases
+static const char* LEGACY_METADB_LIST = "/tmp/metadb_conf"; // by runzhou
 // Legacy configuration file used in old releases
-static const char* LEGACY_CONFIG_FILE = "/tmp/idxfs_conf";
+static const char* LEGACY_CONFIG_FILE = "/tmp/idxfs_conf"; 
 
 // Create a new configuration object for servers
 //
@@ -168,18 +170,18 @@ Status Config::SetServers(IPList& servers) {
 // In addition to setting the servers, we will, if necessary, try to figure out our
 // own server ID by comparing IP addresses of the local machine
 // with IP addresses on the server list.
-//
-Status Config::SetServers(IPPortList& servers) {
-  if (!servers.empty()) {
-    srv_addrs_.clear();
-    IPPortList::const_iterator it = servers.begin();
-    for (; it != servers.end(); it++) {
+// by runzhou << 
+Status Config::SetMetaDBs(IPPortList& metadbs) {
+  if (!metadbs.empty()) {
+    metadb_addrs_.clear();
+    IPPortList::const_iterator it = metads.begin();
+    for (; it != metadbs.end(); it++) {
       const std::string &ip = it->first;
-      srv_addrs_.push_back(std::make_pair(ip, it->second));
-      if (IsServer()) {
+      metadb_addrs_.push_back(std::make_pair(ip, it->second));
+      if (IsMetaDB()) {
         for (size_t i = 0; instance_id_ < 0 && i < ip_addrs_.size(); i++) {
           if (ip == ip_addrs_[i]) {
-            instance_id_ = srv_addrs_.size() - 1;
+            instance_id_ = metadb_addrs_.size() - 1;
           }
         }
       }
@@ -187,6 +189,7 @@ Status Config::SetServers(IPPortList& servers) {
   }
   return Status::OK();
 }
+// >> by runzhou
 
 // Retrieve a fixed set of member servers by loading their IP addresses and port numbers
 // from a user-specified server list file. If we already have a set of member servers, then
@@ -223,6 +226,43 @@ Status Config::LoadServerList(const char* server_list) {
   return Status::OK();
 }
 
+// by runzhou <<
+// Retrieve a fixed set of member servers by loading their IP addresses and port numbers
+// from a user-specified server list file. If we already have a set of member servers, then
+// the provided server list will be ignored and no server will be loaded.
+// In addition to setting the servers, we will, if necessary, try to figure out our
+// own server ID by comparing IP addresses of the local machine
+// with IP addresses on the server list.
+//
+Status Config::LoadMetaDBList(const char* metadb_list) {
+  if (metadb_addrs_.empty()) {
+    DLOG_ASSERT(metadb_list != NULL);
+    Scanner scanner(metadb_list);
+    if (!scanner.IsOpen()) {
+      return Status::IOError("Cannot open file", std::string(metadb_list));
+    }
+    std::string ip, port;
+    while (scanner.HasNextLine()) {
+      if (scanner.NextServerAddress(&ip, &port)) {
+        metadb_addrs_.push_back(std::make_pair(ip,
+                port.empty() ? GetDefaultMetaDBPort() : atoi(port.c_str())));
+        if (IsMetaDB()) {
+          for (size_t i = 0; instance_id_ < 0 && i < ip_addrs_.size(); i++) {
+            if (ip == ip_addrs_[i]) {
+              instance_id_ = metadb_addrs_.size() - 1;
+            }
+          }
+        }
+      }
+    }
+    if (metadb_addrs_.empty()) {
+      return Status::Corruption("Empty metadb list", std::string(metadb_list));
+    }
+  }
+  return Status::OK();
+}
+// >> by runzhou
+
 Status Config::VerifyInstanceInfoAndServerList() {
   Status s;
   switch (instance_type_) {
@@ -233,6 +273,13 @@ Status Config::VerifyInstanceInfoAndServerList() {
       if (instance_id_ < 0 ||
           instance_id_ >= num_instances_) {
         s = Status::Corruption("Invalid server id");
+      }
+      break;
+    case kMetaDB:
+      num_instances_ = metadb_addrs_.size();
+      if (instance_id_ < 0 ||
+          instance_id_ >= num_instances_) {
+        s = Status::Corruption("Invalid metadb id");
       }
       break;
     case kBatchClient:
@@ -255,6 +302,18 @@ Status Config::VerifyInstanceInfoAndServerList() {
         DLOG(INFO)<< "Server " << i << ": " << it->first << ":" << it->second;
       } else {
         DLOG(INFO)<< "Server " << i << ": " << it->first << ":" << it->second << " (me)";
+      }
+    }
+  }
+  if (s.ok() && IsMetaDB()) {
+    DLOG_ASSERT(num_instances_ == metadb_addrs_.size());
+    IPPortList::iterator it = metadb_addrs_.begin();
+    for (; it != metadb_addrs_.end(); it++) {
+      int i = it - metadb_addrs_.begin();
+      if (!IsMetaDB() || instance_id_ != i) {
+        DLOG(INFO)<< "MetaDB " << i << ": " << it->first << ":" << it->second;
+      } else {
+        DLOG(INFO)<< "MetaDB " << i << ": " << it->first << ":" << it->second << " (me)";
       }
     }
   }
@@ -287,6 +346,7 @@ static void LoadFromFile(const char* config_file,
   }
 }
 
+// start with this line. by runzhou
 static std::string GetDBHomeString(Config* config) {
   if (!(FLAGS_db_home_str.empty())) {
     return FLAGS_db_home_str;
