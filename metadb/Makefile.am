@@ -18,6 +18,7 @@ AM_CXXFLAGS = $(EXTRA_INCLUDES) $(COMM_FLAGS) $(EXTRA_CFLAGS)
 ## -------------------------------------------------------------------------
 
 noinst_HEADERS =
+noinst_HEADERS += metadb_driver.h
 noinst_HEADERS += metadb.h
 noinst_HEADERS += metadb_io.h
 noinst_HEADERS += fstat.h
@@ -31,6 +32,7 @@ noinst_HEADERS += dboptions.h
 noinst_LTLIBRARIES = libmetadb_idxfs.la
 
 libmetadb_idxfs_la_SOURCES =
+libmetadb_idxfs_la_SOURCES += metadb_driver.cc
 libmetadb_idxfs_la_SOURCES += dbtypes.cc
 libmetadb_idxfs_la_SOURCES += dboptions.cc
 libmetadb_idxfs_la_SOURCES += metadb.cc

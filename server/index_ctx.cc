@@ -7,6 +7,7 @@
 #include "common/config.h"
 #include "common/logging.h"
 #include "server/index_ctx.h"
+#include "client/client_impl.h"
 
 DEFINE_bool(index_context_new_dir_if_not_found, false, "create dir on demand");
 
@@ -91,6 +92,7 @@ IndexContext::IndexContext(Env* env, Config* options)
   : env_(env),
     options_(options),
     mdb_(NULL) {
+  // in-cache, need to be splitted
   ctrl_table_ = new DirCtrlTable();
   index_cache_ = new DirIndexCache(IndexCacheSize(options_));
   index_policy_ = DirIndexPolicy::Default(options_);
@@ -99,6 +101,7 @@ IndexContext::IndexContext(Env* env, Config* options)
 Status IndexContext::Flush() {
   DLOG_ASSERT(mdb_ != NULL);
   Status s;
+  //in-cache, need an RPC for it
   s = mdb_->Flush();
   return s;
 }

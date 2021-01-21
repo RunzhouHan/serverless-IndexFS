@@ -33,6 +33,7 @@ nodist_libthrift_idxfs_la_SOURCES += MetadataIndexService.cpp
 
 EXTRA_DIST = indexfs.thrift
 
+
 BUILT_SOURCES =
 BUILT_SOURCES += indexfs_types.cpp
 

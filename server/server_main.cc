@@ -21,10 +21,10 @@ using indexfs::ServerDriver;
 using indexfs::Config;
 using indexfs::Env;
 using indexfs::GetSystemEnv;
-using indexfs::Logger;
-using indexfs::LoadServerConfig;
-using indexfs::GetLogFileName;
-using indexfs::GetDefaultLogDir;
+// using indexfs::Logger;
+// using indexfs::LoadServerConfig;
+// using indexfs::GetLogFileName;
+// using indexfs::GetDefaultLogDir;
 using indexfs::SetVersionString;
 using indexfs::SetUsageMessage;
 using indexfs::ParseCommandLineFlags;
@@ -42,30 +42,31 @@ void SignalHandler(int sig) {
   if (driver != NULL) {
     driver->Shutdown();
   }
-  LOG(INFO) << "Receive external signal to stop server ...";
+  // LOG(INFO) << "Receive external signal to stop server ...";
 }
 }
 
 int main(int argc, char* argv[]) {
 //-----------------------------------------------------------------
-  FLAGS_logfn = "indexfs_server";
+  // FLAGS_logfn = "indexfs_server";
   FLAGS_srvid = -1;
-  FLAGS_logbufsecs = 5;
-  FLAGS_log_dir = GetDefaultLogDir();
+  // FLAGS_logbufsecs = 5;
+  // FLAGS_log_dir = GetDefaultLogDir();
   SetVersionString(PACKAGE_VERSION);
   SetUsageMessage("indexfs server");
   ParseCommandLineFlags(&argc, &argv, true);
   srand(FLAGS_srvid);
-  Logger::Initialize(GetLogFileName());
+  // Logger::Initialize(GetLogFileName());
 //-----------------------------------------------------------------
-  config = LoadServerConfig(FLAGS_srvid);
-  env = GetSystemEnv(config);
-  if (config->HasOldData()) {
-    // We will have to link old SSTables into
-    // our current DB home
-    env = NewMemLinkEnv(env);
-  }
-  driver = ServerDriver::NewIndexFSDriver(env, config);
+  // we need to rethink config and env for stateless serverless mds. by runzhou
+  // config = LoadServerConfig(FLAGS_srvid);
+  // env = GetSystemEnv(config);
+  // if (config->HasOldData()) {
+  //   // We will have to link old SSTables into
+  //   // our current DB home
+  //   env = NewMemLinkEnv(env);
+  // }
+  driver = ServerDriver::NewIndexFSDriver();
   driver->PrepareContext();
   driver->SetupMonitoring();
   driver->OpenServer();

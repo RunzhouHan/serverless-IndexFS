@@ -22,6 +22,7 @@ namespace indexfs {
 //
 enum InstanceType {
   kServer,
+  kMetaDB, // by runzhou
   kClient,
   kBatchClient,
 };
@@ -59,6 +60,12 @@ class Config {
   //
   std::vector<std::pair<std::string, int> > srv_addrs_;
 
+  // Runzhou <<
+  // Server address list
+  //
+  std::vector<std::pair<std::string, int> > metadb_addrs_;
+  // >> Runzhou
+
   // Data directory for large files
   //
   std::string file_dir_;
@@ -86,9 +93,15 @@ class Config {
 
   virtual ~Config() { }
 
-  // Initializes an empty config object for servers.
+  // Initializes an empty config object for cache servers.
   //
   static Config* CreateServerConfig();
+
+  // Runzhou <<
+  // Initializes an empty config object for metadb servers.
+  //
+  static Config* CreateDBServerConfig();
+  // >> Runzhou
 
   // Initializes an empty config object for clients.
   //
@@ -103,9 +116,22 @@ class Config {
   //
   static Config* CreateServerTestingConfig(const std::string &srv_dir="/tmp");
 
+  // Runzhou <<
+  // Creates a configuration object for server testing. All configuration items
+  // are deterministically assigned and no configuration files will be read.
+  //
+  static Config* CreateMetaDBTestingConfig(const std::string &metadb_dir="/tmp");
+  // >> Runzhou
+
   // Returns the server id, or -1 for non-server instances.
   //
   int GetSrvId() { return IsServer() ? instance_id_ : -1; }
+
+  // Runzhou <<
+  // Returns the server id, or -1 for non-server instances.
+  //
+  int GetMetaDBId() { return IsDBServer() ? instance_id_ : -1; }
+  // >> Runzhou
 
   // Returns the client id, or -1 if not running as a normal client.
   //
@@ -123,6 +149,12 @@ class Config {
   //
   bool IsServer() { return instance_type_ == kServer; }
 
+  // Runzhou <<
+  // Returns true iff running as a metadb.
+  //
+  bool IsMetaDB() { return instance_type_ == kMetaDB; }
+  // >> Runzhou
+
   // Returns true iff running as a regular client.
   //
   bool IsClient() { return instance_type_ == kClient; }
@@ -139,6 +171,12 @@ class Config {
   //
   int GetSrvNum() { return srv_addrs_.size(); }
 
+  // Runzhou <<
+  // Returns the total number of metadbs
+  //
+  int GetMetaDBNum() { return metadb_addrs_.size(); }
+  // >> Runzhou
+
   // Returns the default port number.
   //
   int GetDefaultSrvPort() { return DEFAULT_SRV_PORT; }
@@ -147,13 +185,28 @@ class Config {
   //
   const std::string& GetSrvIP(int srv_id) { return srv_addrs_[srv_id].first; }
 
+  // Runzhou <<
+  // Returns the IP address of a given metadb.
+  //
+  const std::string& GetMetaDBIP(int metadb_id) { return metadb_addrs_[metadb_id].first; }
+  // >> Runzhou
+
   // Returns the port number of a given server.
   //
   int GetSrvPort(int srv_id) { return srv_addrs_[srv_id].second; }
 
+  // Returns the port number of a given metadb. by runzhou
+  int GetSrvPort(int metadb_id) { return srv_addrs_[metadb_id].second; }
+  
   // Returns the IP address and port number of a given server.
   //
-  const std::pair<std::string, int>& GetSrvAddr(int srv_id) { return srv_addrs_[srv_id]; }
+  const std::pair<std::string, int>& GetSrvAddr(int srv_id) { return srv_addrs_[srv_id]; 
+
+  // Runzhou <<
+  // Returns the IP address and port number of a given metadb.
+  //
+  const std::pair<std::string, int>& GetMetaDBAddr(int metadb_id) { return srv_addrs_[metadb_id]; }
+  // >> Runzhou 
 
   // Returns the storage directory for user file data
   //
@@ -222,8 +275,11 @@ class Config {
   }
 
   Status VerifyInstanceInfoAndServerList();
+
+  Status VerifyInstanceInfoAndMetaDBList(); // Runzhou
   Status LoadNetworkInfo();
   Status LoadServerList(const char* server_list);
+  Status LoadMetaDBList(const char* metadb_list); // Runzhou
   Status LoadOptionsFromFile(const char* config_file);
 
   Status SetClientInfo(int cli_id, int num_clis);
@@ -231,6 +287,11 @@ class Config {
   Status SetSrvId(int srv_id);
   Status SetServers(const std::vector<std::string>& servers);
   Status SetServers(const std::vector<std::pair<std::string, int> >& servers);
+  // Runzhou <<
+  Status SetMetaDBId(int metadb_id);
+  Status SetMetaDBs(const std::vector<std::string>& metadbs);
+  Status SetServers(const std::vector<std::pair<std::string, int> >& metadbs);
+  // >> Runzhou
 };
 
 } /* namespace indexfs */
@@ -243,6 +304,9 @@ DECLARE_string(configfn);
 
 // file name for the server list file
 DECLARE_string(srvlstfn);
+
+// file name for the metadb list file
+DECLARE_string(metadblstfn); // Runzhou
 
 namespace indexfs {
 
@@ -260,6 +324,11 @@ extern const char* GetDefaultConfigFileName();
 
 extern const char* GetServerListFileName();
 extern const char* GetDefaultServerListFileName();
+
+// Runzhou <<
+extern const char* GetMetaDBListFileName();
+extern const char* GetDefaultMetaDBListFileName();
+// >> Runzhou
 
 /*---------------------------------------------------
  * System Environment
@@ -287,6 +356,13 @@ extern Config* LoadServerConfig(
     int srv_id = -1,
     const std::vector<std::pair<std::string, int> >& servers
         = std::vector<std::pair<std::string, int> >());
+
+// Runzhou <<
+extern Config* LoadMetaDBConfig(
+    int metadb_id = -1,
+    const std::vector<std::pair<std::string, int> >& metadbs
+        = std::vector<std::pair<std::string, int> >());
+// >> Runzhou
 
 // This function should be called at the client's bootstrapping phase.
 // It will load important system options from a set of configuration files

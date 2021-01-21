@@ -20,8 +20,8 @@
 
 me=$0
 INDEXFS_HOME=$(cd -P -- `dirname $me`/.. && pwd -P)
-INDEXFS_CONF_FILE="/tmp/idxfs_conf"
-INDEXFS_SERVER_LIST="/tmp/giga_conf"
+INDEXFS_CONF_FILE="/home/osboxes/Desktop/idxfs_conf"
+INDEXFS_SERVER_LIST="/home/osboxes/Desktop/giga_conf"
 INDEXFS_RUN_TYPE=${2-"$INDEXFS_RUN_TYPE"}
 if test -z "$INDEXFS_RUN_TYPE"; then INDEXFS_RUN_TYPE="regular"; fi
 INDEXFS_RUN_PREFIX=${INDEXFS_RUN_PREFIX="`date +%s`"}
@@ -58,7 +58,7 @@ then
   exit 1
 fi
 
-INDEXFS_ROOT=${INDEXFS_ROOT:-"/tmp/indexfs"}
+INDEXFS_ROOT=${INDEXFS_ROOT:-"/mnt/lustre/indexfs"}
 INDEXFS_RUN=$INDEXFS_ROOT/run
 INDEXFS_OUTPUT=$INDEXFS_RUN/tree_test
 INDEXFS_BACKEND=`$INDEXFS_HOME/sbin/idxfs.sh backend`
@@ -113,13 +113,14 @@ esac
 
 set -x
 
-$MPIEXEC -np $NUM_CLIENTS $INDEXFS_BUILD/io_test/io_driver \
+$MPIEXEC --allow-run-as-root \
+  -np $NUM_CLIENTS $INDEXFS_BUILD/io_test/io_driver \
   --prefix=$INDEXFS_RUN_PREFIX \
-  --task=tree \
-  --dirs=1 \
-  --files=8000 \
+  --task=new\
+  --dirs=100 \
+  --files=5000 \
   --share_dirs \
-  --ignore_errors=false \
+  --ignore_errors=true \
   --file_dir=$FILE_ROOT \
   --db_root=$DB_ROOT \
   --configfn=$INDEXFS_CONF_FILE \

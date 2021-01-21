@@ -6,14 +6,18 @@
 #define _INDEXFS_MPI_IO_CLIENT_H_
 
 #include "common/common.h"
-#include "leveldb/util/histogram.h"
+//#include "leveldb/util/histogram.h"
 
 #include <gflags/gflags.h>
 
-namespace indexfs { namespace mpi {
+
+namespace indexfs { 
+
+namespace mpi {
 
 // Immutable string
 typedef const std::string Path;
+
 
 // Abstract FS Interface
 class IOClient;
@@ -42,6 +46,7 @@ struct IOClientFactory {
 //////////////////////////////////////////////////////////////////////////////////
 // IO CLIENT INTERFACE
 //
+
 
 class IOClient {
  protected:

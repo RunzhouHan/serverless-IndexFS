@@ -17,6 +17,7 @@ namespace indexfs {
 // Internal RPC implementations
 //
 class SrvRep;
+class MetaDBRep; // by runzhou
 class CliRep;
 class FTCliRepWrapper;
 
@@ -124,6 +125,34 @@ class RPC_Server {
   // No copy allowed
   RPC_Server(const RPC_Server&);
   RPC_Server& operator=(const RPC_Server&);
+};
+
+// by Runzhou 
+class RPC_MetaDB {
+ public:
+
+  void Stop();
+  void RunForever();
+
+  RPC_MetaDB(Config* conf, MetadataIndexServiceIf* handler)
+    : conf_(conf), handler_(handler) {
+    metadb_ = CreateInteralMetaDB();
+  }
+
+  virtual ~RPC_MetaDB();
+
+ private:
+
+  Config* conf_;
+  MetadataIndexServiceIf* handler_; // pay attention to this. by runzhou
+
+  // MetaDB implementation
+  MetaDBRep* metadb_;
+  MetaDBRep* CreateInteralMetaDBServer();
+
+  // No copy allowed
+  RPC_MetaDB(const RPC_MetaDB&);
+  RPC_MetaDB& operator=(const RPC_MetaDB&);
 };
 
 } /* namespace indexfs */

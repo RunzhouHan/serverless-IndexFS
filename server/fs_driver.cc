@@ -39,23 +39,10 @@ Monitor* CreateMonitorForServer(int server_id) {
   return new Monitor(kOpNames, kNumSrvOps, server_id);
 }
 
-
-namespace {
-static
-void PrepareDirectory(Env* env,
-                      const std::string& dir_name) {
-  Status s;
-  if (!env->FileExists(dir_name)) {
-    s = env->CreateDir(dir_name);
-  }
-  bool dir_exists = env->FileExists(dir_name);
-  CHECK(dir_exists) << "Fail to create dir: " << s.ToString();
-}
-}
-
 class IndexFSDriver: virtual public ServerDriver {
  public:
 
+// need to rethink the env and config here. by runzhou
   explicit IndexFSDriver(Env* env, Config* config)
     : ServerDriver(env, config),
       rpc_(NULL), rpc_srv_(NULL), index_ctx_(NULL), index_srv_(NULL),
@@ -86,10 +73,6 @@ class IndexFSDriver: virtual public ServerDriver {
   }
 
   void PrepareContext() {
-    PrepareDirectory(env_, config_->GetFileDir());
-    PrepareDirectory(env_, config_->GetDBRootDir());
-    PrepareDirectory(env_, config_->GetDBHomeDir());
-    PrepareDirectory(env_, config_->GetDBSplitDir());
     DLOG_ASSERT(index_ctx_ == NULL);
     index_ctx_ = new IndexContext(env_, config_);
     Status s = index_ctx_->Open();

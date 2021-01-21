@@ -25,6 +25,8 @@ static const char* DEFAULT_LOG_FILE = "indexfs";
 static const char* DEFAULT_LOG_DIR = "/tmp/indexfs/logs";
 // Default server list file
 static const char* DEFAULT_SERVER_LIST = "/tmp/indexfs/servers";
+// Default server list file
+static const char* DEFAULT_SERVER_LIST = "/tmp/indexfs/metadb"; // Runzhou 
 // Default configuration file
 static const char* DEFAULT_CONFIG_FILE = "/tmp/indexfs/config";
 // Legacy server list file used in old releases
@@ -37,6 +39,13 @@ static const char* LEGACY_CONFIG_FILE = "/tmp/idxfs_conf";
 Config* Config::CreateServerConfig() {
   return new Config(kServer);
 }
+
+// Runzhou <<
+// Create a new configuration object for metadb
+Config* Config::CreateMetaDBConfig() {
+  return new Config(kMetaDB);
+}
+// >> Runzhou
 
 // Create a new configuration object for clients
 //
@@ -73,10 +82,19 @@ Status Config::LoadNetworkInfo() {
   if (IsServer()) {
     IPList::iterator it = ip_addrs_.begin();
     for (; it != ip_addrs_.end(); it++) {
-      DLOG(INFO)<< "Local IP: " << *it;
+      DLOG(INFO)<< "Local IP (caching server): " << *it; //Runzhou
     }
-    DLOG(INFO)<< "Local host name: " << host_name_;
+    DLOG(INFO)<< "Local host name (caching server): " << host_name_; //Runzhou
   }
+// Runzhou << 
+  if (IsMetaDB()) {
+    IPList::iterator it = ip_addrs_.begin();
+    for (; it != ip_addrs_.end(); it++) {
+      DLOG(INFO)<< "Local IP (metadb): " << *it;
+    }
+    DLOG(INFO)<< "Local host name (metadb): " << host_name_;
+  }
+// >> Runzhou
   return s;
 }
 
@@ -88,6 +106,15 @@ Status Config::SetSrvId(int srv_id) {
   DLOG_ASSERT(IsServer());
   return s;
 }
+
+// Runzhou <<
+Status Config::SetMetaDBId(int metadb_id) {
+  Status s;
+  instance_id_ = metadb_id;
+  DLOG_ASSERT(IsMetaDB());
+  return s;
+}
+// >> Runzhou
 
 // Set client id and number of clients.
 //

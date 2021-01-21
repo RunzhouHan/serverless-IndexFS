@@ -15,7 +15,7 @@
 me=$0
 INDEXFS_HOME=$(cd -P -- `dirname $me`/.. && pwd -P)
 
-INDEXFS_ROOT=${INDEXFS_ROOT:-"/tmp/indexfs"}
+INDEXFS_ROOT=${INDEXFS_ROOT:-"/mnt/lustre/indexfs"}
 INDEXFS_ID=${INDEXFS_ID:-"0"}
 INDEXFS_RUN=${INDEXFS_RUN:-"$INDEXFS_ROOT/run/s$INDEXFS_ID"}
 INDEXFS_PID_FILE=$INDEXFS_RUN/indexfs_server.pid.$INDEXFS_ID

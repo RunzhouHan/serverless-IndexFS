@@ -34,8 +34,8 @@ then
   exit 1
 else
   # ensure legacy indexfs clients can work correctly
-  rm -f /tmp/giga_conf
-  ln -fs $INDEXFS_CONF_DIR/server_list /tmp/giga_conf
+  rm -f /home/osboxes/Desktop/giga_conf
+  ln -fs $INDEXFS_CONF_DIR/server_list /home/osboxes/Desktop/giga_conf
 fi
 
 # check if we have the required configuration files
@@ -46,12 +46,12 @@ then
   exit 1
 else
   # ensure legacy indexfs clients can work correctly
-  rm -f /tmp/idxfs_conf
-  ln -fs $INDEXFS_CONF_DIR/indexfs_conf /tmp/idxfs_conf
+  rm -f /home/osboxes/Desktop/idxfs_conf
+  ln -fs $INDEXFS_CONF_DIR/indexfs_conf /home/osboxes/Desktop/idxfs_conf
 fi
 
 INDEXFS_ID=${INDEXFS_ID:-"0"}
-INDEXFS_ROOT=${INDEXFS_ROOT:-"/tmp/indexfs"}
+INDEXFS_ROOT=${INDEXFS_ROOT:-"/home/osboxes/Desktop/indexfs"}
 INDEXFS_RUN=${INDEXFS_RUN:-"$INDEXFS_ROOT/run/s$INDEXFS_ID"}
 INDEXFS_LOGS=$INDEXFS_RUN/logs
 INDEXFS_OLD_LOGS=$INDEXFS_RUN/old_logs

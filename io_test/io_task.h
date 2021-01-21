@@ -89,6 +89,8 @@ struct IOTaskFactory {
   static IOTask* GetCacheTestTask(int my_rank, int comm_sz);
   // Parallel LevelDB major compaction
   static IOTask* GetCompactionTestTask(int my_rank, int comm_sz);
+  // test workload
+  static IOTask* GetnewTestTask(int my_rank, int comm_sz);   
 };
 
 } /* namespace mpi */ } /* namespace indexfs */

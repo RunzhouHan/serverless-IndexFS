@@ -8,12 +8,13 @@
 #include <string>
 #include <sstream>
 #include <glog/logging.h>
-
+#include "/usr/local/include/gflags/gflags.h"
 namespace indexfs {
 
 using google::SetUsageMessage;
 using google::SetVersionString;
 using google::ParseCommandLineFlags;
+
 
 struct Logger {
 

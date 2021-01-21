@@ -157,6 +157,86 @@ class SrvRep {
 };
 #endif
 
+// Runzhou <<
+// An internal abstraction representing a RPC server exposing a set of RPC
+// endpoints. Each server instance is bind to a local TCP port,
+// and is associated with a RPC handler, which implements those RPC endpoints.
+// This handler is automatically disposed when its parent RPC server is destroyed.
+//
+#ifdef IDXFS_RPC_NOBLOCKING
+class MetaDBRep {
+
+  // No copying allowed
+  MetaDBRep(const MetaDBRep&);
+  MetaDBRep& operator=(const MetaDBRep&);
+
+  scoped_ptr<TNonblockingServer> metadb_;
+  shared_ptr<MetadataIndexServiceIf> handler_;
+  shared_ptr<MetadataIndexServiceProcessor> processor_;
+  shared_ptr<ThreadManager> thread_manager_;
+  shared_ptr<PosixThreadFactory> thread_factory_;
+
+ public:
+
+  void Start() {
+    metadb_->serve();
+  }
+
+  void Stop() {
+    metadb_->stop();
+  }
+
+  MetaDBRep(MetadataIndexServiceIf* handler, int port)
+    : handler_(handler)
+    , processor_(new MetadataIndexServiceProcessor(handler_))
+    , thread_factory_(new PosixThreadFactory()) {
+    thread_manager_ = ThreadManager::newSimpleThreadManager(FLAGS_rpc_worker_threads);
+    thread_manager_->threadFactory(thread_factory_);
+    thread_manager_->start();
+    metadb_.reset(new TNonblockingServer(processor_, port));
+    metadb_->setThreadManager(thread_manager_);
+    metadb_->setNumIOThreads(FLAGS_rpc_io_threads);
+  }
+
+};
+#else
+class MetaDBRep {
+
+  // No copying allowed
+  MetaDBRep(const MetaDBRep&);
+  MetaDBRep& operator=(const MetaDBRep&);
+
+  scoped_ptr<TServer> server_;
+  shared_ptr<MetadataIndexServiceIf> handler_;
+  shared_ptr<MetadataIndexServiceProcessor> processor_;
+  shared_ptr<TServerTransport> socket_;
+  shared_ptr<TProtocolFactory> protocol_factory_;
+  shared_ptr<TTransportFactory> transport_factory_;
+
+ public:
+
+  void Start() {
+    server_->serve();
+  }
+
+  void Stop() {
+    server_->stop();
+  }
+
+  MetaDBRep(MetadataIndexServiceIf* handler, int port)
+    : handler_(handler)
+    , processor_(new MetadataIndexServiceProcessor(handler_))
+    , socket_(new TServerSocket(port))
+    , protocol_factory_(new TBinaryProtocolFactory())
+    , transport_factory_(new TBufferedTransportFactory()) {
+    server_.reset(new TThreadedServer(
+        processor_, socket_, transport_factory_, protocol_factory_));
+  }
+
+};
+#endif
+// >> Runzhou
+
 // An augmented client-side RPC implementation with automatic detection
 // and recovery from failed RPC servers. RPC servers are considered failed
 // if a client can no longer send packages to or receive data from those servers.

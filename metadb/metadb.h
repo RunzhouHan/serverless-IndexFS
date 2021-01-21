@@ -73,7 +73,7 @@ class BulkExtractor {
 // operations such as file creation, directory creation, file stat retrieval, metadata
 // updates, file removal, directory removal, and others.
 //
-class MetaDB {
+class MetaDB { // should wrap the corresponding rpc class, just like index_server.h. by runzhou
  public:
 
   static Status Repair(Config* config, Env* env = NULL);

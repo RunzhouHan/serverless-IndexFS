@@ -143,7 +143,7 @@ exception ParentPathNotDirectoryException {
 }
 
 // ---------------------------------------------------------------
-// IndexFS RPC interface
+// IndexFS server RPC interface
 // ---------------------------------------------------------------
 
 service MetadataIndexService {
@@ -248,5 +248,13 @@ void InsertSplit(1: i64 dir_id, 2: i16 parent_index, 3: i16 child_index,
           2: FileAlreadyExistsException file_exists,
           3: IOError io_error,
           4: ServerInternalError srv_error)
+
+}
+
+// ---------------------------------------------------------------
+// IndexFS metadb RPC interface
+// ---------------------------------------------------------------
+
+service MetadataDBService {
 
 }
