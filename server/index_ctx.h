@@ -5,7 +5,8 @@
 #ifndef _INDEXFS_INDEX_CONTEXT_H_
 #define _INDEXFS_INDEX_CONTEXT_H_
 
-#include "metadb/metadb.h"
+// #include "metadb/metadb.h"
+#include "ipc/rpc.h"
 #include "common/dirlock.h"
 #include "common/dirguard.h"
 

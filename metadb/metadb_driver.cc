@@ -10,7 +10,6 @@
 
 namespace indexfs {
 
-
 namespace {
 static
 void PrepareDirectory(Env* env,
@@ -45,31 +44,45 @@ class IndexMetaDBDriver: virtual public MetaDBDriver {
   }
 
   void Shutdown() {
-    DLOG_ASSERT(rpc_srv_ != NULL);
-    rpc_srv_->Stop();
+    DLOG_ASSERT(rpc_mdb_ != NULL);
+    rpc_mdb_->Stop();
   }
 
 // by runzhou
-  void PrepareDir() {
+  Status PrepareDir() {
     PrepareDirectory(env_, config_->GetFileDir());
     PrepareDirectory(env_, config_->GetDBRootDir());
     PrepareDirectory(env_, config_->GetDBHomeDir());
     PrepareDirectory(env_, config_->GetDBSplitDir());
+
+	DLOG_ASSERT(mdb_ == NULL);
+
+	Status s;
+	if (config_->HasOldData()) {
+	s = MetaDB::Repair(config_, env_);
+	}
+	if (s.ok()) {
+	s = MetaDB::Open(config_, &mdb_, env_);
+	}
+	if (!s.ok()) {
+	return s;
+  }
+
   }
 
   void OpenMetaDB() {
     DLOG_ASSERT(rpc_ == NULL);
     rpc_ = RPC::CreateRPC(config_);
-    DLOG_ASSERT(metadb_ == NULL);
-    mdb_ = new MetaDB();
-    DLOG_ASSERT(rpc_srv_ == NULL);
-    rpc_srv_ = new RPC_Server(config_, mdb_); // need to redesign a RPC_Server dedicated to metadb. by runzhou
+    // DLOG_ASSERT(mdb_ == NULL); // by runzhou
+    DLOG_ASSERT(rpc_mdb_ == NULL);
+    // rpc_mdb_ = new RPCRPC_MetaDB(config_, mdb_); // need to redesign a RPC_Server dedicated to metadb. by runzhou
     DLOG(INFO) << "IndexFS is ready for service, listening to incoming clients ... ";
   }
 
  private:
   RPC* rpc_;
   RPC_MetaDB* rpc_mdb_;
+  MetaDB* mdb_;
   // No copying allowed
   IndexMetaDBDriver(const IndexMetaDBDriver&);
   IndexMetaDBDriver& operator=(const IndexMetaDBDriver&);

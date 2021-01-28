@@ -203,4 +203,37 @@ SrvRep* RPC_Server::CreateInteralServer() {
   return new SrvRep(handler_, conf_->GetSrvPort(conf_->GetSrvId()));
 }
 
+// -------------------------------------------------------------
+// RPC Server Implementation
+// -------------------------------------------------------------
+
+RPC_MetaDB::~RPC_MetaDB() {
+  if (metadb_ != NULL) {
+    delete metadb_;
+  }
+}
+
+// Interrupt the server and stop its service.
+//
+void RPC_MetaDB::Stop() {
+  DLOG_ASSERT(metadb_ != NULL);
+  metadb_->Stop();
+}
+
+// Ask the server to start listening to client requests.
+// This call should and will never return.
+//
+void RPC_MetaDB::RunForever() {
+  DLOG_ASSERT(metadb_ != NULL);
+  metadb_->Start();
+}
+
+// Creates an internal RPC server using pre-specified server configurations.
+//
+MetaDBRep* RPC_MetaDB::CreateInteralMetaDB() {
+  DLOG_ASSERT(handler_ != NULL);
+  DLOG_ASSERT(conf_->GetMetaDBId() >= 0);
+  return new MetaDBRep(handler_, conf_->GetMetaDBPort(conf_->GetMetaDBId()));
+}
+
 } /* namespace indexfs */

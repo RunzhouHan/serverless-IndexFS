@@ -7,7 +7,7 @@
 #include "common/config.h"
 #include "common/logging.h"
 #include "server/index_ctx.h"
-#include "client/client_impl.h"
+// need a 
 
 DEFINE_bool(index_context_new_dir_if_not_found, false, "create dir on demand");
 

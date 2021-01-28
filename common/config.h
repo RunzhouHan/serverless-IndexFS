@@ -97,11 +97,9 @@ class Config {
   //
   static Config* CreateServerConfig();
 
-  // Runzhou <<
   // Initializes an empty config object for metadb servers.
   //
-  static Config* CreateDBServerConfig();
-  // >> Runzhou
+  static Config* CreateMetaDBConfig(); // by runzhou
 
   // Initializes an empty config object for clients.
   //

@@ -20,16 +20,16 @@ SUBDIRS += common
 SUBDIRS += util
 SUBDIRS += metadb
 SUBDIRS += ipc
-SUBDIRS += server
-SUBDIRS += client
+# SUBDIRS += server
+# SUBDIRS += client
 
 # --------------------------------
 # Performance Testing
 # --------------------------------
 
-if BUILD_IOTESTS
-  SUBDIRS += io_test
-endif
+# if BUILD_IOTESTS
+#   SUBDIRS += io_test
+# endif
 
 #if BUILD_MDTESTS
 #  SUBDIRS += md_test
@@ -39,8 +39,8 @@ endif
 # Client Toolkit
 # --------------------------------
 
-SUBDIRS += c
-SUBDIRS += bin
+# SUBDIRS += c
+# SUBDIRS += bin
 
 #if BUILD_FUSE
 #  SUBDIRS += fuse
@@ -65,8 +65,8 @@ EXTRA_DIST += etc/indexfs etc/hdfs-lo etc/rados-lo
 ## -------------------------------------------------------------------------
 
 all-local:
-	ln -fs $(top_builddir)/server/indexfs_server $(top_builddir)/
-	ln -fs $(top_builddir)/indexfs_server $(top_builddir)/metadata_server
+# 	ln -fs $(top_builddir)/server/indexfs_server $(top_builddir)/
+# 	ln -fs $(top_builddir)/indexfs_server $(top_builddir)/metadata_server
 	ln -fs $(top_builddir)/io_test/io_driver $(top_builddir)/
 	ln -fs $(top_builddir)/fuse/fuse_main $(top_builddir)/
 	ln -fs $(top_builddir)/c/.libs/libindexfs_st-$(INDEXFS_VERSION).so $(top_builddir)/

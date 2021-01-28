@@ -39,6 +39,9 @@
 #define DEFAULT_MAX_NUM_SERVERS     16384
 #endif
 
+// Default metadb port number
+#define DEFAULT_METADB_PORT 10086 // by runzhou
+
 // LevelDB Tuning Knobs
 #ifndef IDXFS_ENABLE_COMPRESSION
 #define DEFAULT_LEVELDB_COMPRESSION false

@@ -20,8 +20,8 @@ using leveldb::ObjEnvFactory;
 #include "common/logging.h"
 #include "metadb/metadb.h"
 #include "metadb/dbtypes.h"
-#include "metadb/dboptions.h"
-#include "util/leveldb_types.h"
+// #include "metadb/dboptions.h"
+// #include "util/leveldb_types.h"
 #include "util/leveldb_reader.h"
 
 namespace indexfs {
@@ -140,8 +140,7 @@ struct MDBBulkExtractor:
   const std::string& GetBulkExtractOutputDir() { return dir_path_; }
 };
 
-// Default MetaDB implementation built on top of LevelDB.
-//
+
 class LevelMDB: virtual public MetaDB {
  public:
 
@@ -206,7 +205,6 @@ class LevelMDB: virtual public MetaDB {
   static inline bool IsEmbedded(int16_t status) {
     return (status & kEmbedded) == kEmbedded;
   }
-
   enum SpecialKeys {
     kInodeKey = -1,
   };
@@ -241,7 +239,7 @@ class LevelMDB: virtual public MetaDB {
   // No copying allowed
   LevelMDB(const LevelMDB&);
   LevelMDB& operator=(const LevelMDB&);
-};
+  };
 
 LevelMDB::~LevelMDB() {
   if (db_ != NULL) {

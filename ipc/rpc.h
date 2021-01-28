@@ -148,7 +148,7 @@ class RPC_MetaDB {
 
   // MetaDB implementation
   MetaDBRep* metadb_;
-  MetaDBRep* CreateInteralMetaDBServer();
+  MetaDBRep* CreateInteralMetaDB();
 
   // No copy allowed
   RPC_MetaDB(const RPC_MetaDB&);

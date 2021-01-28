@@ -10,6 +10,8 @@
 
 #include "common/common.h"
 #include "common/config.h"
+#include "metadb/dboptions.h"
+#include "util/leveldb_types.h"
 
 namespace indexfs {
 
@@ -72,7 +74,7 @@ class BulkExtractor {
 // serves as the core processing and storage engine for various file system metadata
 // operations such as file creation, directory creation, file stat retrieval, metadata
 // updates, file removal, directory removal, and others.
-//
+//  
 class MetaDB { // should wrap the corresponding rpc class, just like index_server.h. by runzhou
  public:
 
@@ -163,6 +165,12 @@ class MetaDB { // should wrap the corresponding rpc class, just like index_serve
   MetaDB(const MetaDB&);
   MetaDB& operator=(const MetaDB&);
 };
+
+// by runzhou
+// Default MetaDB implementation built on top of LevelDB.
+//
+// namespace mdb{
+// }  //namespace mdb 
 
 // A helper structure holding necessary information to form a "key".
 //

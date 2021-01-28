@@ -206,7 +206,7 @@ class MetaDBRep {
   MetaDBRep(const MetaDBRep&);
   MetaDBRep& operator=(const MetaDBRep&);
 
-  scoped_ptr<TServer> server_;
+  scoped_ptr<TServer> metadb_;
   shared_ptr<MetadataIndexServiceIf> handler_;
   shared_ptr<MetadataIndexServiceProcessor> processor_;
   shared_ptr<TServerTransport> socket_;
@@ -216,11 +216,11 @@ class MetaDBRep {
  public:
 
   void Start() {
-    server_->serve();
+    metadb_->serve();
   }
 
   void Stop() {
-    server_->stop();
+    metadb_->stop();
   }
 
   MetaDBRep(MetadataIndexServiceIf* handler, int port)
@@ -229,7 +229,7 @@ class MetaDBRep {
     , socket_(new TServerSocket(port))
     , protocol_factory_(new TBinaryProtocolFactory())
     , transport_factory_(new TBufferedTransportFactory()) {
-    server_.reset(new TThreadedServer(
+    metadb_.reset(new TThreadedServer(
         processor_, socket_, transport_factory_, protocol_factory_));
   }
 
