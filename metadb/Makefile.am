@@ -29,15 +29,15 @@ noinst_HEADERS += dboptions.h
 ## Static Lib
 ## -------------------------------------------------------------------------
 
-noinst_LTLIBRARIES = libmetadb_idxfs.la
+# noinst_LTLIBRARIES = libmetadb_idxfs.la
 
-libmetadb_idxfs_la_SOURCES =
-libmetadb_idxfs_la_SOURCES += metadb_driver.cc
-libmetadb_idxfs_la_SOURCES += dbtypes.cc
-libmetadb_idxfs_la_SOURCES += dboptions.cc
-libmetadb_idxfs_la_SOURCES += metadb.cc
-libmetadb_idxfs_la_SOURCES += metadb_reader.cc
-libmetadb_idxfs_la_SOURCES += metadb_writer.cc
+# libmetadb_idxfs_la_SOURCES =
+# libmetadb_idxfs_la_SOURCES += metadb_driver.cc
+# libmetadb_idxfs_la_SOURCES += dbtypes.cc
+# libmetadb_idxfs_la_SOURCES += dboptions.cc
+# libmetadb_idxfs_la_SOURCES += metadb.cc
+# libmetadb_idxfs_la_SOURCES += metadb_reader.cc
+# libmetadb_idxfs_la_SOURCES += metadb_writer.cc
 
 ## -------------------------------------------------------------------------
 ## Test Programs
@@ -45,8 +45,10 @@ libmetadb_idxfs_la_SOURCES += metadb_writer.cc
 
 nobase_bin_PROGRAMS =
 nobase_bin_PROGRAMS += fstat_test
-nobase_bin_PROGRAMS += dbtypes_test
-nobase_bin_PROGRAMS += metadb_test
+# nobase_bin_PROGRAMS += dbtypes_test
+# nobase_bin_PROGRAMS += metadb_test
+# nobase_bin_PROGRAMS += 
+
 
 fstat_test_SOURCES = fstat_test.cc
 
@@ -55,23 +57,55 @@ fstat_test_LDADD += $(top_builddir)/common/libtest_idxfs.la
 fstat_test_LDADD += $(top_builddir)/common/libcommon_idxfs.la
 fstat_test_LDADD += $(top_builddir)/lib/leveldb/libleveldb.la
 
-dbtypes_test_SOURCES = dbtypes_test.cc
+# dbtypes_test_SOURCES = dbtypes_test.cc
 
-dbtypes_test_LDADD =
-dbtypes_test_LDADD += libmetadb_idxfs.la
-dbtypes_test_LDADD += $(top_builddir)/common/libtest_idxfs.la
-dbtypes_test_LDADD += $(top_builddir)/common/libcommon_idxfs.la
-dbtypes_test_LDADD += $(top_builddir)/lib/leveldb/libleveldb.la
+# dbtypes_test_SOURCES = 
+# dbtypes_test_SOURCES += metadb_driver.cc
+# dbtypes_test_SOURCES += dbtypes.cc
+# dbtypes_test_SOURCES += dboptions.cc
+# dbtypes_test_SOURCES += metadb.cc
+# dbtypes_test_SOURCES += metadb_reader.cc
+# dbtypes_test_SOURCES += metadb_writer.cc
 
-metadb_test_SOURCES =
-metadb_test_SOURCES += metadb_test.cc
+# dbtypes_test_LDADD =
+# # dbtypes_test_LDADD += libmetadb_idxfs.la
+# dbtypes_test_LDADD += $(top_builddir)/common/libtest_idxfs.la
+# dbtypes_test_LDADD += $(top_builddir)/common/libcommon_idxfs.la
+# dbtypes_test_LDADD += $(top_builddir)/lib/leveldb/libleveldb.la
 
-metadb_test_LDADD =
-metadb_test_LDADD += libmetadb_idxfs.la
-metadb_test_LDADD += $(top_builddir)/util/libutil_idxfs.la
-metadb_test_LDADD += $(top_builddir)/common/libtest_idxfs.la
-metadb_test_LDADD += $(top_builddir)/common/libcommon_idxfs.la
-metadb_test_LDADD += $(top_builddir)/thrift/libthrift_idxfs.la
-metadb_test_LDADD += $(top_builddir)/lib/leveldb/libleveldb.la
+# metadb_test_SOURCES =
+# metadb_test_SOURCES += metadb_test.cc
+
+# metadb_test_LDADD =
+# metadb_test_LDADD += libmetadb_idxfs.la
+# metadb_test_LDADD += $(top_builddir)/util/libutil_idxfs.la
+# metadb_test_LDADD += $(top_builddir)/common/libtest_idxfs.la
+# metadb_test_LDADD += $(top_builddir)/common/libcommon_idxfs.la
+# metadb_test_LDADD += $(top_builddir)/thrift/libthrift_idxfs.la
+# metadb_test_LDADD += $(top_builddir)/lib/leveldb/libleveldb.la
+
+## -------------------------------------------------------------------------
+## IndexFS Server
+## -------------------------------------------------------------------------
+
+nobase_bin_PROGRAMS += metadb
+
+metadb_SOURCES =
+metadb_SOURCES += metadb_driver.cc
+metadb_SOURCES += dbtypes.cc
+metadb_SOURCES += dboptions.cc
+metadb_SOURCES += metadb.cc
+metadb_SOURCES += metadb_reader.cc
+metadb_SOURCES += metadb_writer.cc
+metadb_SOURCES += metadb_main.cc
+
+metadb_LDADD = 
+# metadb_LDADD += libmetadb_idxfs.la
+metadb_LDADD += $(top_builddir)/util/libutil_idxfs.la
+metadb_LDADD += $(top_builddir)/ipc/libipc_idxfs.la
+# metadb_LDADD += $(top_builddir)/common/libtest_idxfs.la
+metadb_LDADD += $(top_builddir)/common/libcommon_idxfs.la
+metadb_LDADD += $(top_builddir)/thrift/libthrift_idxfs.la
+metadb_LDADD += $(top_builddir)/lib/leveldb/libleveldb.la
 
 ## -------------------------------------------------------------------------

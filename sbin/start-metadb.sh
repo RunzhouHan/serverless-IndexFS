@@ -7,72 +7,73 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file. See the AUTHORS file for names of contributors.
 #
-# Use this script to start or restart an indexfs server instance.
+# Use this script to start or restart an metadb server instance.
 #
 # Root privilege is neither required nor recommended to run this script. 
 #
 
 me=$0
 cmd=${2-"start"}
-INDEXFS_HOME=$(cd -P -- `dirname $me`/.. && pwd -P)
-INDEXFS_BUILD=${INDEXFS_BUILD:-"$INDEXFS_HOME/build"}
-INDEXFS_CONF_DIR=${INDEXFS_CONF_DIR:-"$INDEXFS_HOME/etc/indexfs"}
-INDEXFS_BACKEND=`$INDEXFS_HOME/sbin/idxfs.sh backend`
+METADB_HOME=$(cd -P -- `dirname $me`/.. && pwd -P)
+# METADB_BUILD=${METADB_BUILD:-"$METADB_HOME/build"}
+METADB_BUILD=${METADB_BUILD:-"$METADB_HOME/metadb"}
+METADB_CONF_DIR=${METADB_CONF_DIR:-"$METADB_HOME/etc/metadb"}
+METADB_BACKEND=`$METADB_HOME/sbin/idxfs.sh backend`
 
-# check indexfs backend
-if test -z "$INDEXFS_BACKEND"
+# check metadb backend
+if test -z "$METADB_BACKEND"
 then
-  echo "Cannot determine indexfs backend -- oops"
+  echo "Cannot determine metadb backend -- oops"
   exit 1
 fi
 
 # check if we have the required server list
-if test ! -e "$INDEXFS_CONF_DIR/server_list"
+if test ! -e "$METADB_CONF_DIR/server_list"
 then
   echo "Cannot find our server list file -- oops"
-  echo "It is supposed to be found at $INDEXFS_CONF_DIR/server_list"
+  echo "It is supposed to be found at $METADB_CONF_DIR/server_list"
   exit 1
 else
-  # ensure legacy indexfs clients can work correctly
-  rm -f /home/osboxes/Desktop/giga_conf
-  ln -fs $INDEXFS_CONF_DIR/server_list /home/osboxes/Desktop/giga_conf
+  # ensure legacy metadb clients can work correctly
+  rm -f /home/runzhou/Desktop/giga_conf
+  ln -fs $METADB_CONF_DIR/server_list /home/runzhou/Desktop/giga_conf
 fi
 
 # check if we have the required configuration files
-if test ! -e "$INDEXFS_CONF_DIR/indexfs_conf"
+if test ! -e "$METADB_CONF_DIR/metadb_conf"
 then
-  echo "Cannot find our indexfs config file -- oops"
-  echo "It is supposed to be found at $INDEXFS_CONF_DIR/indexfs_conf"
+  echo "Cannot find our metadb config file -- oops"
+  echo "It is supposed to be found at $METADB_CONF_DIR/metadb_conf"
   exit 1
 else
-  # ensure legacy indexfs clients can work correctly
-  rm -f /home/osboxes/Desktop/idxfs_conf
-  ln -fs $INDEXFS_CONF_DIR/indexfs_conf /home/osboxes/Desktop/idxfs_conf
+  # ensure legacy metadb clients can work correctly
+  rm -f /home/runzhou/Desktop/idxfs_conf
+  ln -fs $METADB_CONF_DIR/metadb_conf /home/runzhou/Desktop/idxfs_conf
 fi
 
-INDEXFS_ID=${INDEXFS_ID:-"0"}
-INDEXFS_ROOT=${INDEXFS_ROOT:-"/home/osboxes/Desktop/indexfs"}
-INDEXFS_RUN=${INDEXFS_RUN:-"$INDEXFS_ROOT/run/s$INDEXFS_ID"}
-INDEXFS_LOGS=$INDEXFS_RUN/logs
-INDEXFS_OLD_LOGS=$INDEXFS_RUN/old_logs
-INDEXFS_PID_FILE=$INDEXFS_RUN/indexfs_server.pid.$INDEXFS_ID
+METADB_ID=${METADB_ID:-"0"}
+METADB_ROOT=${METADB_ROOT:-"/home/runzhou/Desktop/metadb"}
+METADB_RUN=${METADB_RUN:-"$METADB_ROOT/run/s$METADB_ID"}
+METADB_LOGS=$METADB_RUN/logs
+METADB_OLD_LOGS=$METADB_RUN/old_logs
+METADB_PID_FILE=$METADB_RUN/metadb.pid.$METADB_ID
 
 # check running instances
 case "$cmd" in
   start)
-    if test -e "$INDEXFS_PID_FILE"
+    if test -e "$METADB_PID_FILE"
     then
-      echo "Killing existing indexfs server ..."
-      pid=$(cat $INDEXFS_PID_FILE)
-      kill -9 $pid && sleep 1; rm -f $INDEXFS_PID_FILE
+      echo "Killing existing metadb server ..."
+      pid=$(cat $METADB_PID_FILE)
+      kill -9 $pid && sleep 1; rm -f $METADB_PID_FILE
     fi
     ;;
   restart)
-    if test -e "$INDEXFS_PID_FILE"
+    if test -e "$METADB_PID_FILE"
     then
-      echo "Stopping indexfs server ..."
-      pid=$(cat $INDEXFS_PID_FILE)
-      kill $pid && sleep 2; rm -f $INDEXFS_PID_FILE
+      echo "Stopping metadb server ..."
+      pid=$(cat $METADB_PID_FILE)
+      kill $pid && sleep 2; rm -f $METADB_PID_FILE
     fi
     ;;
   *)
@@ -81,41 +82,40 @@ case "$cmd" in
 esac
 
 # prepare java runtime env if necessary
-if test x"$INDEXFS_BACKEND" = x"__HDFS__"
+if test x"$METADB_BACKEND" = x"__HDFS__"
 then
-  LD_PATH=`$INDEXFS_HOME/sbin/hdfs.sh ldpath`
+  LD_PATH=`$METADB_HOME/sbin/hdfs.sh ldpath`
   if test -n "$LD_LIBRARY_PATH"
   then
     LD_PATH="$LD_PATH:$LD_LIBRARY_PATH"
   fi
   export LD_LIBRARY_PATH=$LD_PATH
   export LIBHDFS_OPTS="-Djava.library.path=$LD_PATH"
-  export CLASSPATH=`$INDEXFS_HOME/sbin/hdfs.sh classpath`
+  export CLASSPATH=`$METADB_HOME/sbin/hdfs.sh classpath`
 fi
 
 # switch log directories, retaining old logs
-if test -d "$INDEXFS_LOGS"
+if test -d "$METADB_LOGS"
 then
-  rm -rf $INDEXFS_OLD_LOGS
-  mkdir -p $INDEXFS_RUN && mv \
-    $INDEXFS_LOGS $INDEXFS_OLD_LOGS || exit 1
+  rm -rf $METADB_OLD_LOGS
+  mkdir -p $METADB_RUN && mv \
+    $METADB_LOGS $METADB_OLD_LOGS || exit 1
 fi
-mkdir -p $INDEXFS_RUN $INDEXFS_LOGS || exit 1
+mkdir -p $METADB_RUN $METADB_LOGS || exit 1
 
-srv_addr=${1-"`hostname -s`"}
-echo "Starting indexfs server $INDEXFS_ID at $srv_addr, logging to $INDEXFS_LOGS ..."
+metadb_addr=${1-"`hostname -s`"}
+echo "Starting metadb server $METADB_ID at $metadb_addr, logging to $METADB_LOGS ..."
 
 # start metadb server
-nohup $INDEXFS_BUILD/indexfs_server \
-# METADB_ID should be consistent with SERVER_ID
-    --srvid="$METADB_ID" \
-    --log_dir="$INDEXFS_LOGS" \
-    --file_dir="$INDEXFS_ROOT/_DATA_" \
-    --db_root="$INDEXFS_ROOT/_META_" \
-    --configfn="$INDEXFS_CONF_DIR/indexfs_conf" \
-    --srvlstfn="$INDEXFS_CONF_DIR/server_list" \
-  1>$INDEXFS_LOGS/indexfs_server.STDOUT 2>$INDEXFS_LOGS/indexfs_server.STDERR </dev/null &
+nohup $METADB_BUILD/metadb \
+    --metadbid="$METADB_ID" \
+    --log_dir="$METADB_LOGS" \
+    --file_dir="$METADB_ROOT/_DATA_" \
+    --db_root="$METADB_ROOT/_META_" \
+    --configfn="$METADB_CONF_DIR/metadb_conf" \
+    --metadblstfn="$METADB_CONF_DIR/server_list" \
+  1>$METADB_LOGS/metadb.STDOUT 2>$METADB_LOGS/metadb.STDERR </dev/null &
 
-echo "$!" | tee $INDEXFS_PID_FILE &>/dev/null
+echo "$!" | tee $METADB_PID_FILE &>/dev/null
 
 exit 0

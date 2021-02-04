@@ -5,27 +5,31 @@
 #include <signal.h>
 
 #include "common/logging.h"
-#include "metadb/metadb.h"
 #include "metadb/metadb_driver.h"
 
+DEFINE_int32(metadbid, -1, "set indexfs server rank");
 
-// using indexfs::mdb::LevelMDB;
+
 using indexfs::MetaDBDriver;
-
 using leveldb::NewMemLinkEnv;
 using indexfs::Config;
 using indexfs::Env;
 using indexfs::GetSystemEnv;
 using indexfs::Logger;
-using indexfs::LoadServerConfig;
+using indexfs::LoadMetaDBConfig;
 using indexfs::GetLogFileName;
 using indexfs::GetDefaultLogDir;
 using indexfs::SetVersionString;
 using indexfs::SetUsageMessage;
 using indexfs::ParseCommandLineFlags;
+
+// Global state
+// -----------------------------------------------
 static Env* env = NULL;
 static Config* config = NULL;
 static MetaDBDriver* driver = NULL;
+// -----------------------------------------------
+
 
 namespace {
 static
@@ -40,17 +44,17 @@ void SignalHandler(int sig) {
 int main(int argc, char* argv[]) {
 //-----------------------------------------------------------------
   FLAGS_logfn = "indexfs_metadb";
-  FLAGS_srvid = -1;
+  FLAGS_metadbid = -1;
   FLAGS_logbufsecs = 5;
   FLAGS_log_dir = GetDefaultLogDir();
   SetVersionString(PACKAGE_VERSION);
   SetUsageMessage("indexfs metadb");
   ParseCommandLineFlags(&argc, &argv, true);
-  srand (FLAGS_srvid);
+  srand (FLAGS_metadbid);
   Logger::Initialize(GetLogFileName());
 //-----------------------------------------------------------------
 // LevelDB
-  config = LoadMetaDBConfig(FLAGS_srvid); // not implemented yet
+  config = LoadMetaDBConfig(FLAGS_metadbid); // not implemented yet
   env = GetSystemEnv(config);
   if (config->HasOldData()) {
     // We will have to link old SSTables into
@@ -60,7 +64,7 @@ int main(int argc, char* argv[]) {
 //-----------------------------------------------------------------
 // fd_driver 
   driver = MetaDBDriver::NewMetaDBDriver(env, config);
-  driver->PrepareContext();  
+  driver->PrepareDir();  
   driver->OpenMetaDB();
   signal(SIGINT, &SignalHandler);
   signal(SIGTERM, &SignalHandler);

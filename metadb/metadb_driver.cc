@@ -55,19 +55,18 @@ class IndexMetaDBDriver: virtual public MetaDBDriver {
     PrepareDirectory(env_, config_->GetDBHomeDir());
     PrepareDirectory(env_, config_->GetDBSplitDir());
 
-	DLOG_ASSERT(mdb_ == NULL);
+  	DLOG_ASSERT(mdb_ == NULL);
 
-	Status s;
-	if (config_->HasOldData()) {
-	s = MetaDB::Repair(config_, env_);
-	}
-	if (s.ok()) {
-	s = MetaDB::Open(config_, &mdb_, env_);
-	}
-	if (!s.ok()) {
-	return s;
-  }
-
+  	Status s;
+  	if (config_->HasOldData()) {
+  	MetaDB::Repair(config_, env_);
+  	}
+  	if (s.ok()) {
+  	MetaDB::Open(config_, &mdb_, env_);
+  	}
+  	if (!s.ok()) {
+  	return s;
+    }
   }
 
   void OpenMetaDB() {

@@ -91,6 +91,22 @@ struct WriteResult {
 // }
 
 // ---------------------------------------------------------------
+// MetaDB types
+// ---------------------------------------------------------------
+
+//struct KeyInfo {
+//  1: required i64 parent_id
+//  2: required i16 partition_id_
+//  3: required string file_name_
+//}
+
+//struct KeyOffset {
+//  1: required i64 parent_id
+//  2: required i16 partition_id_
+//  3: required string start_hash_
+//}
+
+// ---------------------------------------------------------------
 // IndexFS exceptions
 // ---------------------------------------------------------------
 
@@ -255,6 +271,10 @@ void InsertSplit(1: i64 dir_id, 2: i16 parent_index, 3: i16 child_index,
 // IndexFS metadb RPC interface
 // ---------------------------------------------------------------
 
-service MetadataDBService {
+service MetaDBService {
+
+//void NewFile(1: KeyInfo &key)
+//  throws (1: IOError io_error,
+//          2: ServerInternalError srv_error)
 
 }

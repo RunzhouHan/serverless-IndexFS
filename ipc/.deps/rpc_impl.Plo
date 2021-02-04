@@ -639,8 +639,8 @@ rpc_impl.lo: rpc_impl.cc /usr/include/stdc-predef.h ../ipc/rpc.h \
  /usr/include/boost/mpl/aux_/preprocessed/gcc/template_arity.hpp \
  /usr/include/boost/mpl/aux_/preprocessed/gcc/full_lambda.hpp \
  /usr/include/boost/mpl/aux_/preprocessed/gcc/apply.hpp \
- ../thrift/indexfs_types.h ../ipc/rpc_impl.h ../ipc/rpc_types.h \
- /usr/include/boost/scoped_ptr.hpp \
+ ../thrift/indexfs_types.h ../thrift/MetadataDBService.h \
+ ../ipc/rpc_impl.h ../ipc/rpc_types.h /usr/include/boost/scoped_ptr.hpp \
  /usr/include/boost/smart_ptr/scoped_ptr.hpp \
  /usr/local/include/thrift/protocol/TBinaryProtocol.h \
  /usr/local/include/thrift/protocol/TVirtualProtocol.h \
@@ -2160,6 +2160,8 @@ rpc_impl.lo: rpc_impl.cc /usr/include/stdc-predef.h ../ipc/rpc.h \
 /usr/include/boost/mpl/aux_/preprocessed/gcc/apply.hpp:
 
 ../thrift/indexfs_types.h:
+
+../thrift/MetadataDBService.h:
 
 ../ipc/rpc_impl.h:
 

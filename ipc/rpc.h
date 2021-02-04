@@ -11,6 +11,8 @@
 
 #include "ipc/membset.h"
 #include "thrift/MetadataIndexService.h"
+#include "thrift/MetadataDBService.h"
+
 
 namespace indexfs {
 
@@ -128,6 +130,33 @@ class RPC_Server {
 };
 
 // by Runzhou 
+// class RPC_MetaDB {
+//  public:
+
+//   void Stop();
+//   void RunForever();
+
+//   RPC_MetaDB(Config* conf, MetadataDBServiceIf* handler)
+//     : conf_(conf), handler_(handler) {
+//     metadb_ = CreateInteralMetaDB();
+//   }
+
+//   virtual ~RPC_MetaDB();
+
+//  private:
+
+//   Config* conf_;
+//   MetadataDBServiceIf* handler_; // pay attention to this. by runzhou
+
+//   // MetaDB implementation
+//   MetaDBRep* metadb_;
+//   MetaDBRep* CreateInteralMetaDB();
+
+//   // No copy allowed
+//   RPC_MetaDB(const RPC_MetaDB&);
+//   RPC_MetaDB& operator=(const RPC_MetaDB&);
+// };
+
 class RPC_MetaDB {
  public:
 

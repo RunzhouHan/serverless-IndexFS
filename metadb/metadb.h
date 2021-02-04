@@ -8,6 +8,7 @@
 #include <string>
 #include <vector>
 
+// #include "ipc/rpc.h"
 #include "common/common.h"
 #include "common/config.h"
 #include "metadb/dboptions.h"
@@ -78,7 +79,7 @@ class BulkExtractor {
 class MetaDB { // should wrap the corresponding rpc class, just like index_server.h. by runzhou
  public:
 
-  static Status Repair(Config* config, Env* env = NULL);
+  static void Repair(Config* config, Env* env = NULL);
 
   // Open the underlying key-value store with the specified system
   // configurations.
@@ -87,20 +88,20 @@ class MetaDB { // should wrap the corresponding rpc class, just like index_serve
   // Stores NULL in *dbptr and returns a non-OK status on error.
   // Note that caller should delete *dbptr when it is no longer needed.
   //
-  static Status Open(Config* config, MetaDB** dbptr, Env* env = NULL);
+  static void Open(Config* config, MetaDB** dbptr, Env* env = NULL);
 
   virtual ~MetaDB() { }
-  virtual Status Flush() = 0;
+  virtual void Flush() = 0;
 
   virtual int64_t GetCurrentInodeNo() = 0;
   virtual int64_t ReserveNextInodeNo() = 0;
 
-  virtual Status EntryExists(const KeyInfo &key) = 0;
+  virtual void EntryExists(const KeyInfo &key) = 0;
 
-  virtual Status DeleteEntry(const KeyInfo &key) = 0;
-  virtual Status GetEntry(const KeyInfo &key, StatInfo *info) = 0;
-  virtual Status UpdateEntry(const KeyInfo &key, const StatInfo &info) = 0;
-  virtual Status InsertEntry(const KeyInfo &key, const StatInfo &info) = 0;
+  virtual void DeleteEntry(const KeyInfo &key) = 0;
+  virtual void GetEntry(const KeyInfo &key, StatInfo *info) = 0;
+  virtual void UpdateEntry(const KeyInfo &key, const StatInfo &info) = 0;
+  virtual void InsertEntry(const KeyInfo &key, const StatInfo &info) = 0;
 
   // Blindly put a new entry into the underlying DB
   // without checking the existence of entries currently
@@ -108,37 +109,37 @@ class MetaDB { // should wrap the corresponding rpc class, just like index_serve
   // This call is introduced so that we can save a
   // LevelDB GET if we already know what that call may return.
   //
-  virtual Status PutEntry(const KeyInfo &key,
+  virtual void PutEntry(const KeyInfo &key,
       const StatInfo &info) = 0;
   // Blindly put a new entry into the underlying DB
   // without checking the existence of entries currently
   // in the DB with the same key.
   // Besides, update the mode according to the new mode.
   //
-  virtual Status PutEntryWithMode(
+  virtual void PutEntryWithMode(
       const KeyInfo &key, const StatInfo &info, mode_t new_mode) = 0;
 
   // Create a new file with no data associated with it.
   // Different from directories, files don't get inode#s.
   // Returns error if file with the same key already exists.
   //
-  virtual Status NewFile(const KeyInfo &key) = 0;
+  virtual void NewFile(const KeyInfo &key) = 0;
   // Make a new directory with the given inode# and server id.
   // Directories are just inode entries associated with their own parent.
   // Entries under this new directory are stored separately (not
   // with the entry being created here) and are very likely on other servers.
   // Returns error if directory with the same key already exists.
   //
-  virtual Status NewDirectory(const KeyInfo &key,
+  virtual void NewDirectory(const KeyInfo &key,
       int16_t zeroth_server, int64_t inode_no) = 0;
   // Override the original file mode according to the new mode.
   // Returns error if no file with the specified key is found.
   //
-  virtual Status SetFileMode(const KeyInfo &key, mode_t new_mode) = 0;
+  virtual void SetFileMode(const KeyInfo &key, mode_t new_mode) = 0;
 
-  virtual Status GetMapping(int64_t dir_id, std::string *dmap_data) = 0;
-  virtual Status UpdateMapping(int64_t dir_id, const Slice &dmap_data) = 0;
-  virtual Status InsertMapping(int64_t dir_id, const Slice &dmap_data) = 0;
+  virtual void GetMapping(int64_t dir_id, std::string *dmap_data) = 0;
+  virtual void UpdateMapping(int64_t dir_id, const Slice &dmap_data) = 0;
+  virtual void InsertMapping(int64_t dir_id, const Slice &dmap_data) = 0;
 
   virtual Status FetchData(const KeyInfo &key,
       int32_t *size, char *buffer) = 0;
@@ -146,12 +147,12 @@ class MetaDB { // should wrap the corresponding rpc class, just like index_serve
       uint32_t offset, uint32_t size, const char *data) = 0;
 
   // List all objects (files or directories) under a given directory partition.
-  virtual Status ListEntries(const KeyOffset &offset,
+  virtual Status ListEntries(const KeyOffset &offset, 
       NameList *names, StatList *infos) = 0;
-  // Get a new directory scanner associated with a given directory partition.
+  // Get a new directory scanner associated with a given directory partition. 
   virtual DirScanner* CreateDirScanner(const KeyOffset &offset) = 0;
 
-  virtual Status BulkInsert(uint64_t min_seq, uint64_t max_seq,
+  virtual void BulkInsert(uint64_t min_seq, uint64_t max_seq,
      const std::string &tmp_path) = 0;
   virtual BulkExtractor* CreateLocalBulkExtractor() = 0;
   virtual BulkExtractor* CreateBulkExtractor(const std::string &tmp_path) = 0;
