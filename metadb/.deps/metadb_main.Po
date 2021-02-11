@@ -173,7 +173,7 @@ metadb_main.o: metadb_main.cc /usr/include/stdc-predef.h \
  /usr/local/include/gflags/gflags_gflags.h \
  /usr/local/include/glog/log_severity.h \
  /usr/local/include/glog/vlog_is_on.h /usr/local/include/gflags/gflags.h \
- ../metadb/metadb_driver.h ../thrift/MetadataDBService.h \
+ ../metadb/metadb_driver.h ../thrift/MetaDBService.h \
  /usr/local/include/thrift/TDispatchProcessor.h \
  /usr/local/include/thrift/TProcessor.h \
  /usr/local/include/thrift/protocol/TProtocol.h \
@@ -1078,7 +1078,7 @@ metadb_main.o: metadb_main.cc /usr/include/stdc-predef.h \
 
 ../metadb/metadb_driver.h:
 
-../thrift/MetadataDBService.h:
+../thrift/MetaDBService.h:
 
 /usr/local/include/thrift/TDispatchProcessor.h:
 

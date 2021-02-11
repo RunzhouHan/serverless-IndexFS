@@ -11,7 +11,7 @@
 
 #include "ipc/membset.h"
 #include "thrift/MetadataIndexService.h"
-#include "thrift/MetadataDBService.h"
+#include "thrift/MetaDBService.h"
 
 
 namespace indexfs {
@@ -36,13 +36,13 @@ class RPC {
   int TotolServers() { return member_set_->TotalServers(); }
 
   virtual ~RPC();
-  Mutex* GetMutex(int srv_id);
-  MetadataIndexServiceIf* GetClient(int srv_id);
-  Status GetMetadataService(int srv_id, MetadataIndexServiceIf** _return);
+  Mutex* GetMutex(int metadb_id);
+  MetaDBServiceIf* GetClient(int metadb_id);
+  Status GetMetadataService(int metadb_id, MetaDBServiceIf** _return);
 
  private:
 
-  explicit RPC(Config* conf, MetadataIndexServiceIf* self = NULL)
+  explicit RPC(Config* conf, MetaDBServiceIf* self = NULL)
     : conf_(conf)
     , self_(self) {
     member_set_ = CreateStaticMemberSet(conf_);
@@ -56,15 +56,15 @@ class RPC {
 
   Config* conf_;
   MemberSet* member_set_;
-  MetadataIndexServiceIf* self_;
+  MetaDBServiceIf* self_;
 
   // Advisory lock for RPC client sharing in MT contexts
   Mutex* mtxes_;
 
   FTCliRepWrapper** clients_;
-  bool IsServerLocal(int srv_id);
-  FTCliRepWrapper* CreateClientFor(int srv_id);
-  FTCliRepWrapper* CreateClientIfNotLocal(int srv_id);
+  bool IsServerLocal(int metadb_id);
+  FTCliRepWrapper* CreateClientFor(int metadb_id);
+  FTCliRepWrapper* CreateClientIfNotLocal(int metadb_id);
 
   // No copy allowed
   RPC(const RPC&);
@@ -130,40 +130,13 @@ class RPC_Server {
 };
 
 // by Runzhou 
-// class RPC_MetaDB {
-//  public:
-
-//   void Stop();
-//   void RunForever();
-
-//   RPC_MetaDB(Config* conf, MetadataDBServiceIf* handler)
-//     : conf_(conf), handler_(handler) {
-//     metadb_ = CreateInteralMetaDB();
-//   }
-
-//   virtual ~RPC_MetaDB();
-
-//  private:
-
-//   Config* conf_;
-//   MetadataDBServiceIf* handler_; // pay attention to this. by runzhou
-
-//   // MetaDB implementation
-//   MetaDBRep* metadb_;
-//   MetaDBRep* CreateInteralMetaDB();
-
-//   // No copy allowed
-//   RPC_MetaDB(const RPC_MetaDB&);
-//   RPC_MetaDB& operator=(const RPC_MetaDB&);
-// };
-
 class RPC_MetaDB {
  public:
 
   void Stop();
   void RunForever();
 
-  RPC_MetaDB(Config* conf, MetadataIndexServiceIf* handler)
+  RPC_MetaDB(Config* conf, MetaDBServiceIf* handler)
     : conf_(conf), handler_(handler) {
     metadb_ = CreateInteralMetaDB();
   }
@@ -173,7 +146,7 @@ class RPC_MetaDB {
  private:
 
   Config* conf_;
-  MetadataIndexServiceIf* handler_; // pay attention to this. by runzhou
+  MetaDBServiceIf* handler_; // pay attention to this. by runzhou
 
   // MetaDB implementation
   MetaDBRep* metadb_;
@@ -183,6 +156,33 @@ class RPC_MetaDB {
   RPC_MetaDB(const RPC_MetaDB&);
   RPC_MetaDB& operator=(const RPC_MetaDB&);
 };
+
+// class RPC_MetaDB {
+//  public:
+
+//   void Stop();
+//   void RunForever();
+
+//   RPC_MetaDB(Config* conf, MetadataIndexServiceIf* handler)
+//     : conf_(conf), handler_(handler) {
+//     metadb_ = CreateInteralMetaDB();
+//   }
+
+//   virtual ~RPC_MetaDB();
+
+//  private:
+
+//   Config* conf_;
+//   MetadataIndexServiceIf* handler_; // pay attention to this. by runzhou
+
+//   // MetaDB implementation
+//   MetaDBRep* metadb_;
+//   MetaDBRep* CreateInteralMetaDB();
+
+//   // No copy allowed
+//   RPC_MetaDB(const RPC_MetaDB&);
+//   RPC_MetaDB& operator=(const RPC_MetaDB&);
+// };
 
 } /* namespace indexfs */
 

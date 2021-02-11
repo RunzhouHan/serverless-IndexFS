@@ -6,7 +6,7 @@
 #define _INDEXFS_METADB_DRIVER_H_
 
 // Need to add a MetadataDBIndexService.h for thrift rpc
-#include "thrift/MetadataDBService.h"
+#include "thrift/MetaDBService.h"
 
 #include "common/options.h"
 #include "common/common.h"
@@ -32,31 +32,31 @@ class MetaDBDriver {
 };
 
 enum MetadataDBOps {
-  oRepair,
-  oOpen,
-  oFlush,
-  oGetCurrentInodeNo,
-  oReserveNextInodeNo,
-  oEntryExists,
-  oDeleteEntry,
-  oGetEntry,
-  oUpdateEntry,
-  oInsertEntry,
-  oPutEntry,
-  oPutEntryWithMode,
+  // oRepair,
+  // oOpen,
+  // oFlush,
+  // oGetCurrentInodeNo,
+  // oReserveNextInodeNo,
+  // oEntryExists,
+  // oDeleteEntry,
+  // oGetEntry,
+  // oUpdateEntry,
+  // oInsertEntry,
+  // oPutEntry,
+  // oPutEntryWithMode,
   oNewFile,
   oNewDirectory,
-  oSetFileMode,
-  oGetMapping,
-  oUpdateMapping,
-  oInsertMapping,
-  oFetchData,
-  oWriteData,
-  oListEntries,
-  oCreateDirScanner,
-  oBulkInsert,
-  oCreateLocalBulkExtractor,
-  oCreateBulkExtractor,
+  // oSetFileMode,
+  // oGetMapping,
+  // oUpdateMapping,
+  // oInsertMapping,
+  // oFetchData,
+  // oWriteData,
+  // oListEntries,
+  // oCreateDirScanner,
+  // oBulkInsert,
+  // oCreateLocalBulkExtractor,
+  // oCreateBulkExtractor,
   kNumSrvOps
 };
 

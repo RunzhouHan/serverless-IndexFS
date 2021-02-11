@@ -47,59 +47,62 @@ Status RPC::Shutdown() {
   return Status::OK();
 }
 
-inline bool RPC::IsServerLocal(int srv_id) {
-  return conf_->GetSrvId() == srv_id;
+inline bool RPC::IsServerLocal(int metadb_id) {
+  return conf_->GetMetaDBId() == metadb_id;
 }
 
-FTCliRepWrapper* RPC::CreateClientFor(int srv_id) {
+FTCliRepWrapper* RPC::CreateClientFor(int metadb_id) {
   DLOG_ASSERT(member_set_ != NULL);
-  return new FTCliRepWrapper(srv_id, conf_, member_set_);
+  return new FTCliRepWrapper(metadb_id, conf_, member_set_);  //this one to be modified
 }
 
-FTCliRepWrapper* RPC::CreateClientIfNotLocal(int srv_id) {
+FTCliRepWrapper* RPC::CreateClientIfNotLocal(int metadb_id) {
   if (self_ == NULL) {
-    return CreateClientFor(srv_id);
+    return CreateClientFor(metadb_id);
   }
-  return IsServerLocal(srv_id) ? NULL : CreateClientFor(srv_id);
+  return IsServerLocal(metadb_id) ? NULL : CreateClientFor(metadb_id);
 }
 
 // Retrieves the advisory lock associated with a given RPC client.
 //
-Mutex* RPC::GetMutex(int srv_id) {
-  DLOG_ASSERT(srv_id >= 0);
-  DLOG_ASSERT(srv_id < conf_->GetSrvNum());
-  return mtxes_ + srv_id;
+Mutex* RPC::GetMutex(int metadb_id) {
+  DLOG_ASSERT(metadb_id >= 0);
+  DLOG_ASSERT(metadb_id < conf_->GetSrvNum());
+  return mtxes_ + metadb_id;
 }
 
 // Retrieves the "service" of a given server. Returns the local server handle if
 // possible, otherwise returns a RPC client stub associated with the remote server.
 // Re-establishes the TCP connection to the server if previous attempts failed.
 //
-Status RPC::GetMetadataService(int srv_id, MetadataIndexServiceIf** _return) {
+
+/* temporarily masked. by Runzhou
+Status RPC::GetMetadataService(int metadb_id, MetaDBServiceIf** _return) {
   *_return = NULL;
-  DLOG_ASSERT(srv_id >= 0);
-  DLOG_ASSERT(srv_id < conf_->GetSrvNum());
-  if (self_ != NULL && IsServerLocal(srv_id)) {
-    DLOG_ASSERT(clients_[srv_id] == NULL);
+  DLOG_ASSERT(metadb_id >= 0);
+  DLOG_ASSERT(metadb_id < conf_->GetMetaDBNum());
+  if (self_ != NULL && IsServerLocal(metadb_id)) {
+    DLOG_ASSERT(clients_[metadb_id] == NULL);
     *_return = self_;
     return Status::OK();
   }
-  DLOG_ASSERT(clients_[srv_id] != NULL);
-  if (!clients_[srv_id]->IsReady()) {
-    clients_[srv_id]->RecoverConnectionToServer();
-    DLOG_ASSERT(clients_[srv_id]->IsReady());
-    DLOG(INFO) << "RPC client #" << srv_id << " re-initialized";
+  DLOG_ASSERT(clients_[metadb_id] != NULL);
+  if (!clients_[metadb_id]->IsReady()) {
+    clients_[metadb_id]->RecoverConnectionToServer();
+    DLOG_ASSERT(clients_[metadb_id]->IsReady());
+    DLOG(INFO) << "RPC client #" << metadb_id << " re-initialized";
   }
-  *_return = clients_[srv_id];
+  *_return = clients_[metadb_id];
   return Status::OK();
 }
+*/
 
 // Returns the "RPC stub" associated with a given server.
 // Throws TTransportException if that server cannot be reached at the moment.
 //
-MetadataIndexServiceIf* RPC::GetClient(int srv_id) {
-  MetadataIndexServiceIf* _return;
-  Status s = GetMetadataService(srv_id, &_return);
+MetaDBServiceIf* RPC::GetClient(int metadb_id) {
+  MetaDBServiceIf* _return;
+  Status s = GetMetaDBService(metadb_id, &_return);
   DLOG_ASSERT(s.ok());
   return _return;
 }

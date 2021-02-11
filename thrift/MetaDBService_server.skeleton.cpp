@@ -22,6 +22,16 @@ class MetaDBServiceHandler : virtual public MetaDBServiceIf {
     // Your initialization goes here
   }
 
+  void NewFile(const KeyInfo_THRIFT& key) {
+    // Your implementation goes here
+    printf("NewFile\n");
+  }
+
+  void NewDirctory(const KeyInfo_THRIFT& key, const int16_t zeroth_server, const int64_t inode_no) {
+    // Your implementation goes here
+    printf("NewDirctory\n");
+  }
+
 };
 
 int main(int argc, char **argv) {

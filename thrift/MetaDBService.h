@@ -21,6 +21,8 @@ namespace indexfs {
 class MetaDBServiceIf {
  public:
   virtual ~MetaDBServiceIf() {}
+  virtual void NewFile(const KeyInfo_THRIFT& key) = 0;
+  virtual void NewDirctory(const KeyInfo_THRIFT& key, const int16_t zeroth_server, const int64_t inode_no) = 0;
 };
 
 class MetaDBServiceIfFactory {
@@ -50,6 +52,250 @@ class MetaDBServiceIfSingletonFactory : virtual public MetaDBServiceIfFactory {
 class MetaDBServiceNull : virtual public MetaDBServiceIf {
  public:
   virtual ~MetaDBServiceNull() {}
+  void NewFile(const KeyInfo_THRIFT& /* key */) {
+    return;
+  }
+  void NewDirctory(const KeyInfo_THRIFT& /* key */, const int16_t /* zeroth_server */, const int64_t /* inode_no */) {
+    return;
+  }
+};
+
+typedef struct _MetaDBService_NewFile_args__isset {
+  _MetaDBService_NewFile_args__isset() : key(false) {}
+  bool key :1;
+} _MetaDBService_NewFile_args__isset;
+
+class MetaDBService_NewFile_args {
+ public:
+
+  MetaDBService_NewFile_args(const MetaDBService_NewFile_args&);
+  MetaDBService_NewFile_args& operator=(const MetaDBService_NewFile_args&);
+  MetaDBService_NewFile_args() {
+  }
+
+  virtual ~MetaDBService_NewFile_args() throw();
+  KeyInfo_THRIFT key;
+
+  _MetaDBService_NewFile_args__isset __isset;
+
+  void __set_key(const KeyInfo_THRIFT& val);
+
+  bool operator == (const MetaDBService_NewFile_args & rhs) const
+  {
+    if (!(key == rhs.key))
+      return false;
+    return true;
+  }
+  bool operator != (const MetaDBService_NewFile_args &rhs) const {
+    return !(*this == rhs);
+  }
+
+  bool operator < (const MetaDBService_NewFile_args & ) const;
+
+  uint32_t read(::apache::thrift::protocol::TProtocol* iprot);
+  uint32_t write(::apache::thrift::protocol::TProtocol* oprot) const;
+
+};
+
+
+class MetaDBService_NewFile_pargs {
+ public:
+
+
+  virtual ~MetaDBService_NewFile_pargs() throw();
+  const KeyInfo_THRIFT* key;
+
+  uint32_t write(::apache::thrift::protocol::TProtocol* oprot) const;
+
+};
+
+typedef struct _MetaDBService_NewFile_result__isset {
+  _MetaDBService_NewFile_result__isset() : io_error(false), srv_error(false) {}
+  bool io_error :1;
+  bool srv_error :1;
+} _MetaDBService_NewFile_result__isset;
+
+class MetaDBService_NewFile_result {
+ public:
+
+  MetaDBService_NewFile_result(const MetaDBService_NewFile_result&);
+  MetaDBService_NewFile_result& operator=(const MetaDBService_NewFile_result&);
+  MetaDBService_NewFile_result() {
+  }
+
+  virtual ~MetaDBService_NewFile_result() throw();
+  IOError io_error;
+  ServerInternalError srv_error;
+
+  _MetaDBService_NewFile_result__isset __isset;
+
+  void __set_io_error(const IOError& val);
+
+  void __set_srv_error(const ServerInternalError& val);
+
+  bool operator == (const MetaDBService_NewFile_result & rhs) const
+  {
+    if (!(io_error == rhs.io_error))
+      return false;
+    if (!(srv_error == rhs.srv_error))
+      return false;
+    return true;
+  }
+  bool operator != (const MetaDBService_NewFile_result &rhs) const {
+    return !(*this == rhs);
+  }
+
+  bool operator < (const MetaDBService_NewFile_result & ) const;
+
+  uint32_t read(::apache::thrift::protocol::TProtocol* iprot);
+  uint32_t write(::apache::thrift::protocol::TProtocol* oprot) const;
+
+};
+
+typedef struct _MetaDBService_NewFile_presult__isset {
+  _MetaDBService_NewFile_presult__isset() : io_error(false), srv_error(false) {}
+  bool io_error :1;
+  bool srv_error :1;
+} _MetaDBService_NewFile_presult__isset;
+
+class MetaDBService_NewFile_presult {
+ public:
+
+
+  virtual ~MetaDBService_NewFile_presult() throw();
+  IOError io_error;
+  ServerInternalError srv_error;
+
+  _MetaDBService_NewFile_presult__isset __isset;
+
+  uint32_t read(::apache::thrift::protocol::TProtocol* iprot);
+
+};
+
+typedef struct _MetaDBService_NewDirctory_args__isset {
+  _MetaDBService_NewDirctory_args__isset() : key(false), zeroth_server(false), inode_no(false) {}
+  bool key :1;
+  bool zeroth_server :1;
+  bool inode_no :1;
+} _MetaDBService_NewDirctory_args__isset;
+
+class MetaDBService_NewDirctory_args {
+ public:
+
+  MetaDBService_NewDirctory_args(const MetaDBService_NewDirctory_args&);
+  MetaDBService_NewDirctory_args& operator=(const MetaDBService_NewDirctory_args&);
+  MetaDBService_NewDirctory_args() : zeroth_server(0), inode_no(0) {
+  }
+
+  virtual ~MetaDBService_NewDirctory_args() throw();
+  KeyInfo_THRIFT key;
+  int16_t zeroth_server;
+  int64_t inode_no;
+
+  _MetaDBService_NewDirctory_args__isset __isset;
+
+  void __set_key(const KeyInfo_THRIFT& val);
+
+  void __set_zeroth_server(const int16_t val);
+
+  void __set_inode_no(const int64_t val);
+
+  bool operator == (const MetaDBService_NewDirctory_args & rhs) const
+  {
+    if (!(key == rhs.key))
+      return false;
+    if (!(zeroth_server == rhs.zeroth_server))
+      return false;
+    if (!(inode_no == rhs.inode_no))
+      return false;
+    return true;
+  }
+  bool operator != (const MetaDBService_NewDirctory_args &rhs) const {
+    return !(*this == rhs);
+  }
+
+  bool operator < (const MetaDBService_NewDirctory_args & ) const;
+
+  uint32_t read(::apache::thrift::protocol::TProtocol* iprot);
+  uint32_t write(::apache::thrift::protocol::TProtocol* oprot) const;
+
+};
+
+
+class MetaDBService_NewDirctory_pargs {
+ public:
+
+
+  virtual ~MetaDBService_NewDirctory_pargs() throw();
+  const KeyInfo_THRIFT* key;
+  const int16_t* zeroth_server;
+  const int64_t* inode_no;
+
+  uint32_t write(::apache::thrift::protocol::TProtocol* oprot) const;
+
+};
+
+typedef struct _MetaDBService_NewDirctory_result__isset {
+  _MetaDBService_NewDirctory_result__isset() : io_error(false), srv_error(false) {}
+  bool io_error :1;
+  bool srv_error :1;
+} _MetaDBService_NewDirctory_result__isset;
+
+class MetaDBService_NewDirctory_result {
+ public:
+
+  MetaDBService_NewDirctory_result(const MetaDBService_NewDirctory_result&);
+  MetaDBService_NewDirctory_result& operator=(const MetaDBService_NewDirctory_result&);
+  MetaDBService_NewDirctory_result() {
+  }
+
+  virtual ~MetaDBService_NewDirctory_result() throw();
+  IOError io_error;
+  ServerInternalError srv_error;
+
+  _MetaDBService_NewDirctory_result__isset __isset;
+
+  void __set_io_error(const IOError& val);
+
+  void __set_srv_error(const ServerInternalError& val);
+
+  bool operator == (const MetaDBService_NewDirctory_result & rhs) const
+  {
+    if (!(io_error == rhs.io_error))
+      return false;
+    if (!(srv_error == rhs.srv_error))
+      return false;
+    return true;
+  }
+  bool operator != (const MetaDBService_NewDirctory_result &rhs) const {
+    return !(*this == rhs);
+  }
+
+  bool operator < (const MetaDBService_NewDirctory_result & ) const;
+
+  uint32_t read(::apache::thrift::protocol::TProtocol* iprot);
+  uint32_t write(::apache::thrift::protocol::TProtocol* oprot) const;
+
+};
+
+typedef struct _MetaDBService_NewDirctory_presult__isset {
+  _MetaDBService_NewDirctory_presult__isset() : io_error(false), srv_error(false) {}
+  bool io_error :1;
+  bool srv_error :1;
+} _MetaDBService_NewDirctory_presult__isset;
+
+class MetaDBService_NewDirctory_presult {
+ public:
+
+
+  virtual ~MetaDBService_NewDirctory_presult() throw();
+  IOError io_error;
+  ServerInternalError srv_error;
+
+  _MetaDBService_NewDirctory_presult__isset __isset;
+
+  uint32_t read(::apache::thrift::protocol::TProtocol* iprot);
+
 };
 
 class MetaDBServiceClient : virtual public MetaDBServiceIf {
@@ -77,6 +323,12 @@ class MetaDBServiceClient : virtual public MetaDBServiceIf {
   boost::shared_ptr< ::apache::thrift::protocol::TProtocol> getOutputProtocol() {
     return poprot_;
   }
+  void NewFile(const KeyInfo_THRIFT& key);
+  void send_NewFile(const KeyInfo_THRIFT& key);
+  void recv_NewFile();
+  void NewDirctory(const KeyInfo_THRIFT& key, const int16_t zeroth_server, const int64_t inode_no);
+  void send_NewDirctory(const KeyInfo_THRIFT& key, const int16_t zeroth_server, const int64_t inode_no);
+  void recv_NewDirctory();
  protected:
   boost::shared_ptr< ::apache::thrift::protocol::TProtocol> piprot_;
   boost::shared_ptr< ::apache::thrift::protocol::TProtocol> poprot_;
@@ -92,9 +344,13 @@ class MetaDBServiceProcessor : public ::apache::thrift::TDispatchProcessor {
   typedef  void (MetaDBServiceProcessor::*ProcessFunction)(int32_t, ::apache::thrift::protocol::TProtocol*, ::apache::thrift::protocol::TProtocol*, void*);
   typedef std::map<std::string, ProcessFunction> ProcessMap;
   ProcessMap processMap_;
+  void process_NewFile(int32_t seqid, ::apache::thrift::protocol::TProtocol* iprot, ::apache::thrift::protocol::TProtocol* oprot, void* callContext);
+  void process_NewDirctory(int32_t seqid, ::apache::thrift::protocol::TProtocol* iprot, ::apache::thrift::protocol::TProtocol* oprot, void* callContext);
  public:
   MetaDBServiceProcessor(boost::shared_ptr<MetaDBServiceIf> iface) :
     iface_(iface) {
+    processMap_["NewFile"] = &MetaDBServiceProcessor::process_NewFile;
+    processMap_["NewDirctory"] = &MetaDBServiceProcessor::process_NewDirctory;
   }
 
   virtual ~MetaDBServiceProcessor() {}
@@ -123,6 +379,24 @@ class MetaDBServiceMultiface : virtual public MetaDBServiceIf {
     ifaces_.push_back(iface);
   }
  public:
+  void NewFile(const KeyInfo_THRIFT& key) {
+    size_t sz = ifaces_.size();
+    size_t i = 0;
+    for (; i < (sz - 1); ++i) {
+      ifaces_[i]->NewFile(key);
+    }
+    ifaces_[i]->NewFile(key);
+  }
+
+  void NewDirctory(const KeyInfo_THRIFT& key, const int16_t zeroth_server, const int64_t inode_no) {
+    size_t sz = ifaces_.size();
+    size_t i = 0;
+    for (; i < (sz - 1); ++i) {
+      ifaces_[i]->NewDirctory(key, zeroth_server, inode_no);
+    }
+    ifaces_[i]->NewDirctory(key, zeroth_server, inode_no);
+  }
+
 };
 
 // The 'concurrent' client is a thread safe client that correctly handles
@@ -153,6 +427,12 @@ class MetaDBServiceConcurrentClient : virtual public MetaDBServiceIf {
   boost::shared_ptr< ::apache::thrift::protocol::TProtocol> getOutputProtocol() {
     return poprot_;
   }
+  void NewFile(const KeyInfo_THRIFT& key);
+  int32_t send_NewFile(const KeyInfo_THRIFT& key);
+  void recv_NewFile(const int32_t seqid);
+  void NewDirctory(const KeyInfo_THRIFT& key, const int16_t zeroth_server, const int64_t inode_no);
+  int32_t send_NewDirctory(const KeyInfo_THRIFT& key, const int16_t zeroth_server, const int64_t inode_no);
+  void recv_NewDirctory(const int32_t seqid);
  protected:
   boost::shared_ptr< ::apache::thrift::protocol::TProtocol> piprot_;
   boost::shared_ptr< ::apache::thrift::protocol::TProtocol> poprot_;

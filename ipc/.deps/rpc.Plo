@@ -639,7 +639,7 @@ rpc.lo: rpc.cc /usr/include/stdc-predef.h rpc.h ../common/common.h \
  /usr/include/boost/mpl/aux_/preprocessed/gcc/template_arity.hpp \
  /usr/include/boost/mpl/aux_/preprocessed/gcc/full_lambda.hpp \
  /usr/include/boost/mpl/aux_/preprocessed/gcc/apply.hpp \
- ../thrift/indexfs_types.h ../thrift/MetadataDBService.h rpc_impl.h \
+ ../thrift/indexfs_types.h ../thrift/MetaDBService.h rpc_impl.h \
  ../ipc/rpc.h ../ipc/rpc_types.h /usr/include/boost/scoped_ptr.hpp \
  /usr/include/boost/smart_ptr/scoped_ptr.hpp \
  /usr/local/include/thrift/protocol/TBinaryProtocol.h \
@@ -2161,7 +2161,7 @@ rpc.h:
 
 ../thrift/indexfs_types.h:
 
-../thrift/MetadataDBService.h:
+../thrift/MetaDBService.h:
 
 rpc_impl.h:
 

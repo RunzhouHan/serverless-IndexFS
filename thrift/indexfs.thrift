@@ -94,11 +94,11 @@ struct WriteResult {
 // MetaDB types
 // ---------------------------------------------------------------
 
-//struct KeyInfo {
-//  1: required i64 parent_id
-//  2: required i16 partition_id_
-//  3: required string file_name_
-//}
+struct KeyInfo_THRIFT {
+  1: required i64 parent_id_
+  2: required i16 partition_id_
+  3: required string file_name_
+}
 
 //struct KeyOffset {
 //  1: required i64 parent_id
@@ -273,8 +273,12 @@ void InsertSplit(1: i64 dir_id, 2: i16 parent_index, 3: i16 child_index,
 
 service MetaDBService {
 
-//void NewFile(1: KeyInfo &key)
-//  throws (1: IOError io_error,
-//          2: ServerInternalError srv_error)
+void NewFile(1: KeyInfo_THRIFT key)
+  throws (1: IOError io_error,
+          2: ServerInternalError srv_error)
+
+void NewDirctory(1: KeyInfo_THRIFT key, 2: i16 zeroth_server, 3: i64 inode_no)
+  throws (1: IOError io_error,
+          2: ServerInternalError srv_error)
 
 }

@@ -639,7 +639,7 @@ metadb_driver.o: metadb_driver.cc /usr/include/stdc-predef.h \
  /usr/include/boost/mpl/aux_/preprocessed/gcc/template_arity.hpp \
  /usr/include/boost/mpl/aux_/preprocessed/gcc/full_lambda.hpp \
  /usr/include/boost/mpl/aux_/preprocessed/gcc/apply.hpp \
- ../thrift/indexfs_types.h ../thrift/MetadataDBService.h \
+ ../thrift/indexfs_types.h ../thrift/MetaDBService.h \
  ../metadb/metadb_driver.h ../metadb/metadb.h ../metadb/dboptions.h \
  ../util/leveldb_types.h ../lib/leveldb/include/leveldb/db.h \
  ../lib/leveldb/include/leveldb/iterator.h ../util/leveldb_io.h \
@@ -2137,7 +2137,7 @@ metadb_driver.o: metadb_driver.cc /usr/include/stdc-predef.h \
 
 ../thrift/indexfs_types.h:
 
-../thrift/MetadataDBService.h:
+../thrift/MetaDBService.h:
 
 ../metadb/metadb_driver.h:
 

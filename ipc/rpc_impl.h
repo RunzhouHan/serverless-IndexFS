@@ -158,11 +158,7 @@ class SrvRep {
 #endif
 
 // Runzhou <<
-// An internal abstraction representing a RPC server exposing a set of RPC
-// endpoints. Each server instance is bind to a local TCP port,
-// and is associated with a RPC handler, which implements those RPC endpoints.
-// This handler is automatically disposed when its parent RPC server is destroyed.
-//
+// MetaDB RPC implementation adapted from RPC server above.
 #ifdef IDXFS_RPC_NOBLOCKING
 class MetaDBRep {
 
@@ -171,8 +167,8 @@ class MetaDBRep {
   MetaDBRep& operator=(const MetaDBRep&);
 
   scoped_ptr<TNonblockingServer> metadb_;
-  shared_ptr<MetadataIndexServiceIf> handler_;
-  shared_ptr<MetadataIndexServiceProcessor> processor_;
+  shared_ptr<MetaDBServiceIf> handler_;
+  shared_ptr<MetaDBServiceProcessor> processor_;
   shared_ptr<ThreadManager> thread_manager_;
   shared_ptr<PosixThreadFactory> thread_factory_;
 
@@ -186,9 +182,9 @@ class MetaDBRep {
     metadb_->stop();
   }
 
-  MetaDBRep(MetadataIndexServiceIf* handler, int port)
+  MetaDBRep(MetaDBServiceIf* handler, int port)
     : handler_(handler)
-    , processor_(new MetadataIndexServiceProcessor(handler_))
+    , processor_(new MetaDBServiceProcessor(handler_))
     , thread_factory_(new PosixThreadFactory()) {
     thread_manager_ = ThreadManager::newSimpleThreadManager(FLAGS_rpc_worker_threads);
     thread_manager_->threadFactory(thread_factory_);
@@ -207,8 +203,8 @@ class MetaDBRep {
   MetaDBRep& operator=(const MetaDBRep&);
 
   scoped_ptr<TServer> metadb_;
-  shared_ptr<MetadataIndexServiceIf> handler_;
-  shared_ptr<MetadataIndexServiceProcessor> processor_;
+  shared_ptr<MetaDBServiceIf> handler_;
+  shared_ptr<MetaDBServiceProcessor> processor_;
   shared_ptr<TServerTransport> socket_;
   shared_ptr<TProtocolFactory> protocol_factory_;
   shared_ptr<TTransportFactory> transport_factory_;
@@ -223,9 +219,9 @@ class MetaDBRep {
     metadb_->stop();
   }
 
-  MetaDBRep(MetadataIndexServiceIf* handler, int port)
+  MetaDBRep(MetaDBServiceIf* handler, int port)
     : handler_(handler)
-    , processor_(new MetadataIndexServiceProcessor(handler_))
+    , processor_(new MetaDBServiceProcessor(handler_))
     , socket_(new TServerSocket(port))
     , protocol_factory_(new TBinaryProtocolFactory())
     , transport_factory_(new TBufferedTransportFactory()) {
