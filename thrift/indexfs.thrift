@@ -277,7 +277,7 @@ void NewFile(1: KeyInfo_THRIFT key)
   throws (1: IOError io_error,
           2: ServerInternalError srv_error)
 
-void NewDirctory(1: KeyInfo_THRIFT key, 2: i16 zeroth_server, 3: i64 inode_no)
+void NewDirectory(1: KeyInfo_THRIFT key, 2: i16 zeroth_server, 3: i64 inode_no)
   throws (1: IOError io_error,
           2: ServerInternalError srv_error)
 

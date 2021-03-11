@@ -19,7 +19,6 @@
 # found in the LICENSE file. See the AUTHORS file for names of contributors.
 
 
-
 VPATH = ../../metadb
 am__is_gnu_make = { \
   if test -z '$(MAKELEVEL)'; then \
@@ -94,8 +93,7 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = x86_64-pc-linux-gnu
 host_triplet = x86_64-pc-linux-gnu
-nobase_bin_PROGRAMS = fstat_test$(EXEEXT) dbtypes_test$(EXEEXT) \
-	metadb_test$(EXEEXT)
+nobase_bin_PROGRAMS = fstat_test$(EXEEXT) metadb$(EXEEXT)
 subdir = metadb
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/ac_check_compile_flag.m4 \
@@ -111,33 +109,23 @@ mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
-LTLIBRARIES = $(noinst_LTLIBRARIES)
-libmetadb_idxfs_la_LIBADD =
-am_libmetadb_idxfs_la_OBJECTS = metadb_driver.lo dbtypes.lo \
-	dboptions.lo metadb.lo metadb_reader.lo metadb_writer.lo
-libmetadb_idxfs_la_OBJECTS = $(am_libmetadb_idxfs_la_OBJECTS)
-AM_V_lt = $(am__v_lt_$(V))
-am__v_lt_ = $(am__v_lt_$(AM_DEFAULT_VERBOSITY))
-am__v_lt_0 = --silent
-am__v_lt_1 = 
 am__installdirs = "$(DESTDIR)$(bindir)"
 PROGRAMS = $(nobase_bin_PROGRAMS)
-am_dbtypes_test_OBJECTS = dbtypes_test.$(OBJEXT)
-dbtypes_test_OBJECTS = $(am_dbtypes_test_OBJECTS)
-dbtypes_test_DEPENDENCIES = libmetadb_idxfs.la \
-	$(top_builddir)/common/libtest_idxfs.la \
-	$(top_builddir)/common/libcommon_idxfs.la \
-	$(top_builddir)/lib/leveldb/libleveldb.la
 am_fstat_test_OBJECTS = fstat_test.$(OBJEXT)
 fstat_test_OBJECTS = $(am_fstat_test_OBJECTS)
 fstat_test_DEPENDENCIES = $(top_builddir)/common/libtest_idxfs.la \
 	$(top_builddir)/common/libcommon_idxfs.la \
 	$(top_builddir)/lib/leveldb/libleveldb.la
-am_metadb_test_OBJECTS = metadb_test.$(OBJEXT)
-metadb_test_OBJECTS = $(am_metadb_test_OBJECTS)
-metadb_test_DEPENDENCIES = libmetadb_idxfs.la \
-	$(top_builddir)/util/libutil_idxfs.la \
-	$(top_builddir)/common/libtest_idxfs.la \
+AM_V_lt = $(am__v_lt_$(V))
+am__v_lt_ = $(am__v_lt_$(AM_DEFAULT_VERBOSITY))
+am__v_lt_0 = --silent
+am__v_lt_1 = 
+am_metadb_OBJECTS = metadb_driver.$(OBJEXT) dbtypes.$(OBJEXT) \
+	dboptions.$(OBJEXT) metadb.$(OBJEXT) metadb_reader.$(OBJEXT) \
+	metadb_writer.$(OBJEXT) metadb_main.$(OBJEXT)
+metadb_OBJECTS = $(am_metadb_OBJECTS)
+metadb_DEPENDENCIES = $(top_builddir)/util/libutil_idxfs.la \
+	$(top_builddir)/ipc/libipc_idxfs.la \
 	$(top_builddir)/common/libcommon_idxfs.la \
 	$(top_builddir)/thrift/libthrift_idxfs.la \
 	$(top_builddir)/lib/leveldb/libleveldb.la
@@ -175,10 +163,8 @@ AM_V_CXXLD = $(am__v_CXXLD_$(V))
 am__v_CXXLD_ = $(am__v_CXXLD_$(AM_DEFAULT_VERBOSITY))
 am__v_CXXLD_0 = @echo "  CXXLD   " $@;
 am__v_CXXLD_1 = 
-SOURCES = $(libmetadb_idxfs_la_SOURCES) $(dbtypes_test_SOURCES) \
-	$(fstat_test_SOURCES) $(metadb_test_SOURCES)
-DIST_SOURCES = $(libmetadb_idxfs_la_SOURCES) $(dbtypes_test_SOURCES) \
-	$(fstat_test_SOURCES) $(metadb_test_SOURCES)
+SOURCES = $(fstat_test_SOURCES) $(metadb_SOURCES)
+DIST_SOURCES = $(fstat_test_SOURCES) $(metadb_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -344,22 +330,19 @@ AM_CFLAGS = $(EXTRA_INCLUDES) $(COMM_FLAGS) $(EXTRA_CFLAGS)
 AM_CXXFLAGS = $(EXTRA_INCLUDES) $(COMM_FLAGS) $(EXTRA_CFLAGS)
 noinst_HEADERS = metadb_driver.h metadb.h metadb_io.h fstat.h \
 	dbtypes.h dboptions.h
-noinst_LTLIBRARIES = libmetadb_idxfs.la
-libmetadb_idxfs_la_SOURCES = metadb_driver.cc dbtypes.cc dboptions.cc \
-	metadb.cc metadb_reader.cc metadb_writer.cc
+# nobase_bin_PROGRAMS += dbtypes_test
+# nobase_bin_PROGRAMS += metadb_test
+# nobase_bin_PROGRAMS += 
 fstat_test_SOURCES = fstat_test.cc
 fstat_test_LDADD = $(top_builddir)/common/libtest_idxfs.la \
 	$(top_builddir)/common/libcommon_idxfs.la \
 	$(top_builddir)/lib/leveldb/libleveldb.la
-dbtypes_test_SOURCES = dbtypes_test.cc
-dbtypes_test_LDADD = libmetadb_idxfs.la \
-	$(top_builddir)/common/libtest_idxfs.la \
-	$(top_builddir)/common/libcommon_idxfs.la \
-	$(top_builddir)/lib/leveldb/libleveldb.la
-metadb_test_SOURCES = metadb_test.cc
-metadb_test_LDADD = libmetadb_idxfs.la \
-	$(top_builddir)/util/libutil_idxfs.la \
-	$(top_builddir)/common/libtest_idxfs.la \
+metadb_SOURCES = metadb_driver.cc dbtypes.cc dboptions.cc metadb.cc \
+	metadb_reader.cc metadb_writer.cc metadb_main.cc
+# metadb_LDADD += libmetadb_idxfs.la
+# metadb_LDADD += $(top_builddir)/common/libtest_idxfs.la
+metadb_LDADD = $(top_builddir)/util/libutil_idxfs.la \
+	$(top_builddir)/ipc/libipc_idxfs.la \
 	$(top_builddir)/common/libcommon_idxfs.la \
 	$(top_builddir)/thrift/libthrift_idxfs.la \
 	$(top_builddir)/lib/leveldb/libleveldb.la
@@ -396,20 +379,6 @@ $(top_srcdir)/configure:  $(am__configure_deps)
 $(ACLOCAL_M4):  $(am__aclocal_m4_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
 $(am__aclocal_m4_deps):
-
-clean-noinstLTLIBRARIES:
-	-test -z "$(noinst_LTLIBRARIES)" || rm -f $(noinst_LTLIBRARIES)
-	@list='$(noinst_LTLIBRARIES)'; \
-	locs=`for p in $$list; do echo $$p; done | \
-	      sed 's|^[^/]*$$|.|; s|/[^/]*$$||; s|$$|/so_locations|' | \
-	      sort -u`; \
-	test -z "$$locs" || { \
-	  echo rm -f $${locs}; \
-	  rm -f $${locs}; \
-	}
-
-libmetadb_idxfs.la: $(libmetadb_idxfs_la_OBJECTS) $(libmetadb_idxfs_la_DEPENDENCIES) $(EXTRA_libmetadb_idxfs_la_DEPENDENCIES) 
-	$(AM_V_CXXLD)$(CXXLINK)  $(libmetadb_idxfs_la_OBJECTS) $(libmetadb_idxfs_la_LIBADD) $(LIBS)
 install-nobase_binPROGRAMS: $(nobase_bin_PROGRAMS)
 	@$(NORMAL_INSTALL)
 	@list='$(nobase_bin_PROGRAMS)'; test -n "$(bindir)" || list=; \
@@ -466,17 +435,13 @@ clean-nobase_binPROGRAMS:
 	echo " rm -f" $$list; \
 	rm -f $$list
 
-dbtypes_test$(EXEEXT): $(dbtypes_test_OBJECTS) $(dbtypes_test_DEPENDENCIES) $(EXTRA_dbtypes_test_DEPENDENCIES) 
-	@rm -f dbtypes_test$(EXEEXT)
-	$(AM_V_CXXLD)$(CXXLINK) $(dbtypes_test_OBJECTS) $(dbtypes_test_LDADD) $(LIBS)
-
 fstat_test$(EXEEXT): $(fstat_test_OBJECTS) $(fstat_test_DEPENDENCIES) $(EXTRA_fstat_test_DEPENDENCIES) 
 	@rm -f fstat_test$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(fstat_test_OBJECTS) $(fstat_test_LDADD) $(LIBS)
 
-metadb_test$(EXEEXT): $(metadb_test_OBJECTS) $(metadb_test_DEPENDENCIES) $(EXTRA_metadb_test_DEPENDENCIES) 
-	@rm -f metadb_test$(EXEEXT)
-	$(AM_V_CXXLD)$(CXXLINK) $(metadb_test_OBJECTS) $(metadb_test_LDADD) $(LIBS)
+metadb$(EXEEXT): $(metadb_OBJECTS) $(metadb_DEPENDENCIES) $(EXTRA_metadb_DEPENDENCIES) 
+	@rm -f metadb$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(metadb_OBJECTS) $(metadb_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -484,15 +449,14 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-include ./$(DEPDIR)/dboptions.Plo
-include ./$(DEPDIR)/dbtypes.Plo
-include ./$(DEPDIR)/dbtypes_test.Po
+include ./$(DEPDIR)/dboptions.Po
+include ./$(DEPDIR)/dbtypes.Po
 include ./$(DEPDIR)/fstat_test.Po
-include ./$(DEPDIR)/metadb.Plo
-include ./$(DEPDIR)/metadb_driver.Plo
-include ./$(DEPDIR)/metadb_reader.Plo
-include ./$(DEPDIR)/metadb_test.Po
-include ./$(DEPDIR)/metadb_writer.Plo
+include ./$(DEPDIR)/metadb.Po
+include ./$(DEPDIR)/metadb_driver.Po
+include ./$(DEPDIR)/metadb_main.Po
+include ./$(DEPDIR)/metadb_reader.Po
+include ./$(DEPDIR)/metadb_writer.Po
 
 .cc.o:
 	$(AM_V_CXX)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\
@@ -608,7 +572,7 @@ distdir: $(DISTFILES)
 	done
 check-am: all-am
 check: check-am
-all-am: Makefile $(LTLIBRARIES) $(PROGRAMS) $(HEADERS)
+all-am: Makefile $(PROGRAMS) $(HEADERS)
 installdirs:
 	for dir in "$(DESTDIR)$(bindir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
@@ -646,7 +610,7 @@ maintainer-clean-generic:
 clean: clean-am
 
 clean-am: clean-generic clean-libtool clean-nobase_binPROGRAMS \
-	clean-noinstLTLIBRARIES mostlyclean-am
+	mostlyclean-am
 
 distclean: distclean-am
 	-rm -rf ./$(DEPDIR)
@@ -717,19 +681,18 @@ uninstall-am: uninstall-nobase_binPROGRAMS
 .MAKE: install-am install-strip
 
 .PHONY: CTAGS GTAGS TAGS all all-am check check-am clean clean-generic \
-	clean-libtool clean-nobase_binPROGRAMS clean-noinstLTLIBRARIES \
-	cscopelist-am ctags ctags-am distclean distclean-compile \
-	distclean-generic distclean-libtool distclean-tags distdir dvi \
-	dvi-am html html-am info info-am install install-am \
-	install-data install-data-am install-dvi install-dvi-am \
-	install-exec install-exec-am install-html install-html-am \
-	install-info install-info-am install-man \
-	install-nobase_binPROGRAMS install-pdf install-pdf-am \
-	install-ps install-ps-am install-strip installcheck \
-	installcheck-am installdirs maintainer-clean \
-	maintainer-clean-generic mostlyclean mostlyclean-compile \
-	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
-	tags tags-am uninstall uninstall-am \
+	clean-libtool clean-nobase_binPROGRAMS cscopelist-am ctags \
+	ctags-am distclean distclean-compile distclean-generic \
+	distclean-libtool distclean-tags distdir dvi dvi-am html \
+	html-am info info-am install install-am install-data \
+	install-data-am install-dvi install-dvi-am install-exec \
+	install-exec-am install-html install-html-am install-info \
+	install-info-am install-man install-nobase_binPROGRAMS \
+	install-pdf install-pdf-am install-ps install-ps-am \
+	install-strip installcheck installcheck-am installdirs \
+	maintainer-clean maintainer-clean-generic mostlyclean \
+	mostlyclean-compile mostlyclean-generic mostlyclean-libtool \
+	pdf pdf-am ps ps-am tags tags-am uninstall uninstall-am \
 	uninstall-nobase_binPROGRAMS
 
 .PRECIOUS: Makefile

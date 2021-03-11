@@ -434,7 +434,7 @@ rpc.lo: rpc.cc /usr/include/stdc-predef.h rpc.h ../common/common.h \
  /usr/include/c++/9/bits/sstream.tcc /usr/local/include/glog/logging.h \
  /usr/local/include/glog/log_severity.h \
  /usr/local/include/glog/vlog_is_on.h /usr/local/include/gflags/gflags.h \
- ../ipc/membset.h ../thrift/MetadataIndexService.h \
+ ../ipc/membset.h ../thrift/MetaDBService.h \
  /usr/local/include/thrift/TDispatchProcessor.h \
  /usr/local/include/thrift/TProcessor.h \
  /usr/local/include/thrift/async/TConcurrentClientSyncInfo.h \
@@ -639,8 +639,8 @@ rpc.lo: rpc.cc /usr/include/stdc-predef.h rpc.h ../common/common.h \
  /usr/include/boost/mpl/aux_/preprocessed/gcc/template_arity.hpp \
  /usr/include/boost/mpl/aux_/preprocessed/gcc/full_lambda.hpp \
  /usr/include/boost/mpl/aux_/preprocessed/gcc/apply.hpp \
- ../thrift/indexfs_types.h ../thrift/MetaDBService.h rpc_impl.h \
- ../ipc/rpc.h ../ipc/rpc_types.h /usr/include/boost/scoped_ptr.hpp \
+ ../thrift/indexfs_types.h rpc_impl.h ../ipc/rpc.h ../ipc/rpc_types.h \
+ /usr/include/boost/scoped_ptr.hpp \
  /usr/include/boost/smart_ptr/scoped_ptr.hpp \
  /usr/local/include/thrift/protocol/TBinaryProtocol.h \
  /usr/local/include/thrift/protocol/TVirtualProtocol.h \
@@ -1727,7 +1727,7 @@ rpc.h:
 
 ../ipc/membset.h:
 
-../thrift/MetadataIndexService.h:
+../thrift/MetaDBService.h:
 
 /usr/local/include/thrift/TDispatchProcessor.h:
 
@@ -2160,8 +2160,6 @@ rpc.h:
 /usr/include/boost/mpl/aux_/preprocessed/gcc/apply.hpp:
 
 ../thrift/indexfs_types.h:
-
-../thrift/MetaDBService.h:
 
 rpc_impl.h:
 

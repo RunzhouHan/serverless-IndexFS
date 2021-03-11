@@ -4,7 +4,6 @@
 
 #include <vector>
 
-#include "ipc/rpc.h"
 #include "metadb/metadb_driver.h"
 #include "metadb/metadb.h"
 
@@ -74,7 +73,7 @@ class IndexMetaDBDriver: virtual public MetaDBDriver {
     rpc_ = RPC::CreateRPC(config_);
     // DLOG_ASSERT(mdb_ == NULL); // by runzhou
     DLOG_ASSERT(rpc_mdb_ == NULL);
-    // rpc_mdb_ = new RPCRPC_MetaDB(config_, mdb_); // need to redesign a RPC_Server dedicated to metadb. by runzhou
+    rpc_mdb_ = new RPC_MetaDB(config_, mdb_); // need to redesign a RPC_Server dedicated to metadb. by runzhou
     DLOG(INFO) << "IndexFS is ready for service, listening to incoming clients ... ";
   }
 

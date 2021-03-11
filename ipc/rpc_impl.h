@@ -36,7 +36,7 @@ class CliRep {
   shared_ptr<TSocket> socket_;
   shared_ptr<TTransport> transport_;
   shared_ptr<TProtocol> protocol_;
-  scoped_ptr<MetadataIndexServiceIf> stub_;
+  scoped_ptr<MetaDBServiceIf> stub_;
 
  public:
 
@@ -48,7 +48,7 @@ class CliRep {
     , transport_(new TBufferedTransport(socket_))
 #   endif
     , protocol_(new TBinaryProtocol(transport_))
-    , stub_(new MetadataIndexServiceClient(protocol_)) {
+    , stub_(new MetaDBServiceClient(protocol_)) {
     alive_ = opened_ = false;
   }
 
@@ -76,7 +76,7 @@ class CliRep {
   }
 
   bool IsReady() { return opened_ && alive_; }
-  MetadataIndexServiceIf* GetClientStub() { return stub_.get(); }
+  MetaDBServiceIf* GetClientStub() { return stub_.get(); }
 };
 
 // An internal abstraction representing a RPC server exposing a set of RPC
@@ -84,78 +84,78 @@ class CliRep {
 // and is associated with a RPC handler, which implements those RPC endpoints.
 // This handler is automatically disposed when its parent RPC server is destroyed.
 //
-#ifdef IDXFS_RPC_NOBLOCKING
-class SrvRep {
+// #ifdef IDXFS_RPC_NOBLOCKING
+// class SrvRep {
 
-  // No copying allowed
-  SrvRep(const SrvRep&);
-  SrvRep& operator=(const SrvRep&);
+//   // No copying allowed
+//   SrvRep(const SrvRep&);
+//   SrvRep& operator=(const SrvRep&);
 
-  scoped_ptr<TNonblockingServer> server_;
-  shared_ptr<MetadataIndexServiceIf> handler_;
-  shared_ptr<MetadataIndexServiceProcessor> processor_;
-  shared_ptr<ThreadManager> thread_manager_;
-  shared_ptr<PosixThreadFactory> thread_factory_;
+//   scoped_ptr<TNonblockingServer> server_;
+//   shared_ptr<MetadataIndexServiceIf> handler_;
+//   shared_ptr<MetadataIndexServiceProcessor> processor_;
+//   shared_ptr<ThreadManager> thread_manager_;
+//   shared_ptr<PosixThreadFactory> thread_factory_;
 
- public:
+//  public:
 
-  void Start() {
-    server_->serve();
-  }
+//   void Start() {
+//     server_->serve();
+//   }
 
-  void Stop() {
-    server_->stop();
-  }
+//   void Stop() {
+//     server_->stop();
+//   }
 
-  SrvRep(MetadataIndexServiceIf* handler, int port)
-    : handler_(handler)
-    , processor_(new MetadataIndexServiceProcessor(handler_))
-    , thread_factory_(new PosixThreadFactory()) {
-    thread_manager_ = ThreadManager::newSimpleThreadManager(FLAGS_rpc_worker_threads);
-    thread_manager_->threadFactory(thread_factory_);
-    thread_manager_->start();
-    server_.reset(new TNonblockingServer(processor_, port));
-    server_->setThreadManager(thread_manager_);
-    server_->setNumIOThreads(FLAGS_rpc_io_threads);
-  }
+//   SrvRep(MetadataIndexServiceIf* handler, int port)
+//     : handler_(handler)
+//     , processor_(new MetadataIndexServiceProcessor(handler_))
+//     , thread_factory_(new PosixThreadFactory()) {
+//     thread_manager_ = ThreadManager::newSimpleThreadManager(FLAGS_rpc_worker_threads);
+//     thread_manager_->threadFactory(thread_factory_);
+//     thread_manager_->start();
+//     server_.reset(new TNonblockingServer(processor_, port));
+//     server_->setThreadManager(thread_manager_);
+//     server_->setNumIOThreads(FLAGS_rpc_io_threads);
+//   }
 
-};
-#else
-class SrvRep {
+// };
+// #else
+// class SrvRep {
 
-  // No copying allowed
-  SrvRep(const SrvRep&);
-  SrvRep& operator=(const SrvRep&);
+//   // No copying allowed
+//   SrvRep(const SrvRep&);
+//   SrvRep& operator=(const SrvRep&);
 
-  scoped_ptr<TServer> server_;
-  shared_ptr<MetadataIndexServiceIf> handler_;
-  shared_ptr<MetadataIndexServiceProcessor> processor_;
-  shared_ptr<TServerTransport> socket_;
-  shared_ptr<TProtocolFactory> protocol_factory_;
-  shared_ptr<TTransportFactory> transport_factory_;
+//   scoped_ptr<TServer> server_;
+//   shared_ptr<MetadataIndexServiceIf> handler_;
+//   shared_ptr<MetadataIndexServiceProcessor> processor_;
+//   shared_ptr<TServerTransport> socket_;
+//   shared_ptr<TProtocolFactory> protocol_factory_;
+//   shared_ptr<TTransportFactory> transport_factory_;
 
- public:
+//  public:
 
-  void Start() {
-    server_->serve();
-  }
+//   void Start() {
+//     server_->serve();
+//   }
 
-  void Stop() {
-    server_->stop();
-  }
+//   void Stop() {
+//     server_->stop();
+//   }
 
-  SrvRep(MetadataIndexServiceIf* handler, int port)
-    : handler_(handler)
-    , processor_(new MetadataIndexServiceProcessor(handler_))
-    , socket_(new TServerSocket(port))
-    , protocol_factory_(new TBinaryProtocolFactory())
-    , transport_factory_(new TBufferedTransportFactory()) {
-    server_.reset(new TThreadedServer(
-        processor_, socket_, transport_factory_, protocol_factory_));
-  }
+//   SrvRep(MetadataIndexServiceIf* handler, int port)
+//     : handler_(handler)
+//     , processor_(new MetadataIndexServiceProcessor(handler_))
+//     , socket_(new TServerSocket(port))
+//     , protocol_factory_(new TBinaryProtocolFactory())
+//     , transport_factory_(new TBufferedTransportFactory()) {
+//     server_.reset(new TThreadedServer(
+//         processor_, socket_, transport_factory_, protocol_factory_));
+//   }
 
-};
-#endif
+// };
+// #endif
 
 // Runzhou <<
 // MetaDB RPC implementation adapted from RPC server above.
@@ -184,7 +184,7 @@ class MetaDBRep {
 
   MetaDBRep(MetaDBServiceIf* handler, int port)
     : handler_(handler)
-    , processor_(new MetaDBServiceProcessor(handler_))
+    , processor_(new MetaDBServiceProcessor(handler_)) // temporarily commented
     , thread_factory_(new PosixThreadFactory()) {
     thread_manager_ = ThreadManager::newSimpleThreadManager(FLAGS_rpc_worker_threads);
     thread_manager_->threadFactory(thread_factory_);
@@ -221,7 +221,7 @@ class MetaDBRep {
 
   MetaDBRep(MetaDBServiceIf* handler, int port)
     : handler_(handler)
-    , processor_(new MetaDBServiceProcessor(handler_))
+    , processor_(new MetaDBServiceProcessor(handler_)) // temporarily commented
     , socket_(new TServerSocket(port))
     , protocol_factory_(new TBinaryProtocolFactory())
     , transport_factory_(new TBufferedTransportFactory()) {
@@ -238,14 +238,14 @@ class MetaDBRep {
 // if a client can no longer send packages to or receive data from those servers.
 // This may be caused by network partitions, server crashes, or hardware outage.
 //
-class FTCliRepWrapper: virtual public MetadataIndexServiceIf {
+class FTCliRepWrapper: virtual public MetaDBServiceIf {
 
   // No copying allowed
   FTCliRepWrapper(const FTCliRepWrapper&);
   FTCliRepWrapper& operator=(const FTCliRepWrapper&);
 
   CliRep* client_; // the real client being adapted
-  int srv_id_;
+  int metadb_id_;
   Config* conf_;
   Env* env_;
   MemberSet* member_set_;
@@ -254,10 +254,10 @@ class FTCliRepWrapper: virtual public MetadataIndexServiceIf {
   int port_;
   std::string ip_;
 
-  MetadataIndexServiceIf* GetInternalStub() {
+  MetaDBServiceIf* GetInternalStub() {
     DLOG_ASSERT(client_ != NULL);
     DLOG_ASSERT(client_->IsReady());
-    MetadataIndexServiceIf* stub = client_->GetClientStub();
+    MetaDBServiceIf* stub = client_->GetClientStub();
     DLOG_ASSERT(stub != NULL);
     return stub;
   }
@@ -270,7 +270,7 @@ class FTCliRepWrapper: virtual public MetadataIndexServiceIf {
  public:
 
   virtual ~FTCliRepWrapper();
-  FTCliRepWrapper(int srv_id, Config* conf, MemberSet* member_set);
+  FTCliRepWrapper(int metadb_id, Config* conf, MemberSet* member_set);
 
   // Open the underlying TCP connection, if possible, to the server.
   Status Open();
@@ -291,7 +291,9 @@ class FTCliRepWrapper: virtual public MetadataIndexServiceIf {
   // -------------------------------------------------------------
   // Add auto-recovery to the following RPC functions
   // -------------------------------------------------------------
-
+  void NewFile(const KeyInfo_THRIFT& key);
+  void NewDirectory(const KeyInfo_THRIFT& key, const int16_t zeroth_server, const int64_t inode_no);
+/*
   void Ping();
   void FlushDB();
 
@@ -317,6 +319,7 @@ class FTCliRepWrapper: virtual public MetadataIndexServiceIf {
       const int16_t parent_index, const int16_t child_index,
       const std::string& path_split_files, const std::string& dmap_data,
       const int64_t min_seq, const int64_t max_seq, const int64_t num_entries);
+*/
 };
 
 } /* namespace indexfs */

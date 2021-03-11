@@ -434,7 +434,7 @@ fs_driver.o: fs_driver.cc /usr/include/stdc-predef.h \
  /usr/include/c++/9/bits/sstream.tcc /usr/local/include/glog/logging.h \
  /usr/local/include/glog/log_severity.h \
  /usr/local/include/glog/vlog_is_on.h /usr/local/include/gflags/gflags.h \
- ../ipc/membset.h ../thrift/MetadataIndexService.h \
+ ../ipc/membset.h ../thrift/MetaDBService.h \
  /usr/local/include/thrift/TDispatchProcessor.h \
  /usr/local/include/thrift/TProcessor.h \
  /usr/local/include/thrift/async/TConcurrentClientSyncInfo.h \
@@ -639,7 +639,8 @@ fs_driver.o: fs_driver.cc /usr/include/stdc-predef.h \
  /usr/include/boost/mpl/aux_/preprocessed/gcc/template_arity.hpp \
  /usr/include/boost/mpl/aux_/preprocessed/gcc/full_lambda.hpp \
  /usr/include/boost/mpl/aux_/preprocessed/gcc/apply.hpp \
- ../thrift/indexfs_types.h ../server/fs_driver.h ../util/monitor.h \
+ ../thrift/indexfs_types.h ../server/fs_driver.h \
+ ../thrift/MetadataIndexService.h ../util/monitor.h \
  /usr/include/c++/9/iostream ../lib/leveldb/util/histogram.h \
  ../util/monitor_thread.h ../lib/leveldb/util/socket.h \
  ../server/index_server.h ../common/leasectrl.h ../common/dirguard.h \
@@ -1692,7 +1693,7 @@ fs_driver.o: fs_driver.cc /usr/include/stdc-predef.h \
 
 ../ipc/membset.h:
 
-../thrift/MetadataIndexService.h:
+../thrift/MetaDBService.h:
 
 /usr/local/include/thrift/TDispatchProcessor.h:
 
@@ -2127,6 +2128,8 @@ fs_driver.o: fs_driver.cc /usr/include/stdc-predef.h \
 ../thrift/indexfs_types.h:
 
 ../server/fs_driver.h:
+
+../thrift/MetadataIndexService.h:
 
 ../util/monitor.h:
 

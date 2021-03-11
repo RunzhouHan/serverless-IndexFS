@@ -87,11 +87,6 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = x86_64-pc-linux-gnu
 host_triplet = x86_64-pc-linux-gnu
-
-# --------------------------------
-# Performance Testing
-# --------------------------------
-am__append_1 = io_test
 subdir = .
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/ac_check_compile_flag.m4 \
@@ -165,8 +160,7 @@ am__define_uniq_tagged_files = \
 ETAGS = etags
 CTAGS = ctags
 CSCOPE = cscope
-DIST_SUBDIRS = lib/leveldb thrift common util metadb ipc server client \
-	io_test c bin
+DIST_SUBDIRS = $(SUBDIRS)
 am__DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/config.h.in ar-lib \
 	compile config.guess config.sub install-sh ltmain.sh missing
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -348,6 +342,17 @@ ACLOCAL_AMFLAGS = -I m4 ${ACLOCAL_FLAGS}
 # --------------------------------
 # Main Modules
 # --------------------------------
+SUBDIRS = lib/leveldb thrift common util metadb ipc
+# SUBDIRS += server
+# SUBDIRS += client
+
+# --------------------------------
+# Performance Testing
+# --------------------------------
+
+# if BUILD_IOTESTS
+#   SUBDIRS += io_test
+# endif
 
 #if BUILD_MDTESTS
 #  SUBDIRS += md_test
@@ -356,8 +361,9 @@ ACLOCAL_AMFLAGS = -I m4 ${ACLOCAL_FLAGS}
 # --------------------------------
 # Client Toolkit
 # --------------------------------
-SUBDIRS = lib/leveldb thrift common util metadb ipc server client \
-	$(am__append_1) c bin
+
+# SUBDIRS += c
+# SUBDIRS += bin
 
 #if BUILD_FUSE
 #  SUBDIRS += fuse
@@ -850,8 +856,8 @@ uninstall-am:
 
 
 all-local:
-	ln -fs $(top_builddir)/server/indexfs_server $(top_builddir)/
-	ln -fs $(top_builddir)/indexfs_server $(top_builddir)/metadata_server
+# 	ln -fs $(top_builddir)/server/indexfs_server $(top_builddir)/
+# 	ln -fs $(top_builddir)/indexfs_server $(top_builddir)/metadata_server
 	ln -fs $(top_builddir)/io_test/io_driver $(top_builddir)/
 	ln -fs $(top_builddir)/fuse/fuse_main $(top_builddir)/
 	ln -fs $(top_builddir)/c/.libs/libindexfs_st-$(INDEXFS_VERSION).so $(top_builddir)/

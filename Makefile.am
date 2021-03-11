@@ -18,8 +18,8 @@ SUBDIRS += lib/leveldb
 SUBDIRS += thrift
 SUBDIRS += common
 SUBDIRS += util
-SUBDIRS += metadb
 SUBDIRS += ipc
+SUBDIRS += metadb
 # SUBDIRS += server
 # SUBDIRS += client
 

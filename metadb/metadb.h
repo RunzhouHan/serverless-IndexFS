@@ -76,11 +76,12 @@ class BulkExtractor {
 // operations such as file creation, directory creation, file stat retrieval, metadata
 // updates, file removal, directory removal, and others.
 //  
-class MetaDB { // should wrap the corresponding rpc class, just like index_server.h. by runzhou
+class MetaDB: virtual public MetaDBServiceIf { // should wrap the corresponding rpc class, just like index_server.h. by runzhou
  public:
 
+  // MetaDB(Config* config, Env* env = NULL); // by Runzhou
+/*To be implemented in the future*/
   static void Repair(Config* config, Env* env = NULL);
-
   // Open the underlying key-value store with the specified system
   // configurations.
   // Stores a pointer to a heap-allocated database in *dbptr and returns
@@ -122,7 +123,7 @@ class MetaDB { // should wrap the corresponding rpc class, just like index_serve
   // Different from directories, files don't get inode#s.
   // Returns error if file with the same key already exists.
   //
-  virtual void NewFile(const KeyInfo_THRIFT &key) = 0;
+  void NewFile(const KeyInfo_THRIFT &key) = 0;
   // virtual void NewFile(const KeyInfo &key) = 0;  //original
 
   // Make a new directory with the given inode# and server id.
@@ -131,7 +132,7 @@ class MetaDB { // should wrap the corresponding rpc class, just like index_serve
   // with the entry being created here) and are very likely on other servers.
   // Returns error if directory with the same key already exists.
   //
-  virtual void NewDirectory(const KeyInfo_THRIFT &key,
+  void NewDirectory(const KeyInfo_THRIFT &key,
       i16 zeroth_server, i64 inode_no) = 0;
   // virtual void NewDirectory(const KeyInfo &key,
   //     int16_t zeroth_server, int64_t inode_no) = 0;
@@ -160,6 +161,7 @@ class MetaDB { // should wrap the corresponding rpc class, just like index_serve
   virtual BulkExtractor* CreateLocalBulkExtractor() = 0;
   virtual BulkExtractor* CreateBulkExtractor(const std::string &tmp_path) = 0;
 
+/* Temporarily commented */
  protected:
   // No public initialization
   explicit MetaDB() { }

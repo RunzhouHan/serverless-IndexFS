@@ -6,7 +6,7 @@
 #define _INDEXFS_METADB_DRIVER_H_
 
 // Need to add a MetadataDBIndexService.h for thrift rpc
-#include "thrift/MetaDBService.h"
+// #include "thrift/MetaDBService.h"
 
 #include "common/options.h"
 #include "common/common.h"

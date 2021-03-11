@@ -343,7 +343,7 @@ ACLOCAL_AMFLAGS = -I m4 ${ACLOCAL_FLAGS}
 # --------------------------------
 # Main Modules
 # --------------------------------
-SUBDIRS = lib/leveldb thrift common util metadb ipc
+SUBDIRS = lib/leveldb thrift common util ipc metadb
 # SUBDIRS += server
 # SUBDIRS += client
 

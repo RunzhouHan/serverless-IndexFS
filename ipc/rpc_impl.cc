@@ -25,9 +25,9 @@ FTCliRepWrapper::~FTCliRepWrapper() {
 }
 
 FTCliRepWrapper::FTCliRepWrapper(
-    int srv_id, Config* conf, MemberSet* member_set)
+    int metadb_id, Config* conf, MemberSet* member_set)
   : client_(NULL)
-  , srv_id_(srv_id)
+  , metadb_id_(metadb_id)
   , conf_(conf)
   , env_(Env::Default())
   , member_set_(member_set) {
@@ -60,11 +60,11 @@ void FTCliRepWrapper::PrepareClient() {
 //
 void FTCliRepWrapper::RetrieveServerAddress() {
   DLOG_ASSERT(member_set_ != NULL);
-  Status s = member_set_->FindServer(srv_id_, &ip_, &port_);
+  Status s = member_set_->FindServer(metadb_id_, &ip_, &port_);
   CHECK(s.ok())
       << "Fail to retrieve the address of "
-      << "server " << srv_id_ << ": " << s.ToString();
-  DLOG(INFO) << "RPC setting address [server=" << srv_id_ << "]"
+      << "server " << metadb_id_ << ": " << s.ToString();
+  DLOG(INFO) << "RPC setting address [server=" << metadb_id_ << "]"
       << ": ip=" << ip_ << ", port=" << port_;
 }
 
@@ -84,7 +84,7 @@ Status FTCliRepWrapper::Reconnect(int max_attempts) {
     s = client_->Open();
   }
   DLOG(INFO) << "RPC connecting to server"
-      << " [server=" << srv_id_ << "]"
+      << " [server=" << metadb_id_ << "]"
       << ": total_attempts=" << std::min(attempt, max_attempts)
       << ", result=" << s.ToCodeString();
   return s;
@@ -97,7 +97,7 @@ Status FTCliRepWrapper::ReestabilishConnectionToServer() {
   Status s;
   LOG_IF(WARNING, client_ != NULL)
       << "RPC connection not found or lost"
-      << " [server=" << srv_id_ << "]: ip=" << ip_ << ", port=" << port_;
+      << " [server=" << metadb_id_ << "]: ip=" << ip_ << ", port=" << port_;
   int attempt = 0;
   s = Status::IOError(Slice());
   while (!s.ok() && ++attempt <= FLAGS_rpc_conn_attempts) {
@@ -106,7 +106,7 @@ Status FTCliRepWrapper::ReestabilishConnectionToServer() {
   }
   LOG_IF(INFO, s.ok())
       << "RPC connection reestablished"
-      << " [server=" << srv_id_ << "]: ip=" << ip_ << ", port=" << port_;
+      << " [server=" << metadb_id_ << "]: ip=" << ip_ << ", port=" << port_;
   return s;
 }
 
@@ -116,7 +116,7 @@ Status FTCliRepWrapper::Open() {
   Status s = Reconnect(1);
   LOG_IF(INFO, s.ok())
       << "RPC connection established"
-      << " [server=" << srv_id_ << "]: ip=" << ip_ << ", port=" << port_;
+      << " [server=" << metadb_id_ << "]: ip=" << ip_ << ", port=" << port_;
   return s;
 }
 
@@ -172,6 +172,25 @@ void FTCliRepWrapper::RecoverConnectionToServer() {
 
 // -------------------------------------------------------------
 
+void FTCliRepWrapper::NewFile(const KeyInfo_THRIFT& key) {
+  RPC_TRACE(__func__);
+  EXEC_WITH_RETRY_TRY() {
+    GetInternalStub()->NewFile(key);
+    EXEC_EXIT();
+  }
+  EXEC_WITH_RETRY_CATCH();
+}
+
+void FTCliRepWrapper::NewDirectory(const KeyInfo_THRIFT& key, const int16_t zeroth_server, const int64_t inode_no) {
+  RPC_TRACE(__func__);
+  EXEC_WITH_RETRY_TRY() {
+    GetInternalStub()->NewDirectory(key, zeroth_server, inode_no);
+    EXEC_EXIT();
+  }
+  EXEC_WITH_RETRY_CATCH();
+}
+
+/*
 void FTCliRepWrapper::Ping() {
   RPC_TRACE(__func__);
   EXEC_WITH_RETRY_TRY() {
@@ -333,5 +352,6 @@ void FTCliRepWrapper::InsertSplit(const int64_t dir_id,
   }
   EXEC_WITH_RETRY_CATCH();
 }
+*/
 
 } /* namespace indexfs */

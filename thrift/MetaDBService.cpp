@@ -216,11 +216,11 @@ uint32_t MetaDBService_NewFile_presult::read(::apache::thrift::protocol::TProtoc
 }
 
 
-MetaDBService_NewDirctory_args::~MetaDBService_NewDirctory_args() throw() {
+MetaDBService_NewDirectory_args::~MetaDBService_NewDirectory_args() throw() {
 }
 
 
-uint32_t MetaDBService_NewDirctory_args::read(::apache::thrift::protocol::TProtocol* iprot) {
+uint32_t MetaDBService_NewDirectory_args::read(::apache::thrift::protocol::TProtocol* iprot) {
 
   apache::thrift::protocol::TInputRecursionTracker tracker(*iprot);
   uint32_t xfer = 0;
@@ -277,10 +277,10 @@ uint32_t MetaDBService_NewDirctory_args::read(::apache::thrift::protocol::TProto
   return xfer;
 }
 
-uint32_t MetaDBService_NewDirctory_args::write(::apache::thrift::protocol::TProtocol* oprot) const {
+uint32_t MetaDBService_NewDirectory_args::write(::apache::thrift::protocol::TProtocol* oprot) const {
   uint32_t xfer = 0;
   apache::thrift::protocol::TOutputRecursionTracker tracker(*oprot);
-  xfer += oprot->writeStructBegin("MetaDBService_NewDirctory_args");
+  xfer += oprot->writeStructBegin("MetaDBService_NewDirectory_args");
 
   xfer += oprot->writeFieldBegin("key", ::apache::thrift::protocol::T_STRUCT, 1);
   xfer += this->key.write(oprot);
@@ -300,14 +300,14 @@ uint32_t MetaDBService_NewDirctory_args::write(::apache::thrift::protocol::TProt
 }
 
 
-MetaDBService_NewDirctory_pargs::~MetaDBService_NewDirctory_pargs() throw() {
+MetaDBService_NewDirectory_pargs::~MetaDBService_NewDirectory_pargs() throw() {
 }
 
 
-uint32_t MetaDBService_NewDirctory_pargs::write(::apache::thrift::protocol::TProtocol* oprot) const {
+uint32_t MetaDBService_NewDirectory_pargs::write(::apache::thrift::protocol::TProtocol* oprot) const {
   uint32_t xfer = 0;
   apache::thrift::protocol::TOutputRecursionTracker tracker(*oprot);
-  xfer += oprot->writeStructBegin("MetaDBService_NewDirctory_pargs");
+  xfer += oprot->writeStructBegin("MetaDBService_NewDirectory_pargs");
 
   xfer += oprot->writeFieldBegin("key", ::apache::thrift::protocol::T_STRUCT, 1);
   xfer += (*(this->key)).write(oprot);
@@ -327,11 +327,11 @@ uint32_t MetaDBService_NewDirctory_pargs::write(::apache::thrift::protocol::TPro
 }
 
 
-MetaDBService_NewDirctory_result::~MetaDBService_NewDirctory_result() throw() {
+MetaDBService_NewDirectory_result::~MetaDBService_NewDirectory_result() throw() {
 }
 
 
-uint32_t MetaDBService_NewDirctory_result::read(::apache::thrift::protocol::TProtocol* iprot) {
+uint32_t MetaDBService_NewDirectory_result::read(::apache::thrift::protocol::TProtocol* iprot) {
 
   apache::thrift::protocol::TInputRecursionTracker tracker(*iprot);
   uint32_t xfer = 0;
@@ -380,11 +380,11 @@ uint32_t MetaDBService_NewDirctory_result::read(::apache::thrift::protocol::TPro
   return xfer;
 }
 
-uint32_t MetaDBService_NewDirctory_result::write(::apache::thrift::protocol::TProtocol* oprot) const {
+uint32_t MetaDBService_NewDirectory_result::write(::apache::thrift::protocol::TProtocol* oprot) const {
 
   uint32_t xfer = 0;
 
-  xfer += oprot->writeStructBegin("MetaDBService_NewDirctory_result");
+  xfer += oprot->writeStructBegin("MetaDBService_NewDirectory_result");
 
   if (this->__isset.io_error) {
     xfer += oprot->writeFieldBegin("io_error", ::apache::thrift::protocol::T_STRUCT, 1);
@@ -401,11 +401,11 @@ uint32_t MetaDBService_NewDirctory_result::write(::apache::thrift::protocol::TPr
 }
 
 
-MetaDBService_NewDirctory_presult::~MetaDBService_NewDirctory_presult() throw() {
+MetaDBService_NewDirectory_presult::~MetaDBService_NewDirectory_presult() throw() {
 }
 
 
-uint32_t MetaDBService_NewDirctory_presult::read(::apache::thrift::protocol::TProtocol* iprot) {
+uint32_t MetaDBService_NewDirectory_presult::read(::apache::thrift::protocol::TProtocol* iprot) {
 
   apache::thrift::protocol::TInputRecursionTracker tracker(*iprot);
   uint32_t xfer = 0;
@@ -513,18 +513,18 @@ void MetaDBServiceClient::recv_NewFile()
   return;
 }
 
-void MetaDBServiceClient::NewDirctory(const KeyInfo_THRIFT& key, const int16_t zeroth_server, const int64_t inode_no)
+void MetaDBServiceClient::NewDirectory(const KeyInfo_THRIFT& key, const int16_t zeroth_server, const int64_t inode_no)
 {
-  send_NewDirctory(key, zeroth_server, inode_no);
-  recv_NewDirctory();
+  send_NewDirectory(key, zeroth_server, inode_no);
+  recv_NewDirectory();
 }
 
-void MetaDBServiceClient::send_NewDirctory(const KeyInfo_THRIFT& key, const int16_t zeroth_server, const int64_t inode_no)
+void MetaDBServiceClient::send_NewDirectory(const KeyInfo_THRIFT& key, const int16_t zeroth_server, const int64_t inode_no)
 {
   int32_t cseqid = 0;
-  oprot_->writeMessageBegin("NewDirctory", ::apache::thrift::protocol::T_CALL, cseqid);
+  oprot_->writeMessageBegin("NewDirectory", ::apache::thrift::protocol::T_CALL, cseqid);
 
-  MetaDBService_NewDirctory_pargs args;
+  MetaDBService_NewDirectory_pargs args;
   args.key = &key;
   args.zeroth_server = &zeroth_server;
   args.inode_no = &inode_no;
@@ -535,7 +535,7 @@ void MetaDBServiceClient::send_NewDirctory(const KeyInfo_THRIFT& key, const int1
   oprot_->getTransport()->flush();
 }
 
-void MetaDBServiceClient::recv_NewDirctory()
+void MetaDBServiceClient::recv_NewDirectory()
 {
 
   int32_t rseqid = 0;
@@ -555,12 +555,12 @@ void MetaDBServiceClient::recv_NewDirctory()
     iprot_->readMessageEnd();
     iprot_->getTransport()->readEnd();
   }
-  if (fname.compare("NewDirctory") != 0) {
+  if (fname.compare("NewDirectory") != 0) {
     iprot_->skip(::apache::thrift::protocol::T_STRUCT);
     iprot_->readMessageEnd();
     iprot_->getTransport()->readEnd();
   }
-  MetaDBService_NewDirctory_presult result;
+  MetaDBService_NewDirectory_presult result;
   result.read(iprot_);
   iprot_->readMessageEnd();
   iprot_->getTransport()->readEnd();
@@ -652,30 +652,30 @@ void MetaDBServiceProcessor::process_NewFile(int32_t seqid, ::apache::thrift::pr
   }
 }
 
-void MetaDBServiceProcessor::process_NewDirctory(int32_t seqid, ::apache::thrift::protocol::TProtocol* iprot, ::apache::thrift::protocol::TProtocol* oprot, void* callContext)
+void MetaDBServiceProcessor::process_NewDirectory(int32_t seqid, ::apache::thrift::protocol::TProtocol* iprot, ::apache::thrift::protocol::TProtocol* oprot, void* callContext)
 {
   void* ctx = NULL;
   if (this->eventHandler_.get() != NULL) {
-    ctx = this->eventHandler_->getContext("MetaDBService.NewDirctory", callContext);
+    ctx = this->eventHandler_->getContext("MetaDBService.NewDirectory", callContext);
   }
-  ::apache::thrift::TProcessorContextFreer freer(this->eventHandler_.get(), ctx, "MetaDBService.NewDirctory");
+  ::apache::thrift::TProcessorContextFreer freer(this->eventHandler_.get(), ctx, "MetaDBService.NewDirectory");
 
   if (this->eventHandler_.get() != NULL) {
-    this->eventHandler_->preRead(ctx, "MetaDBService.NewDirctory");
+    this->eventHandler_->preRead(ctx, "MetaDBService.NewDirectory");
   }
 
-  MetaDBService_NewDirctory_args args;
+  MetaDBService_NewDirectory_args args;
   args.read(iprot);
   iprot->readMessageEnd();
   uint32_t bytes = iprot->getTransport()->readEnd();
 
   if (this->eventHandler_.get() != NULL) {
-    this->eventHandler_->postRead(ctx, "MetaDBService.NewDirctory", bytes);
+    this->eventHandler_->postRead(ctx, "MetaDBService.NewDirectory", bytes);
   }
 
-  MetaDBService_NewDirctory_result result;
+  MetaDBService_NewDirectory_result result;
   try {
-    iface_->NewDirctory(args.key, args.zeroth_server, args.inode_no);
+    iface_->NewDirectory(args.key, args.zeroth_server, args.inode_no);
   } catch (IOError &io_error) {
     result.io_error = io_error;
     result.__isset.io_error = true;
@@ -684,11 +684,11 @@ void MetaDBServiceProcessor::process_NewDirctory(int32_t seqid, ::apache::thrift
     result.__isset.srv_error = true;
   } catch (const std::exception& e) {
     if (this->eventHandler_.get() != NULL) {
-      this->eventHandler_->handlerError(ctx, "MetaDBService.NewDirctory");
+      this->eventHandler_->handlerError(ctx, "MetaDBService.NewDirectory");
     }
 
     ::apache::thrift::TApplicationException x(e.what());
-    oprot->writeMessageBegin("NewDirctory", ::apache::thrift::protocol::T_EXCEPTION, seqid);
+    oprot->writeMessageBegin("NewDirectory", ::apache::thrift::protocol::T_EXCEPTION, seqid);
     x.write(oprot);
     oprot->writeMessageEnd();
     oprot->getTransport()->writeEnd();
@@ -697,17 +697,17 @@ void MetaDBServiceProcessor::process_NewDirctory(int32_t seqid, ::apache::thrift
   }
 
   if (this->eventHandler_.get() != NULL) {
-    this->eventHandler_->preWrite(ctx, "MetaDBService.NewDirctory");
+    this->eventHandler_->preWrite(ctx, "MetaDBService.NewDirectory");
   }
 
-  oprot->writeMessageBegin("NewDirctory", ::apache::thrift::protocol::T_REPLY, seqid);
+  oprot->writeMessageBegin("NewDirectory", ::apache::thrift::protocol::T_REPLY, seqid);
   result.write(oprot);
   oprot->writeMessageEnd();
   bytes = oprot->getTransport()->writeEnd();
   oprot->getTransport()->flush();
 
   if (this->eventHandler_.get() != NULL) {
-    this->eventHandler_->postWrite(ctx, "MetaDBService.NewDirctory", bytes);
+    this->eventHandler_->postWrite(ctx, "MetaDBService.NewDirectory", bytes);
   }
 }
 
@@ -804,19 +804,19 @@ void MetaDBServiceConcurrentClient::recv_NewFile(const int32_t seqid)
   } // end while(true)
 }
 
-void MetaDBServiceConcurrentClient::NewDirctory(const KeyInfo_THRIFT& key, const int16_t zeroth_server, const int64_t inode_no)
+void MetaDBServiceConcurrentClient::NewDirectory(const KeyInfo_THRIFT& key, const int16_t zeroth_server, const int64_t inode_no)
 {
-  int32_t seqid = send_NewDirctory(key, zeroth_server, inode_no);
-  recv_NewDirctory(seqid);
+  int32_t seqid = send_NewDirectory(key, zeroth_server, inode_no);
+  recv_NewDirectory(seqid);
 }
 
-int32_t MetaDBServiceConcurrentClient::send_NewDirctory(const KeyInfo_THRIFT& key, const int16_t zeroth_server, const int64_t inode_no)
+int32_t MetaDBServiceConcurrentClient::send_NewDirectory(const KeyInfo_THRIFT& key, const int16_t zeroth_server, const int64_t inode_no)
 {
   int32_t cseqid = this->sync_.generateSeqId();
   ::apache::thrift::async::TConcurrentSendSentry sentry(&this->sync_);
-  oprot_->writeMessageBegin("NewDirctory", ::apache::thrift::protocol::T_CALL, cseqid);
+  oprot_->writeMessageBegin("NewDirectory", ::apache::thrift::protocol::T_CALL, cseqid);
 
-  MetaDBService_NewDirctory_pargs args;
+  MetaDBService_NewDirectory_pargs args;
   args.key = &key;
   args.zeroth_server = &zeroth_server;
   args.inode_no = &inode_no;
@@ -830,7 +830,7 @@ int32_t MetaDBServiceConcurrentClient::send_NewDirctory(const KeyInfo_THRIFT& ke
   return cseqid;
 }
 
-void MetaDBServiceConcurrentClient::recv_NewDirctory(const int32_t seqid)
+void MetaDBServiceConcurrentClient::recv_NewDirectory(const int32_t seqid)
 {
 
   int32_t rseqid = 0;
@@ -859,7 +859,7 @@ void MetaDBServiceConcurrentClient::recv_NewDirctory(const int32_t seqid)
         iprot_->readMessageEnd();
         iprot_->getTransport()->readEnd();
       }
-      if (fname.compare("NewDirctory") != 0) {
+      if (fname.compare("NewDirectory") != 0) {
         iprot_->skip(::apache::thrift::protocol::T_STRUCT);
         iprot_->readMessageEnd();
         iprot_->getTransport()->readEnd();
@@ -868,7 +868,7 @@ void MetaDBServiceConcurrentClient::recv_NewDirctory(const int32_t seqid)
         using ::apache::thrift::protocol::TProtocolException;
         throw TProtocolException(TProtocolException::INVALID_DATA);
       }
-      MetaDBService_NewDirctory_presult result;
+      MetaDBService_NewDirectory_presult result;
       result.read(iprot_);
       iprot_->readMessageEnd();
       iprot_->getTransport()->readEnd();

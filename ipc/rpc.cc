@@ -50,6 +50,7 @@ Status RPC::Shutdown() {
 inline bool RPC::IsServerLocal(int metadb_id) {
   return conf_->GetMetaDBId() == metadb_id;
 }
+// Temporarily commented. by Runzhou
 
 FTCliRepWrapper* RPC::CreateClientFor(int metadb_id) {
   DLOG_ASSERT(member_set_ != NULL);
@@ -76,8 +77,7 @@ Mutex* RPC::GetMutex(int metadb_id) {
 // Re-establishes the TCP connection to the server if previous attempts failed.
 //
 
-/* temporarily masked. by Runzhou
-Status RPC::GetMetadataService(int metadb_id, MetaDBServiceIf** _return) {
+Status RPC::GetMetaDBService(int metadb_id, MetaDBServiceIf** _return) {
   *_return = NULL;
   DLOG_ASSERT(metadb_id >= 0);
   DLOG_ASSERT(metadb_id < conf_->GetMetaDBNum());
@@ -95,7 +95,6 @@ Status RPC::GetMetadataService(int metadb_id, MetaDBServiceIf** _return) {
   *_return = clients_[metadb_id];
   return Status::OK();
 }
-*/
 
 // Returns the "RPC stub" associated with a given server.
 // Throws TTransportException if that server cannot be reached at the moment.
@@ -127,9 +126,9 @@ Status RPC_Client::Init() {
   DLOG_ASSERT(client_ != NULL);
   Status s = client_->Open();
   DLOG_IF(ERROR, !s.ok())
-      << "Fail to open RPC client #" << srv_id_
+      << "Fail to open RPC client #" << metadb_id_
       << ": " << s.ToString() << ", will retry later";
-  DLOG(INFO) << "RPC client #" << srv_id_ << " initialized";
+  DLOG(INFO) << "RPC client #" << metadb_id_ << " initialized";
   return Status::OK();
 }
 
@@ -139,25 +138,28 @@ Status RPC_Client::Init() {
 Status RPC_Client::Shutdown() {
   DLOG_ASSERT(client_ != NULL);
   client_->Shutdown();
-  DLOG(INFO) << "RPC client #" << srv_id_ << " closed";
+  DLOG(INFO) << "RPC client #" << metadb_id_ << " closed";
   return Status::OK();
 }
 
+// Temporarily commented by Runzhou
+
 FTCliRepWrapper* RPC_Client::CreateInternalClient() {
   DLOG_ASSERT(member_set_ != NULL);
-  return new FTCliRepWrapper(srv_id_, conf_, member_set_);
+  return new FTCliRepWrapper(metadb_id_, conf_, member_set_);
 }
+
 
 // Returns a RPC client stub associated with the remote server.
 // Re-establishes the TCP connection to the server if previous attempts failed.
 //
-Status RPC_Client::GetMetadataService(MetadataIndexServiceIf** _return) {
+Status RPC_Client::GetMetaDBService(MetaDBServiceIf** _return) {
   *_return = NULL;
   DLOG_ASSERT(client_ != NULL);
   if (!client_->IsReady()) {
     client_->RecoverConnectionToServer();
     DLOG_ASSERT(client_->IsReady());
-    DLOG(INFO) << "RPC client #" << srv_id_ << " re-initialized";
+    DLOG(INFO) << "RPC client #" << metadb_id_ << " re-initialized";
   }
   *_return = client_;
   return Status::OK();
@@ -166,9 +168,9 @@ Status RPC_Client::GetMetadataService(MetadataIndexServiceIf** _return) {
 // Returns the "RPC stub" associated with the remote server.
 // Throws TTransportException if that server cannot be reached at the moment.
 //
-MetadataIndexServiceIf* RPC_Client::operator->() {
-  MetadataIndexServiceIf* _return;
-  Status s = GetMetadataService(&_return);
+MetaDBServiceIf* RPC_Client::operator->() {
+  MetaDBServiceIf* _return;
+  Status s = GetMetaDBService(&_return);
   DLOG_ASSERT(s.ok());
   return _return;
 }
@@ -177,34 +179,34 @@ MetadataIndexServiceIf* RPC_Client::operator->() {
 // RPC Server Implementation
 // -------------------------------------------------------------
 
-RPC_Server::~RPC_Server() {
-  if (server_ != NULL) {
-    delete server_;
-  }
-}
+// RPC_Server::~RPC_Server() {
+//   if (server_ != NULL) {
+//     delete server_;
+//   }
+// }
 
-// Interrupt the server and stop its service.
-//
-void RPC_Server::Stop() {
-  DLOG_ASSERT(server_ != NULL);
-  server_->Stop();
-}
+// // Interrupt the server and stop its service.
+// //
+// void RPC_Server::Stop() {
+//   DLOG_ASSERT(server_ != NULL);
+//   server_->Stop();
+// }
 
-// Ask the server to start listening to client requests.
-// This call should and will never return.
-//
-void RPC_Server::RunForever() {
-  DLOG_ASSERT(server_ != NULL);
-  server_->Start();
-}
+// // Ask the server to start listening to client requests.
+// // This call should and will never return.
+// //
+// void RPC_Server::RunForever() {
+//   DLOG_ASSERT(server_ != NULL);
+//   server_->Start();
+// }
 
-// Creates an internal RPC server using pre-specified server configurations.
-//
-SrvRep* RPC_Server::CreateInteralServer() {
-  DLOG_ASSERT(handler_ != NULL);
-  DLOG_ASSERT(conf_->GetSrvId() >= 0);
-  return new SrvRep(handler_, conf_->GetSrvPort(conf_->GetSrvId()));
-}
+// // Creates an internal RPC server using pre-specified server configurations.
+// //
+// SrvRep* RPC_Server::CreateInteralServer() {
+//   DLOG_ASSERT(handler_ != NULL);
+//   DLOG_ASSERT(conf_->GetSrvId() >= 0);
+//   return new SrvRep(handler_, conf_->GetSrvPort(conf_->GetSrvId()));
+// }
 
 // -------------------------------------------------------------
 // RPC Server Implementation

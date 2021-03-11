@@ -85,7 +85,7 @@ fstat_test_LDADD += $(top_builddir)/lib/leveldb/libleveldb.la
 # metadb_test_LDADD += $(top_builddir)/lib/leveldb/libleveldb.la
 
 ## -------------------------------------------------------------------------
-## IndexFS Server
+## MetaDB Server
 ## -------------------------------------------------------------------------
 
 nobase_bin_PROGRAMS += metadb
