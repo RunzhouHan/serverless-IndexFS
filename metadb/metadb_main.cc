@@ -4,6 +4,8 @@
 #include <string.h>
 #include <signal.h>
 
+// #include <iostream>
+
 #include "common/logging.h"
 #include "metadb/metadb_driver.h"
 
@@ -22,6 +24,9 @@ using indexfs::GetDefaultLogDir;
 using indexfs::SetVersionString;
 using indexfs::SetUsageMessage;
 using indexfs::ParseCommandLineFlags;
+
+// using std::cout;
+// using std::endl;
 
 // Global state
 // -----------------------------------------------
@@ -43,6 +48,7 @@ void SignalHandler(int sig) {
 
 int main(int argc, char* argv[]) {
 //-----------------------------------------------------------------
+  // cout << "starts here" << endl; 
   FLAGS_logfn = "indexfs_metadb";
   FLAGS_metadbid = -1;
   FLAGS_logbufsecs = 5;
@@ -64,11 +70,15 @@ int main(int argc, char* argv[]) {
 //-----------------------------------------------------------------
 // fd_driver 
   driver = MetaDBDriver::NewMetaDBDriver(env, config);
+  // cout << "driver Initialized" << endl;
   driver->PrepareDir();  
+  // cout << "directory prepared" << endl;
   driver->OpenMetaDB();
+  // cout << "metadb Initialized" << endl;
   signal(SIGINT, &SignalHandler);
   signal(SIGTERM, &SignalHandler);
-  driver->Start(); // Run forever until interrupted
+  driver->Start(); // Run forever until interrupted 
+  // cout << "rpc server started" << endl;
 //-----------------------------------------------------------------
   MetaDBDriver* _driver_ = driver;
   driver = NULL;

@@ -5,9 +5,11 @@
 #ifndef _INDEXFS_IPC_RPCIMPL_H_
 #define _INDEXFS_IPC_RPCIMPL_H_
 
+
 #include "ipc/membset.h"
 #include "ipc/rpc.h"
 #include "ipc/rpc_types.h"
+
 
 // -------------------------------------------------------------
 // Internal RPC Implementation

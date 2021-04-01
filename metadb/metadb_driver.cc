@@ -3,9 +3,13 @@
 // found in the LICENSE file. See the AUTHORS file for names of contributors.
 
 #include <vector>
+// #include <iostream>
 
 #include "metadb/metadb_driver.h"
 #include "metadb/metadb.h"
+
+// using std::cout;
+// using std::endl;
 
 namespace indexfs {
 
@@ -38,8 +42,10 @@ class IndexMetaDBDriver: virtual public MetaDBDriver {
   }
 
   void Start() {
+    // cout << "reach here 1" << endl;
     DLOG_ASSERT(rpc_mdb_ != NULL);
     rpc_mdb_->RunForever();
+    // cout << "reach here 2" << endl;
   }
 
   void Shutdown() {
@@ -48,24 +54,28 @@ class IndexMetaDBDriver: virtual public MetaDBDriver {
   }
 
 // by runzhou
-  Status PrepareDir() {
+  void PrepareDir() {
     PrepareDirectory(env_, config_->GetFileDir());
     PrepareDirectory(env_, config_->GetDBRootDir());
     PrepareDirectory(env_, config_->GetDBHomeDir());
     PrepareDirectory(env_, config_->GetDBSplitDir());
+    // cout << "done here 1" << endl;
 
   	DLOG_ASSERT(mdb_ == NULL);
 
-  	Status s;
+  	// Status s;
   	if (config_->HasOldData()) {
   	MetaDB::Repair(config_, env_);
   	}
-  	if (s.ok()) {
+    // cout << "done here 2" << endl;
+
+  	// if (s.ok()) {
   	MetaDB::Open(config_, &mdb_, env_);
-  	}
-  	if (!s.ok()) {
-  	return s;
-    }
+  	// }
+    // cout << "done here 3" << endl;
+  	// if (!s.ok()) {
+  	// return s;
+    // }
   }
 
   void OpenMetaDB() {

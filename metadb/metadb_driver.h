@@ -23,7 +23,7 @@ class MetaDBDriver {
   virtual void Start() = 0;
   virtual void Shutdown() = 0;
   virtual void OpenMetaDB() = 0;
-  virtual Status PrepareDir() = 0;
+  virtual void PrepareDir() = 0;
 
  protected:
   Env* env_;

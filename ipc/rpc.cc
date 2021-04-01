@@ -2,8 +2,13 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file. See the AUTHORS file for names of contributors.
 
+// #include <iostream>
+
 #include "rpc.h"
 #include "rpc_impl.h"
+
+// using std::cout;
+// using std::endl;
 
 namespace indexfs {
 
@@ -229,8 +234,10 @@ void RPC_MetaDB::Stop() {
 // This call should and will never return.
 //
 void RPC_MetaDB::RunForever() {
+  // cout << "RunForever 1" << endl;
   DLOG_ASSERT(metadb_ != NULL);
   metadb_->Start();
+  // cout << "RunForever 2" << endl;
 }
 
 // Creates an internal RPC server using pre-specified server configurations.
