@@ -509,6 +509,7 @@ void LevelMDB::NewFile(const KeyInfo_THRIFT &key) {
   mdb_val->SetGroupId(-1);
   mdb_val->SetTime(time(NULL));
   db_->Put(write_async_, mdb_key.ToSlice(), mdb_val.ToSlice());
+  printf("New File created.\n");
 }
 
 void LevelMDB::NewDirectory(const KeyInfo_THRIFT &key,
@@ -528,6 +529,7 @@ void LevelMDB::NewDirectory(const KeyInfo_THRIFT &key,
   mdb_val->SetGroupId(-1);
   mdb_val->SetTime(time(NULL));
   db_->Put(write_async_, mdb_key.ToSlice(), mdb_val.ToSlice());
+  printf("New File created.\n");
 }
 
 void LevelMDB::GetMapping(int64_t dir_id,

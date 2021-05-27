@@ -1,7 +1,8 @@
 package edu.cmu.pdl.indexfs.rpc;
 
 import org.apache.thrift.TException;
-import org.apache.thrift.protocol.TCompactProtocol;
+import org.apache.thrift.protocol.TBinaryProtocol;
+//import org.apache.thrift.protocol.TCompactProtocol;
 import org.apache.thrift.protocol.TProtocol;
 import org.apache.thrift.transport.TSocket;
 import org.apache.thrift.transport.TTransport;
@@ -49,10 +50,10 @@ public class MDB_svrless_ctx {
 		MDB_svrless_ctx mdb_svrless_ctx = new MDB_svrless_ctx();
 
 		try {		
-	 		String ip = "10.0.0.48"; //server ip
+	 		String ip = "10.0.0.49"; //server ip
 	 		int port = 10086; // port
 			TTransport socket = new TSocket(ip,port);
-			TProtocol protocol = new TCompactProtocol(socket);
+			TProtocol protocol = new TBinaryProtocol(socket);
         	MetaDBService.Client mdb_client = new MetaDBService.Client(protocol);
         	
     		KeyInfo_THRIFT key_root_dir = new KeyInfo_THRIFT();
@@ -65,12 +66,17 @@ public class MDB_svrless_ctx {
             KeyInfo_THRIFT key_file = new KeyInfo_THRIFT();
             key_file.parent_id_ = 0;
             key_file.partition_id_ = 1;
-            key_file.file_name_ = "file0";
+            key_file.file_name_ = "0";
             
         	socket.open(); 
         	
-            mdb_svrless_ctx.newDirectory(mdb_client, key_root_dir, (short) 0, inode_no);
-            mdb_svrless_ctx.newFile(mdb_client, key_root_dir);
+            mdb_svrless_ctx.newDirectory(mdb_client, key_root_dir, zeroth_server, inode_no);
+            for (int i =0; i< 10 ; i++) {
+//            	key_file.file_name_ = String.valueOf(i);
+            	mdb_svrless_ctx.newFile(mdb_client, key_file);
+            }
+//            mdb_svrless_ctx.newFile(mdb_client, key_root_dir);
+
             
             socket.close(); 
 		}
