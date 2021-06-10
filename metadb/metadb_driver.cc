@@ -3,13 +3,13 @@
 // found in the LICENSE file. See the AUTHORS file for names of contributors.
 
 #include <vector>
-// #include <iostream>
+#include <iostream>
 
 #include "metadb/metadb_driver.h"
 #include "metadb/metadb.h"
 
-// using std::cout;
-// using std::endl;
+using std::cout;
+using std::endl;
 
 namespace indexfs {
 
@@ -42,10 +42,10 @@ class IndexMetaDBDriver: virtual public MetaDBDriver {
   }
 
   void Start() {
-    // cout << "reach here 1" << endl;
+    cout << "trying to start rpc server" << endl;
     DLOG_ASSERT(rpc_mdb_ != NULL);
     rpc_mdb_->RunForever();
-    // cout << "reach here 2" << endl;
+    cout << "rpc server started" << endl;
   }
 
   void Shutdown() {
@@ -85,6 +85,7 @@ class IndexMetaDBDriver: virtual public MetaDBDriver {
     DLOG_ASSERT(rpc_mdb_ == NULL);
     rpc_mdb_ = new RPC_MetaDB(config_, mdb_); // need to redesign a RPC_Server dedicated to metadb. by runzhou
     DLOG(INFO) << "IndexFS is ready for service, listening to incoming clients ... ";
+    cout << "rpc server initialized" << endl;
   }
 
  private:

@@ -4,7 +4,7 @@
 #include <string.h>
 #include <signal.h>
 
-// #include <iostream>
+#include <iostream>
 
 #include "common/logging.h"
 #include "metadb/metadb_driver.h"
@@ -25,8 +25,8 @@ using indexfs::SetVersionString;
 using indexfs::SetUsageMessage;
 using indexfs::ParseCommandLineFlags;
 
-// using std::cout;
-// using std::endl;
+using std::cout;
+using std::endl;
 
 // Global state
 // -----------------------------------------------
@@ -70,15 +70,16 @@ int main(int argc, char* argv[]) {
 //-----------------------------------------------------------------
 // fd_driver 
   driver = MetaDBDriver::NewMetaDBDriver(env, config);
-  // cout << "driver Initialized" << endl;
+  cout << "driver Initialized" << endl;
   driver->PrepareDir();  
-  // cout << "directory prepared" << endl;
+  cout << "directory prepared" << endl;
   driver->OpenMetaDB();
-  // cout << "metadb Initialized" << endl;
+  cout << "metadb Initialized" << endl;
   signal(SIGINT, &SignalHandler);
   signal(SIGTERM, &SignalHandler);
   driver->Start(); // Run forever until interrupted 
-  // cout << "rpc server started" << endl;
+  DLOG(INFO) << "rpc server started";
+  cout << "rpc server started" << endl;
 //-----------------------------------------------------------------
   MetaDBDriver* _driver_ = driver;
   driver = NULL;

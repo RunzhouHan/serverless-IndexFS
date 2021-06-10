@@ -234,10 +234,10 @@ void RPC_MetaDB::Stop() {
 // This call should and will never return.
 //
 void RPC_MetaDB::RunForever() {
-  // cout << "RunForever 1" << endl;
+  cout << "RunForever 1" << endl;
   DLOG_ASSERT(metadb_ != NULL);
   metadb_->Start();
-  // cout << "RunForever 2" << endl;
+  cout << "RunForever 2" << endl;
 }
 
 // Creates an internal RPC server using pre-specified server configurations.

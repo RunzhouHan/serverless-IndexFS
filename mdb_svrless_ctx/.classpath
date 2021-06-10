@@ -6,8 +6,8 @@
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="/home/runzhou/indexfs-0.4/thrift/libthrift-0.9.3.jar"/>
-	<classpathentry kind="lib" path="/home/runzhou/indexfs-0.4/thrift/slf4j-api-1.7.12.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
+	<classpathentry kind="lib" path="/home/runzhou/indexfs-0.4/serverless-IndexFS/thrift/libthrift-0.9.3.jar"/>
+	<classpathentry kind="lib" path="/home/runzhou/indexfs-0.4/serverless-IndexFS/thrift/slf4j-api-1.7.12.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

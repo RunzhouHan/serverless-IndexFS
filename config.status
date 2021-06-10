@@ -437,7 +437,7 @@ Copyright (C) 2012 Free Software Foundation, Inc.
 This config.status script is free software; the Free Software Foundation
 gives unlimited permission to copy, distribute and modify it."
 
-ac_pwd='/home/runzhou/indexfs-0.4'
+ac_pwd='/home/runzhou/indexfs-0.4/serverless-IndexFS'
 srcdir='.'
 INSTALL='/usr/bin/install -c'
 MKDIR_P='/bin/mkdir -p'
@@ -678,8 +678,8 @@ postuninstall_cmds=''
 finish_cmds='PATH="\$PATH:/sbin" ldconfig -n $libdir'
 finish_eval=''
 hardcode_into_libs='yes'
-sys_lib_search_path_spec='/usr/lib/gcc/x86_64-linux-gnu/5 /usr/lib/x86_64-linux-gnu /usr/lib /lib/x86_64-linux-gnu /lib '
-configure_time_dlsearch_path='/lib /usr/lib /opt/ceph/lib/x86_64-linux-gnu /usr/lib/x86_64-linux-gnu/libfakeroot /usr/local/lib /usr/local/lib/x86_64-linux-gnu /lib/x86_64-linux-gnu /usr/lib/x86_64-linux-gnu /lib32 /usr/lib32 '
+sys_lib_search_path_spec='/usr/lib/gcc/x86_64-linux-gnu/9 /usr/lib/x86_64-linux-gnu /usr/lib /lib/x86_64-linux-gnu /lib '
+configure_time_dlsearch_path='/lib /usr/lib /opt/ceph/lib/x86_64-linux-gnu /usr/lib/x86_64-linux-gnu/libfakeroot /usr/local/lib /usr/local/lib/x86_64-linux-gnu /lib/x86_64-linux-gnu /usr/lib/x86_64-linux-gnu /lib32 /usr/lib32 /libx32 /usr/libx32 '
 configure_time_lt_sys_library_path=''
 hardcode_action='immediate'
 enable_dlopen='unknown'
@@ -735,12 +735,12 @@ prelink_cmds_CXX=''
 postlink_cmds_CXX=''
 file_list_spec_CXX=''
 hardcode_action_CXX='immediate'
-compiler_lib_search_dirs_CXX='/usr/lib/gcc/x86_64-linux-gnu/9 /usr/lib/gcc/x86_64-linux-gnu/9/../../../x86_64-linux-gnu /usr/lib/gcc/x86_64-linux-gnu/9/../../../../lib /lib/x86_64-linux-gnu /lib/../lib /usr/lib/x86_64-linux-gnu /usr/lib/../lib /usr/lib/gcc/x86_64-linux-gnu/9/../../..'
-predep_objects_CXX='/usr/lib/gcc/x86_64-linux-gnu/9/../../../x86_64-linux-gnu/crti.o /usr/lib/gcc/x86_64-linux-gnu/9/crtbeginS.o'
-postdep_objects_CXX='/usr/lib/gcc/x86_64-linux-gnu/9/crtendS.o /usr/lib/gcc/x86_64-linux-gnu/9/../../../x86_64-linux-gnu/crtn.o'
+compiler_lib_search_dirs_CXX='/usr/lib/gcc/x86_64-linux-gnu/5 /usr/lib/gcc/x86_64-linux-gnu/5/../../../x86_64-linux-gnu /usr/lib/gcc/x86_64-linux-gnu/5/../../../../lib /lib/x86_64-linux-gnu /lib/../lib /usr/lib/x86_64-linux-gnu /usr/lib/../lib /usr/lib/gcc/x86_64-linux-gnu/5/../../..'
+predep_objects_CXX='/usr/lib/gcc/x86_64-linux-gnu/5/../../../x86_64-linux-gnu/crti.o /usr/lib/gcc/x86_64-linux-gnu/5/crtbeginS.o'
+postdep_objects_CXX='/usr/lib/gcc/x86_64-linux-gnu/5/crtendS.o /usr/lib/gcc/x86_64-linux-gnu/5/../../../x86_64-linux-gnu/crtn.o'
 predeps_CXX=''
 postdeps_CXX='-lstdc++ -lm -lgcc_s -lc -lgcc_s'
-compiler_lib_search_path_CXX='-L/usr/lib/gcc/x86_64-linux-gnu/9 -L/usr/lib/gcc/x86_64-linux-gnu/9/../../../x86_64-linux-gnu -L/usr/lib/gcc/x86_64-linux-gnu/9/../../../../lib -L/lib/x86_64-linux-gnu -L/lib/../lib -L/usr/lib/x86_64-linux-gnu -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-linux-gnu/9/../../..'
+compiler_lib_search_path_CXX='-L/usr/lib/gcc/x86_64-linux-gnu/5 -L/usr/lib/gcc/x86_64-linux-gnu/5/../../../x86_64-linux-gnu -L/usr/lib/gcc/x86_64-linux-gnu/5/../../../../lib -L/lib/x86_64-linux-gnu -L/lib/../lib -L/usr/lib/x86_64-linux-gnu -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-linux-gnu/5/../../..'
 
 LTCC='gcc'
 LTCFLAGS='-g -O2'
@@ -903,8 +903,8 @@ S["BACKEND_PVFS2_TRUE"]="#"
 S["PVFS2_LIBS"]=""
 S["BACKEND_HDFS_FALSE"]=""
 S["BACKEND_HDFS_TRUE"]="#"
-S["JDK_INSTALLED_FALSE"]=""
-S["JDK_INSTALLED_TRUE"]="#"
+S["JDK_INSTALLED_FALSE"]="#"
+S["JDK_INSTALLED_TRUE"]=""
 S["THRIFT"]="/usr/local/bin/thrift"
 S["EXTRA_INCLUDES"]="-I$(top_srcdir) -I$(top_srcdir)/lib -I$(top_srcdir)/lib/leveldb -I$(top_srcdir)/lib/leveldb/include"
 S["EXTRA_CFLAGS"]=" -std=c++0x -pthread -fno-builtin-memcmp -fno-builtin-memmove"
@@ -972,12 +972,12 @@ S["mkdir_p"]="$(MKDIR_P)"
 S["MKDIR_P"]="/bin/mkdir -p"
 S["INSTALL_STRIP_PROGRAM"]="$(install_sh) -c -s"
 S["STRIP"]="strip"
-S["install_sh"]="${SHELL} /home/runzhou/indexfs-0.4/install-sh"
-S["MAKEINFO"]="${SHELL} /home/runzhou/indexfs-0.4/missing makeinfo"
-S["AUTOHEADER"]="${SHELL} /home/runzhou/indexfs-0.4/missing autoheader"
-S["AUTOMAKE"]="${SHELL} /home/runzhou/indexfs-0.4/missing automake-1.15"
-S["AUTOCONF"]="${SHELL} /home/runzhou/indexfs-0.4/missing autoconf"
-S["ACLOCAL"]="${SHELL} /home/runzhou/indexfs-0.4/missing aclocal-1.15"
+S["install_sh"]="${SHELL} /home/runzhou/indexfs-0.4/serverless-IndexFS/install-sh"
+S["MAKEINFO"]="${SHELL} /home/runzhou/indexfs-0.4/serverless-IndexFS/missing makeinfo"
+S["AUTOHEADER"]="${SHELL} /home/runzhou/indexfs-0.4/serverless-IndexFS/missing autoheader"
+S["AUTOMAKE"]="${SHELL} /home/runzhou/indexfs-0.4/serverless-IndexFS/missing automake-1.15"
+S["AUTOCONF"]="${SHELL} /home/runzhou/indexfs-0.4/serverless-IndexFS/missing autoconf"
+S["ACLOCAL"]="${SHELL} /home/runzhou/indexfs-0.4/serverless-IndexFS/missing aclocal-1.15"
 S["VERSION"]="0.4.1"
 S["PACKAGE"]="indexfs"
 S["CYGPATH_W"]="echo"
@@ -1126,6 +1126,10 @@ D["HAVE_THRIFT_PROTOCOL_TPROTOCOL_H"]=" 1"
 D["HAVE_THRIFT_TRANSPORT_TTRANSPORT_H"]=" 1"
 D["HAVE_THRIFT_CONCURRENCY_THREADMANAGER_H"]=" 1"
 D["HAVE_THRIFT_SERVER_TSERVER_H"]=" 1"
+D["HAVE__USR_LIB_JVM_JAVA_1_8_0_OPENJDK_AMD64_INCLUDE_JNI_H"]=" 1"
+D["HAVE__USR_LIB_JVM_JAVA_1_8_0_OPENJDK_AMD64_INCLUDE_LINUX_JNI_MD_H"]=" 1"
+D["HAVE__USR_LIB_JVM_JAVA_1_8_0_OPENJDK_AMD64_JRE_LIB_AMD64_LIBJAVA_SO"]=" 1"
+D["HAVE__USR_LIB_JVM_JAVA_1_8_0_OPENJDK_AMD64_JRE_LIB_AMD64_SERVER_LIBJVM_SO"]=" 1"
 D["HAVE_FUSE_H"]=" 1"
 D["HAVE_LIBFUSE"]=" 1"
 D["HAVE_SNAPPY_H"]=" 1"
