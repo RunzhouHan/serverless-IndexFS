@@ -78,8 +78,6 @@ int main(int argc, char* argv[]) {
   signal(SIGINT, &SignalHandler);
   signal(SIGTERM, &SignalHandler);
   driver->Start(); // Run forever until interrupted 
-  DLOG(INFO) << "rpc server started";
-  cout << "rpc server started" << endl;
 //-----------------------------------------------------------------
   MetaDBDriver* _driver_ = driver;
   driver = NULL;

@@ -190,6 +190,15 @@ void FTCliRepWrapper::NewDirectory(const KeyInfo_THRIFT& key, const int16_t zero
   EXEC_WITH_RETRY_CATCH();
 }
 
+void FTCliRepWrapper::Flush() {
+  RPC_TRACE(__func__);
+  EXEC_WITH_RETRY_TRY() {
+    GetInternalStub()->Flush();
+    EXEC_EXIT();
+  }
+  EXEC_WITH_RETRY_CATCH();
+}
+
 /*
 void FTCliRepWrapper::Ping() {
   RPC_TRACE(__func__);
@@ -200,14 +209,7 @@ void FTCliRepWrapper::Ping() {
   EXEC_WITH_RETRY_CATCH();
 }
 
-void FTCliRepWrapper::FlushDB() {
-  RPC_TRACE(__func__);
-  EXEC_WITH_RETRY_TRY() {
-    GetInternalStub()->FlushDB();
-    EXEC_EXIT();
-  }
-  EXEC_WITH_RETRY_CATCH();
-}
+
 
 void FTCliRepWrapper::Mknod(const OID& obj_id, const int16_t perm) {
   RPC_TRACE(__func__);

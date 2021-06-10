@@ -295,9 +295,10 @@ class FTCliRepWrapper: virtual public MetaDBServiceIf {
   // -------------------------------------------------------------
   void NewFile(const KeyInfo_THRIFT& key);
   void NewDirectory(const KeyInfo_THRIFT& key, const int16_t zeroth_server, const int64_t inode_no);
+  void Flush();
+
 /*
   void Ping();
-  void FlushDB();
 
   void Access(LookupInfo& _return, const OID& obj_id);
   void Renew(LookupInfo& _return, const OID& obj_id);

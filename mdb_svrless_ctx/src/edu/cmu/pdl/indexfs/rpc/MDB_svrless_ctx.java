@@ -13,6 +13,23 @@ import edu.cmu.pdl.indexfs.rpc.*;
 
 public class MDB_svrless_ctx {
 
+	public void Flush(MetaDBService.Client mdb_client) {
+		assertNotNull(mdb_client);
+		System.out.println("Client rpc invoked: Flush");
+		try {
+			mdb_client.Flush();
+		} catch (IOError e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ServerInternalError e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (TException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
 	public void newFile(MetaDBService.Client mdb_client, KeyInfo_THRIFT keyinfo) {
 		assertNotNull(mdb_client);
 		System.out.println("Client rpc invoked: newFile");
@@ -64,17 +81,19 @@ public class MDB_svrless_ctx {
     		long inode_no = 15;
         	
             KeyInfo_THRIFT key_file = new KeyInfo_THRIFT();
-            key_file.parent_id_ = 0;
-            key_file.partition_id_ = 1;
-            key_file.file_name_ = "0";
+            key_file.parent_id_ = 1;
+            key_file.partition_id_ = 0;
+//            key_file.file_name_ = "0";
             
         	socket.open(); 
         	
             mdb_svrless_ctx.newDirectory(mdb_client, key_root_dir, zeroth_server, inode_no);
-            for (int i =0; i< 10 ; i++) {
-//            	key_file.file_name_ = String.valueOf(i);
+            for (int i =0; i< 100 ; i++) {
+            	key_file.file_name_ = String.valueOf(i);
+            	mdb_svrless_ctx.newFile(mdb_client, key_file);
             	mdb_svrless_ctx.newFile(mdb_client, key_file);
             }
+            mdb_svrless_ctx.Flush(mdb_client);
 //            mdb_svrless_ctx.newFile(mdb_client, key_root_dir);
 
             

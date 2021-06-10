@@ -273,6 +273,10 @@ void InsertSplit(1: i64 dir_id, 2: i16 parent_index, 3: i16 child_index,
 
 service MetaDBService {
 
+void Flush()
+  throws (1: IOError io_error,
+          2: ServerInternalError srv_error)
+
 void NewFile(1: KeyInfo_THRIFT key)
   throws (1: IOError io_error,
           2: ServerInternalError srv_error)
