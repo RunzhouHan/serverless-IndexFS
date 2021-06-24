@@ -68,7 +68,8 @@ public class MDB_svrless_ctx {
 
 		try {		
 //	 		String ip = "10.0.0.47"; //server ip, local
-	 		String ip = "10.128.0.2"; //server ip, GCE
+//	 		String ip = "10.128.0.2"; //server ip, GCE
+	 		String ip = args[0];
 	 		int port = 10086; // port
 			TTransport socket = new TSocket(ip,port);
 			TProtocol protocol = new TBinaryProtocol(socket);
