@@ -100,9 +100,6 @@ public class MDB_svrless_ctx {
             mdb_svrless_ctx.Flush(mdb_client);
 //            mdb_svrless_ctx.newFile(mdb_client, key_root_dir);
             socket.close(); 
-            JsonObject response = new JsonObject();
-            response.addProperty("Cheers", "serverless client");
-            return response;
 		}
 		catch (TTransportException e) {
             e.printStackTrace();
@@ -110,5 +107,8 @@ public class MDB_svrless_ctx {
 		catch (TException e) {  
             e.printStackTrace();  
         }
+        JsonObject response = new JsonObject();
+        response.addProperty("Cheers", "serverless client");
+        return response;
 	}
 }
