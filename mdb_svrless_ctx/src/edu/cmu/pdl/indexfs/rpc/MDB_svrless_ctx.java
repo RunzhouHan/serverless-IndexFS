@@ -65,13 +65,15 @@ public class MDB_svrless_ctx {
 			e.printStackTrace();
 		}
 	}
-	public static JsonObject main(JsonObject args) {
+//	public static JsonObject main(JsonObject args) {
+	public static void main(String[] args) {
 		MDB_svrless_ctx mdb_svrless_ctx = new MDB_svrless_ctx();
 
 		try {		
 //	 		String ip = "10.0.0.47"; //server ip, local
 //	 		String ip = "10.128.0.2"; //server ip, GCE
-	 		String ip = args.getAsJsonPrimitive("ip").getAsString();
+//	 		String ip = args.getAsJsonPrimitive("ip").getAsString();
+			String ip = args[0];
 	 		int port = 10086; // port
 			TTransport socket = new TSocket(ip,port);
 			TProtocol protocol = new TBinaryProtocol(socket);
@@ -109,6 +111,6 @@ public class MDB_svrless_ctx {
         }
         JsonObject response = new JsonObject();
         response.addProperty("Cheers", "serverless client");
-        return response;
+//        return response;
 	}
 }
