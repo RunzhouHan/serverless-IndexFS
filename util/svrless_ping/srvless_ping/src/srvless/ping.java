@@ -14,7 +14,7 @@ public class ping {
             e.printStackTrace();
         }
         JsonObject response = new JsonObject();
-        response.addProperty("Cheers", "10.128.0.2 is reachable");
+        response.addProperty("Cheers", "ping 10.128.0.2 done");
         return response;
     }
 }
