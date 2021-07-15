@@ -92,15 +92,19 @@ public class MDB_svrless_ctx {
 //            key_file.file_name_ = "0";
             
         	socket.open(); 
-        	
+        	long start = System.currentTimeMillis();
+    	
             mdb_svrless_ctx.newDirectory(mdb_client, key_root_dir, zeroth_server, inode_no);
-            for (int i =0; i< 100 ; i++) {
+            
+            for (int i =0; i< 100000 ; i++) {
             	key_file.file_name_ = String.valueOf(i);
-            	mdb_svrless_ctx.newFile(mdb_client, key_file);
             	mdb_svrless_ctx.newFile(mdb_client, key_file);
             }
             mdb_svrless_ctx.Flush(mdb_client);
 //            mdb_svrless_ctx.newFile(mdb_client, key_root_dir);
+            long finish = System.currentTimeMillis();
+            long timeElapsed = finish - start;
+            System.out.println(timeElapsed); 
             socket.close(); 
 		}
 		catch (TTransportException e) {
