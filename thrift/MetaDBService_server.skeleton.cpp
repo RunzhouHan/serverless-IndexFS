@@ -32,9 +32,19 @@ class MetaDBServiceHandler : virtual public MetaDBServiceIf {
     printf("NewFile\n");
   }
 
-  void NewDirectory(const KeyInfo_THRIFT& key, const int16_t zeroth_server, const int64_t inode_no) {
+  void NewDirectory(const KeyInfo_THRIFT& key, const int32_t zeroth_server, const int64_t inode_no) {
     // Your implementation goes here
     printf("NewDirectory\n");
+  }
+
+  void GetEntry(const KeyInfo_THRIFT& key, const StatInfo& info) {
+    // Your implementation goes here
+    printf("GetEntry\n");
+  }
+
+  void GetServerList(std::vector<std::string> & _return) {
+    // Your implementation goes here
+    printf("GetServerList\n");
   }
 
 };

@@ -165,7 +165,7 @@ class LevelMDB: virtual public MetaDB {
 
   Status DeleteEntry(const KeyInfo &key);
 
-  void GetEntry(const KeyInfo &key, StatInfo *info);
+  void GetEntry(const KeyInfo_THRIFT &key, const StatInfo& info);
 
   Status UpdateEntry(const KeyInfo &key, const StatInfo &info);
 
@@ -175,13 +175,20 @@ class LevelMDB: virtual public MetaDB {
 
   void NewFile(const KeyInfo_THRIFT &key);
 
-  void NewDirectory(const KeyInfo_THRIFT &key, i16 zeroth_server, i64 inode_no);
+  void NewDirectory(const KeyInfo_THRIFT &key, int zeroth_server, i64 inode_no);
 
-  void GetMapping(int64_t dir_id, std::string *dmap_data);
+  void GetServerList(std::vector<std::string> & _return);
 
-  // void UpdateMapping(int64_t dir_id, const Slice &dmap_data);
+  void GetPortList(std::vector<int16_t> & _return);
 
-  // void InsertMapping(int64/_t dir_id, const Slice &dmap_data);
+  // This is to be reimplemented for cache update
+  void GetMapping(int64_t dir_id, std::string *dmap_data); 
+
+  // To be removed
+  void UpdateMapping(int64_t dir_id, const Slice &dmap_data);
+
+  // To be removed
+  void InsertMapping(int64_t dir_id, const Slice &dmap_data);
 
   BulkExtractor* CreateLocalBulkExtractor(); // think about adding a bulkextractor structure
 
@@ -430,8 +437,8 @@ Status LevelMDB::DeleteEntry(const KeyInfo &key) {
   return db_->Delete(write_async_, mdb_key.ToSlice());
 }
 
-void LevelMDB::GetEntry(const KeyInfo &key,
-        StatInfo *info) {
+void LevelMDB::GetEntry(const KeyInfo_THRIFT &key,
+        const StatInfo& info) {
   MDBKey mdb_key(key.parent_id_, key.partition_id_, key.file_name_);
   std::string buffer;
   Status s = db_->Get(read_fill_cache_, mdb_key.ToSlice(), &buffer);
@@ -440,14 +447,14 @@ void LevelMDB::GetEntry(const KeyInfo &key,
   }
   const char* ptr = buffer.data();
   const FileStat* file_stat = reinterpret_cast<const FileStat*>(ptr);
-  info->id = file_stat->InodeNo();
-  info->size = file_stat->FileSize();
-  info->mode = file_stat->FileMode();
-  info->is_embedded = IsEmbedded(file_stat->FileStatus());
-  info->zeroth_server = file_stat->ZerothServer();
-  info->gid = info->uid = -1;
-  info->ctime = file_stat->ChangeTime();
-  info->mtime = file_stat->ModifyTime();
+  info.id = file_stat->InodeNo();
+  info.size = file_stat->FileSize();
+  info.mode = file_stat->FileMode();
+  info.is_embedded = IsEmbedded(file_stat->FileStatus());
+  info.zeroth_server = file_stat->ZerothServer();
+  info.gid = info->uid = -1;
+  info.ctime = file_stat->ChangeTime();
+  info.mtime = file_stat->ModifyTime();
   Status::OK();
 }
 
@@ -513,7 +520,7 @@ void LevelMDB::NewFile(const KeyInfo_THRIFT &key) {
 }
 
 void LevelMDB::NewDirectory(const KeyInfo_THRIFT &key,
-        i16 zeroth_server, i64 inode_no) {
+        int zeroth_server, i64 inode_no) {
   MDBKey mdb_key(key.parent_id_, key.partition_id_, key.file_name_);
   Status s = db_->Exists(read_fill_cache_, mdb_key.ToSlice());
   if (!s.IsNotFound()) {
@@ -532,6 +539,18 @@ void LevelMDB::NewDirectory(const KeyInfo_THRIFT &key,
   printf("New File created.\n");
 }
 
+void LevelMDB::GetServerList(std::vector<std::string> & _return) {
+  int num_srv = config_->GetMetaDBNum();
+  for (int i = 0; i < num_srv; i++) 
+    _return.push_back(config_->GetMetaDBIP(i));
+}
+
+// void LevelMDB::GetPortList(std::vector<int16_t> & _return) {
+//   int num_srv = config_->GetMetaDBNum();
+//   for (int i = 0; i < num_srv; i++) 
+//     _return.push_back(config_->GetMetaDBPort(i));
+// }
+
 void LevelMDB::GetMapping(int64_t dir_id,
         std::string *dmap_data) {
   MDBKey mdb_key(dir_id, -1);
@@ -539,7 +558,7 @@ void LevelMDB::GetMapping(int64_t dir_id,
   s.IsNotFound() ? ERR_NOT_FOUND : s;
 }
 
-/*
+
 void LevelMDB::UpdateMapping(int64_t dir_id,
         const Slice &dmap_data) {
   MDBKey mdb_key(dir_id, -1);
@@ -549,9 +568,9 @@ void LevelMDB::UpdateMapping(int64_t dir_id,
   }
   db_->Put(write_async_, mdb_key.ToSlice(), dmap_data);
 }
-*/
 
-/*
+
+
 void LevelMDB::InsertMapping(int64_t dir_id,
         const Slice &dmap_data) {
   MDBKey mdb_key(dir_id, -1);
@@ -561,7 +580,7 @@ void LevelMDB::InsertMapping(int64_t dir_id,
   }
   db_->Put(write_async_, mdb_key.ToSlice(), dmap_data);
 }
-*/
+
 
 Status LevelMDB::ListEntries(const KeyOffset &offset,
         NameList *names, StatList *infos) {

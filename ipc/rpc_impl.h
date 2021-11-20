@@ -293,9 +293,12 @@ class FTCliRepWrapper: virtual public MetaDBServiceIf {
   // -------------------------------------------------------------
   // Add auto-recovery to the following RPC functions
   // -------------------------------------------------------------
-  void NewFile(const KeyInfo_THRIFT& key);
-  void NewDirectory(const KeyInfo_THRIFT& key, const int16_t zeroth_server, const int64_t inode_no);
   void Flush();
+  void NewFile(const KeyInfo_THRIFT& key);
+  void NewDirectory(const KeyInfo_THRIFT& key, const int32_t zeroth_server, const int64_t inode_no);
+  void GetEntry(const KeyInfo_THRIFT &key, const StatInfo& info);
+  void GetServerList(std::vector<std::string> & _return);
+  // void GetPortList(std::vector<int16_t> & _return);
 
 /*
   void Ping();

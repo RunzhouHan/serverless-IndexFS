@@ -44,7 +44,7 @@ class RPCEngine {
 
   Status Getattr(const OID& oid, StatInfo* info);
   Status ReadDir(i64 dir_id, NameList* names);
-  Status ListDir(i64 dir_id, NameList* names, StatList* stats);
+  // Status ListDir(i64 dir_id, NameList* names, StatList* stats);
 
  private:
   int srv_id_;

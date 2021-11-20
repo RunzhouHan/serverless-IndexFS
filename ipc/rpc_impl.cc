@@ -181,7 +181,7 @@ void FTCliRepWrapper::NewFile(const KeyInfo_THRIFT& key) {
   EXEC_WITH_RETRY_CATCH();
 }
 
-void FTCliRepWrapper::NewDirectory(const KeyInfo_THRIFT& key, const int16_t zeroth_server, const int64_t inode_no) {
+void FTCliRepWrapper::NewDirectory(const KeyInfo_THRIFT& key, const int32_t zeroth_server, const int64_t inode_no) {
   RPC_TRACE(__func__);
   EXEC_WITH_RETRY_TRY() {
     GetInternalStub()->NewDirectory(key, zeroth_server, inode_no);
@@ -198,6 +198,33 @@ void FTCliRepWrapper::Flush() {
   }
   EXEC_WITH_RETRY_CATCH();
 }
+
+void FTCliRepWrapper::GetEntry(const KeyInfo_THRIFT &key, const StatInfo& info) {
+  RPC_TRACE(__func__);
+  EXEC_WITH_RETRY_TRY() {
+    GetInternalStub()->GetEntry(key, info);
+    EXEC_EXIT();
+  }
+  EXEC_WITH_RETRY_CATCH();
+}
+
+void FTCliRepWrapper::GetServerList(std::vector<std::string> & _return) {
+  RPC_TRACE(__func__);
+  EXEC_WITH_RETRY_TRY() {
+    GetInternalStub()->GetServerList(_return);
+    EXEC_EXIT();
+  }
+  EXEC_WITH_RETRY_CATCH();  
+}
+
+// void FTCliRepWrapper::GetPortList(std::vector<int16_t> & _return) {
+//   RPC_TRACE(__func__);
+//   EXEC_WITH_RETRY_TRY() {
+//     GetInternalStub()->GetPortList(_return);
+//     EXEC_EXIT();
+//   }
+//   EXEC_WITH_RETRY_CATCH();  
+// }
 
 /*
 void FTCliRepWrapper::Ping() {

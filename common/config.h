@@ -61,7 +61,7 @@ class Config {
   std::vector<std::pair<std::string, int> > srv_addrs_;
 
   // Runzhou <<
-  // Server address list
+  // MetaDB address list
   //
   std::vector<std::pair<std::string, int> > metadb_addrs_;
   // >> Runzhou

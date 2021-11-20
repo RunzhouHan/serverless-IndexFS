@@ -170,6 +170,9 @@ libindexfs_st_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX \
 	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CXXLD) \
 	$(AM_CXXFLAGS) $(CXXFLAGS) $(libindexfs_st_la_LDFLAGS) \
 	$(LDFLAGS) -o $@
+libindexfs_svrless_la_LIBADD =
+libindexfs_svrless_la_SOURCES = libindexfs_svrless.c
+libindexfs_svrless_la_OBJECTS = libindexfs_svrless.lo
 PROGRAMS = $(nobase_bin_PROGRAMS)
 am_libclient_test_OBJECTS = libclient_test.$(OBJEXT)
 libclient_test_OBJECTS = $(am_libclient_test_OBJECTS)
@@ -190,6 +193,24 @@ DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
 am__mv = mv -f
+COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
+	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+LTCOMPILE = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) \
+	$(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) \
+	$(AM_CFLAGS) $(CFLAGS)
+AM_V_CC = $(am__v_CC_@AM_V@)
+am__v_CC_ = $(am__v_CC_@AM_DEFAULT_V@)
+am__v_CC_0 = @echo "  CC      " $@;
+am__v_CC_1 = 
+CCLD = $(CC)
+LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
+	$(AM_LDFLAGS) $(LDFLAGS) -o $@
+AM_V_CCLD = $(am__v_CCLD_@AM_V@)
+am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
+am__v_CCLD_0 = @echo "  CCLD    " $@;
+am__v_CCLD_1 = 
 CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
 	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
 LTCXXCOMPILE = $(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) \
@@ -209,10 +230,11 @@ am__v_CXXLD_ = $(am__v_CXXLD_@AM_DEFAULT_V@)
 am__v_CXXLD_0 = @echo "  CXXLD   " $@;
 am__v_CXXLD_1 = 
 SOURCES = $(libclient_c_idxfs_la_SOURCES) $(libindexfs_mt_la_SOURCES) \
-	$(libindexfs_st_la_SOURCES) $(libclient_test_SOURCES)
+	$(libindexfs_st_la_SOURCES) libindexfs_svrless.c \
+	$(libclient_test_SOURCES)
 DIST_SOURCES = $(libclient_c_idxfs_la_SOURCES) \
 	$(libindexfs_mt_la_SOURCES) $(libindexfs_st_la_SOURCES) \
-	$(libclient_test_SOURCES)
+	libindexfs_svrless.c $(libclient_test_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -376,10 +398,11 @@ COMM_FLAGS = $(BACKEND_FLAGS) $(SNAPPY_FLAGS) $(PLATFORM) \
 	-DLEVELDB_PLATFORM_POSIX
 AM_CFLAGS = $(EXTRA_INCLUDES) $(COMM_FLAGS) $(EXTRA_CFLAGS)
 AM_CXXFLAGS = $(EXTRA_INCLUDES) $(COMM_FLAGS) $(EXTRA_CFLAGS)
-noinst_HEADERS = cli.h cli_types.h libclient.h
+noinst_HEADERS = cli.h cli_types.h libclient.h cli_svrless.h
 noinst_LTLIBRARIES = libclient_c_idxfs.la
 libclient_c_idxfs_la_SOURCES = cli.cc
-nobase_lib_LTLIBRARIES = libindexfs_st.la libindexfs_mt.la
+nobase_lib_LTLIBRARIES = libindexfs_st.la libindexfs_mt.la \
+	libindexfs_svrless.la
 libindexfs_st_la_SOURCES = cli_st.cc
 libindexfs_st_la_LIBADD = libclient_c_idxfs.la \
 	$(top_builddir)/client/libclient_idxfs.la \
@@ -396,11 +419,19 @@ libindexfs_mt_la_LIBADD = libclient_c_idxfs.la \
 	$(top_builddir)/thrift/libthrift_idxfs.la \
 	$(top_builddir)/lib/leveldb/libleveldb.la
 libindexfs_mt_la_LDFLAGS = -release $(INDEXFS_VERSION)
+libindexfs_srvless_la_SOURCES = cli_svrless.cc
+libindexfs_srvless_la_LIBADD = libclient_c_idxfs.la \
+	$(top_builddir)/client/libclient_idxfs.la \
+	$(top_builddir)/ipc/libipc_idxfs.la \
+	$(top_builddir)/common/libcommon_idxfs.la \
+	$(top_builddir)/thrift/libthrift_idxfs.la \
+	$(top_builddir)/lib/leveldb/libleveldb.la
+libindexfs_srvless_la_LDFLAGS = -release $(INDEXFS_VERSION)
 libclient_test_SOURCES = libclient_test.cc
 all: all-am
 
 .SUFFIXES:
-.SUFFIXES: .cc .lo .o .obj
+.SUFFIXES: .c .cc .lo .o .obj
 $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
@@ -493,6 +524,9 @@ libindexfs_mt.la: $(libindexfs_mt_la_OBJECTS) $(libindexfs_mt_la_DEPENDENCIES) $
 
 libindexfs_st.la: $(libindexfs_st_la_OBJECTS) $(libindexfs_st_la_DEPENDENCIES) $(EXTRA_libindexfs_st_la_DEPENDENCIES) 
 	$(AM_V_CXXLD)$(libindexfs_st_la_LINK) -rpath $(libdir)/. $(libindexfs_st_la_OBJECTS) $(libindexfs_st_la_LIBADD) $(LIBS)
+
+libindexfs_svrless.la: $(libindexfs_svrless_la_OBJECTS) $(libindexfs_svrless_la_DEPENDENCIES) $(EXTRA_libindexfs_svrless_la_DEPENDENCIES) 
+	$(AM_V_CCLD)$(LINK) -rpath $(libdir)/. $(libindexfs_svrless_la_OBJECTS) $(libindexfs_svrless_la_LIBADD) $(LIBS)
 install-nobase_binPROGRAMS: $(nobase_bin_PROGRAMS)
 	@$(NORMAL_INSTALL)
 	@list='$(nobase_bin_PROGRAMS)'; test -n "$(bindir)" || list=; \
@@ -563,6 +597,31 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cli_mt.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cli_st.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libclient_test.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libindexfs_svrless.Plo@am__quote@
+
+.c.o:
+@am__fastdepCC_TRUE@	$(AM_V_CC)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\
+@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ $< &&\
+@am__fastdepCC_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(COMPILE) -c -o $@ $<
+
+.c.obj:
+@am__fastdepCC_TRUE@	$(AM_V_CC)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.obj$$||'`;\
+@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ `$(CYGPATH_W) '$<'` &&\
+@am__fastdepCC_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(COMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
+
+.c.lo:
+@am__fastdepCC_TRUE@	$(AM_V_CC)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.lo$$||'`;\
+@am__fastdepCC_TRUE@	$(LTCOMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ $< &&\
+@am__fastdepCC_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LTCOMPILE) -c -o $@ $<
 
 .cc.o:
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\
