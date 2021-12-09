@@ -63,17 +63,17 @@ libindexfs_mt_la_LDFLAGS = -release $(INDEXFS_VERSION)
 
 nobase_lib_LTLIBRARIES += libindexfs_svrless.la
 
-libindexfs_srvless_la_SOURCES = cli_svrless.cc
+#libindexfs_srvless_la_SOURCES = cli_svrless.cc
 
-libindexfs_srvless_la_LIBADD =
-libindexfs_srvless_la_LIBADD += libclient_c_idxfs.la
-libindexfs_srvless_la_LIBADD += $(top_builddir)/client/libclient_idxfs.la
-libindexfs_srvless_la_LIBADD += $(top_builddir)/ipc/libipc_idxfs.la
-libindexfs_srvless_la_LIBADD += $(top_builddir)/common/libcommon_idxfs.la
-libindexfs_srvless_la_LIBADD += $(top_builddir)/thrift/libthrift_idxfs.la
-libindexfs_srvless_la_LIBADD += $(top_builddir)/lib/leveldb/libleveldb.la
+#libindexfs_srvless_la_LIBADD =
+#libindexfs_srvless_la_LIBADD += libclient_c_idxfs.la
+#libindexfs_srvless_la_LIBADD += $(top_builddir)/client/libclient_idxfs.la
+#libindexfs_srvless_la_LIBADD += $(top_builddir)/ipc/libipc_idxfs.la
+#libindexfs_srvless_la_LIBADD += $(top_builddir)/common/libcommon_idxfs.la
+#libindexfs_srvless_la_LIBADD += $(top_builddir)/thrift/libthrift_idxfs.la
+#libindexfs_srvless_la_LIBADD += $(top_builddir)/lib/leveldb/libleveldb.la
 
-libindexfs_srvless_la_LDFLAGS = -release $(INDEXFS_VERSION)
+#libindexfs_srvless_la_LDFLAGS = -release $(INDEXFS_VERSION)
 
 ## -------------------------------------------------------------------------
 ## Test Programs

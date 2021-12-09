@@ -292,13 +292,16 @@ class FTCliRepWrapper: virtual public MetaDBServiceIf {
 
   // -------------------------------------------------------------
   // Add auto-recovery to the following RPC functions
+  // MetaDB RPC interface for Serverless IndexFS.
   // -------------------------------------------------------------
   void Flush();
   void NewFile(const KeyInfo_THRIFT& key);
   void NewDirectory(const KeyInfo_THRIFT& key, const int32_t zeroth_server, const int64_t inode_no);
-  void GetEntry(const KeyInfo_THRIFT &key, const StatInfo& info);
+  void GetEntry(StatInfo& _return, const KeyInfo_THRIFT& key);
+  void PutEntry(const KeyInfo_THRIFT& key, const StatInfo& info);
+  int64_t ReserveNextInodeNo();
   void GetServerList(std::vector<std::string> & _return);
-  // void GetPortList(std::vector<int16_t> & _return);
+  void GetPortList(std::vector<int32_t> & _return);
 
 /*
   void Ping();

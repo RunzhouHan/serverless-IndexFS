@@ -110,7 +110,7 @@ CONFIG_CLEAN_VPATH_FILES =
 LTLIBRARIES = $(noinst_LTLIBRARIES)
 libthrift_idxfs_la_LIBADD =
 nodist_libthrift_idxfs_la_OBJECTS = indexfs_types.lo \
-	indexfs_constants.lo MetadataIndexService.lo MetaDBService.lo
+	indexfs_constants.lo MetaDBService.lo
 libthrift_idxfs_la_OBJECTS = $(nodist_libthrift_idxfs_la_OBJECTS)
 AM_V_lt = $(am__v_lt_$(V))
 am__v_lt_ = $(am__v_lt_$(AM_DEFAULT_VERBOSITY))
@@ -313,18 +313,20 @@ top_builddir = ..
 top_srcdir = ..
 AM_CFLAGS = $(EXTRA_CFLAGS)
 AM_CXXFLAGS = $(EXTRA_CFLAGS)
+#nodist_noinst_HEADERS += MetadataIndexService.h
 nodist_noinst_HEADERS = indexfs_types.h indexfs_constants.h \
-	MetadataIndexService.h MetaDBService.h
+	MetaDBService.h
 noinst_LTLIBRARIES = libthrift_idxfs.la
+#nodist_libthrift_idxfs_la_SOURCES += MetadataIndexService.cpp
 nodist_libthrift_idxfs_la_SOURCES = indexfs_types.cpp \
-	indexfs_constants.cpp MetadataIndexService.cpp \
-	MetaDBService.cpp
+	indexfs_constants.cpp MetaDBService.cpp
 EXTRA_DIST = indexfs.thrift
 BUILT_SOURCES = indexfs_types.cpp
-CLEANFILES = indexfs_types.h indexfs_constants.h \
-	MetadataIndexService.h MetaDBService.h indexfs_types.cpp \
-	indexfs_constants.cpp MetadataIndexService.cpp \
-	MetaDBService.cpp MetadataIndexService_server.skeleton.cpp \
+#CLEANFILES += MetadataIndexService.h
+#CLEANFILES += MetadataIndexService.cpp
+#CLEANFILES += MetadataIndexService_server.skeleton.cpp
+CLEANFILES = indexfs_types.h indexfs_constants.h MetaDBService.h \
+	indexfs_types.cpp indexfs_constants.cpp MetaDBService.cpp \
 	MetaDBService_server.skeleton.cpp
 all: $(BUILT_SOURCES)
 	$(MAKE) $(AM_MAKEFLAGS) all-am
@@ -382,7 +384,6 @@ distclean-compile:
 	-rm -f *.tab.c
 
 include ./$(DEPDIR)/MetaDBService.Plo
-include ./$(DEPDIR)/MetadataIndexService.Plo
 include ./$(DEPDIR)/indexfs_constants.Plo
 include ./$(DEPDIR)/indexfs_types.Plo
 

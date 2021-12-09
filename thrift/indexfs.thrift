@@ -182,17 +182,28 @@ void NewDirectory(1: KeyInfo_THRIFT key, 2: i32 zeroth_server, 3: i64 inode_no)
           4: IOError io_error,
           5: ServerInternalError srv_error)
 
-void GetEntry(1: KeyInfo_THRIFT key, 2: StatInfo info)
+StatInfo GetEntry(1: KeyInfo_THRIFT key)
   throws (1: UnrecognizedDirectoryError unknown_dir,
           2: ServerRedirectionException srv_redirect,
           3: FileNotFoundException not_found,
           4: IOError io_error,
           5: ServerInternalError srv_error)
-          
+
+void PutEntry(1: KeyInfo_THRIFT key, 2: StatInfo info)
+  throws (1: UnrecognizedDirectoryError unknown_dir,
+          2: ServerRedirectionException srv_redirect,
+          3: FileAlreadyExistsException file_exists,
+          4: IOError io_error,
+          5: ServerInternalError srv_error)
+
+i64 ReserveNextInodeNo() 
+  throws (1: IOError io_error,
+          2: ServerInternalError srv_error)
+
 list<string> GetServerList()
   throws (1: ServerInternalError srv_error)
 
-//list<i16> GetPortList()
-//  throws (1: ServerInternalError srv_error)
+list<i32> GetPortList()
+  throws (1: ServerInternalError srv_error)
 
 } // MetaDBService ends.

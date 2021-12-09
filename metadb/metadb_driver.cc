@@ -59,7 +59,6 @@ class IndexMetaDBDriver: virtual public MetaDBDriver {
     PrepareDirectory(env_, config_->GetDBRootDir());
     PrepareDirectory(env_, config_->GetDBHomeDir());
     PrepareDirectory(env_, config_->GetDBSplitDir());
-    // cout << "done here 1" << endl;
 
   	DLOG_ASSERT(mdb_ == NULL);
 
@@ -67,15 +66,8 @@ class IndexMetaDBDriver: virtual public MetaDBDriver {
   	if (config_->HasOldData()) {
   	MetaDB::Repair(config_, env_);
   	}
-    // cout << "done here 2" << endl;
 
-  	// if (s.ok()) {
   	MetaDB::Open(config_, &mdb_, env_);
-  	// }
-    // cout << "done here 3" << endl;
-  	// if (!s.ok()) {
-  	// return s;
-    // }
   }
 
   void OpenMetaDB() {
@@ -84,7 +76,7 @@ class IndexMetaDBDriver: virtual public MetaDBDriver {
     // DLOG_ASSERT(mdb_ == NULL); // by runzhou
     DLOG_ASSERT(rpc_mdb_ == NULL);
     rpc_mdb_ = new RPC_MetaDB(config_, mdb_); // need to redesign a RPC_Server dedicated to metadb. by runzhou
-    DLOG(INFO) << "IndexFS is ready for service, listening to incoming clients ... ";
+    DLOG(INFO) << "MetaDB is ready for service, listening to incoming clients ... ";
     cout << "rpc server initialized" << endl;
   }
 

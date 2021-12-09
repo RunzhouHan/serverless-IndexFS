@@ -419,14 +419,6 @@ libindexfs_mt_la_LIBADD = libclient_c_idxfs.la \
 	$(top_builddir)/thrift/libthrift_idxfs.la \
 	$(top_builddir)/lib/leveldb/libleveldb.la
 libindexfs_mt_la_LDFLAGS = -release $(INDEXFS_VERSION)
-libindexfs_srvless_la_SOURCES = cli_svrless.cc
-libindexfs_srvless_la_LIBADD = libclient_c_idxfs.la \
-	$(top_builddir)/client/libclient_idxfs.la \
-	$(top_builddir)/ipc/libipc_idxfs.la \
-	$(top_builddir)/common/libcommon_idxfs.la \
-	$(top_builddir)/thrift/libthrift_idxfs.la \
-	$(top_builddir)/lib/leveldb/libleveldb.la
-libindexfs_srvless_la_LDFLAGS = -release $(INDEXFS_VERSION)
 libclient_test_SOURCES = libclient_test.cc
 all: all-am
 

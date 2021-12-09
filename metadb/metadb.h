@@ -92,24 +92,15 @@ class MetaDB: virtual public MetaDBServiceIf { // should wrap the corresponding 
   static void Open(Config* config, MetaDB** dbptr, Env* env = NULL);
 
   virtual ~MetaDB() { }
-  virtual void Flush() = 0;
 
   virtual int64_t GetCurrentInodeNo() = 0;
-  virtual int64_t ReserveNextInodeNo() = 0;
 
   virtual Status EntryExists(const KeyInfo &key) = 0; //
   virtual Status DeleteEntry(const KeyInfo &key) = 0; //
   virtual Status UpdateEntry(const KeyInfo &key, const StatInfo &info) = 0; //
   virtual Status InsertEntry(const KeyInfo &key, const StatInfo &info) = 0; //
 
-  // Blindly put a new entry into the underlying DB
-  // without checking the existence of entries currently
-  // in the DB with the same key.
-  // This call is introduced so that we can save a
-  // LevelDB GET if we already know what that call may return.
-  //
-  virtual void PutEntry(const KeyInfo &key,
-      const StatInfo &info) = 0;
+
   // Blindly put a new entry into the underlying DB
   // without checking the existence of entries currently
   // in the DB with the same key.
@@ -117,13 +108,19 @@ class MetaDB: virtual public MetaDBServiceIf { // should wrap the corresponding 
   //
   virtual Status PutEntryWithMode(
       const KeyInfo &key, const StatInfo &info, mode_t new_mode) = 0; //
+  
+  /* Serverless IndexFS API */
+  void Flush() = 0;
+  /* Original IndexFS API */
+  // virtual void Flush() = 0;
 
-  // *Serverless MDS*
   // Create a new file with no data associated with it.
   // Different from directories, files don't get inode#s.
   // Returns error if file with the same key already exists.
   //
+  /* Serverless IndexFS API */
   void NewFile(const KeyInfo_THRIFT &key) = 0;
+  /* Original IndexFS API */
   // virtual void NewFile(const KeyInfo &key) = 0;  //original
 
   // *Serverless MDS* 
@@ -133,26 +130,44 @@ class MetaDB: virtual public MetaDBServiceIf { // should wrap the corresponding 
   // with the entry being created here) and are very likely on other servers.
   // Returns error if directory with the same key already exists.
   //
+  /* Serverless IndexFS API */
   void NewDirectory(const KeyInfo_THRIFT &key,
       int zeroth_server, i64 inode_no) = 0;
+  /* Original IndexFS API */
   // virtual void NewDirectory(const KeyInfo &key,
   //     int16_t zeroth_server, int64_t inode_no) = 0;  // Original
 
-  // *Serverless MDS* 
-  void GetEntry(const KeyInfo_THRIFT &key, const StatInfo& info) = 0;
+  /* Serverless IndexFS API */
+  void GetEntry(StatInfo& _return, const KeyInfo_THRIFT& key) = 0;
 
-  // *Serverless MDS*
-  // Get the list of server IP address
+  // Blindly put a new entry into the underlying DB
+  // without checking the existence of entries currently
+  // in the DB with the same key.
+  // This call is introduced so that we can save a
+  // LevelDB GET if we already know what that call may return.
+  //
+  /* Serverless IndexFS API */
+  void PutEntry(const KeyInfo_THRIFT& key, const StatInfo& info) = 0;
+  /* Original IndexFS API */
+  // virtual void PutEntry(const KeyInfo &key,
+  //     const StatInfo &info) = 0;
+  
+  /* Serverless IndexFS API */
+  int64_t ReserveNextInodeNo() = 0;
+  /* Original IndexFS API */
+  // virtual int64_t ReserveNextInodeNo() = 0;
+
+  // Get the list of server IP address based on MetaDB configuration file.
+  /* Serverless IndexFS API */
   void GetServerList(std::vector<std::string> & _return) = 0;
 
-  // *Serverless MDS*
-  // Get the list of server IP address
-  // void GetPortList(std::vector<int16_t> & _return) = 0;
+  // Get the list of server port based on MetaDB configuration file.
+  /* Serverless IndexFS API */
+  void GetPortList(std::vector<int32_t> & _return) = 0;
 
   // Override the original file mode according to the new mode.
   // Returns error if no file with the specified key is found.
   //
-
   virtual Status SetFileMode(const KeyInfo &key, mode_t new_mode) = 0; //
 
   virtual void GetMapping(int64_t dir_id, std::string *dmap_data) = 0;

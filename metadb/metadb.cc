@@ -149,15 +149,41 @@ class LevelMDB: virtual public MetaDB {
 
   int64_t GetCurrentInodeNo();
 
-  int64_t ReserveNextInodeNo();
-
-  void Flush();
-
   Status Init(OptionInitializer opt_initializer);
 
   DirScanner* CreateDirScanner(const KeyOffset &offset);
 
-  void PutEntry(const KeyInfo &key, const StatInfo &info);
+  /* Original IndexFS APIs */
+
+  // void PutEntry(const KeyInfo &key, const StatInfo &info);
+
+  // Status NewFile(const KeyInfo &key);
+
+  // Status NewDirectory(const KeyInfo &key, int16_t zeroth_server, int64_t inode_no);
+
+  // Status GetEntry(const KeyInfo &key, StatInfo *info);
+
+
+  /* Serverless IndexFS APIs */
+
+  void Flush();
+
+  void NewFile(const KeyInfo_THRIFT &key);
+
+  void NewDirectory(const KeyInfo_THRIFT &key, int zeroth_server, i64 inode_no);
+
+  void GetEntry(StatInfo& _return, const KeyInfo_THRIFT& key);
+
+  void PutEntry(const KeyInfo_THRIFT &key, const StatInfo &info);
+
+  int64_t ReserveNextInodeNo();
+
+  void GetServerList(std::vector<std::string> & _return);
+
+  void GetPortList(std::vector<int32_t> & _return);
+
+  /* Serverless IndexFS APIs. End. */
+
 
   Status PutEntryWithMode(const KeyInfo &key, const StatInfo &info, mode_t new_mode);
 
@@ -165,29 +191,16 @@ class LevelMDB: virtual public MetaDB {
 
   Status DeleteEntry(const KeyInfo &key);
 
-  void GetEntry(const KeyInfo_THRIFT &key, const StatInfo& info);
-
   Status UpdateEntry(const KeyInfo &key, const StatInfo &info);
 
   Status InsertEntry(const KeyInfo &key, const StatInfo &info);
 
   Status SetFileMode(const KeyInfo &key, mode_t new_mode);
 
-  void NewFile(const KeyInfo_THRIFT &key);
-
-  void NewDirectory(const KeyInfo_THRIFT &key, int zeroth_server, i64 inode_no);
-
-  void GetServerList(std::vector<std::string> & _return);
-
-  void GetPortList(std::vector<int16_t> & _return);
-
-  // This is to be reimplemented for cache update
   void GetMapping(int64_t dir_id, std::string *dmap_data); 
 
-  // To be removed
   void UpdateMapping(int64_t dir_id, const Slice &dmap_data);
 
-  // To be removed
   void InsertMapping(int64_t dir_id, const Slice &dmap_data);
 
   BulkExtractor* CreateLocalBulkExtractor(); // think about adding a bulkextractor structure
@@ -196,11 +209,15 @@ class LevelMDB: virtual public MetaDB {
 
   void BulkInsert(uint64_t min_seq, uint64_t max_seq, const std::string &tmp_path);
 
-  Status ListEntries(const KeyOffset &offset, NameList *names, StatList *infos); //rpc not implemented
+  /* RPC not implemented */
 
-  Status FetchData(const KeyInfo &key, int32_t *size, char *buffer); // rpc not implemented
+  Status ListEntries(const KeyOffset &offset, NameList *names, StatList *infos);
 
-  Status WriteData(const KeyInfo &key, uint32_t offset, uint32_t size, const char *data); // rpc not implemented
+  Status FetchData(const KeyInfo &key, int32_t *size, char *buffer);
+
+  Status WriteData(const KeyInfo &key, uint32_t offset, uint32_t size, const char *data);
+    
+  /* RPC not implemented. End. */
 
  private:
 
@@ -270,9 +287,11 @@ LevelMDB::LevelMDB(Config* config, Env* env) :
   read_pass_cache_.fill_cache = false;
 }
 
+/* Serverless IndexFS API */
 void LevelMDB::Flush() {
   DLOG_ASSERT(db_ != NULL);
   db_->Flush();
+  printf("Flush\n");
 }
 
 Status LevelMDB::Init(OptionInitializer opt_initializer) {
@@ -358,14 +377,42 @@ int64_t LevelMDB::GetCurrentInodeNo() {
   return inode_counter_;
 }
 
+/* Original */
+// inline
+// int64_t LevelMDB::ReserveNextInodeNo() {
+//   MutexLock lock(&inode_mu_);
+//   inode_counter_ += DEFAULT_MAX_NUM_SERVERS;
+//   return inode_counter_;
+// }
+
+/* Serverless IndexFS API */
 inline
 int64_t LevelMDB::ReserveNextInodeNo() {
   MutexLock lock(&inode_mu_);
   inode_counter_ += DEFAULT_MAX_NUM_SERVERS;
+  printf("ReserveNextInodeNo\n");
   return inode_counter_;
 }
 
-void LevelMDB::PutEntry(const KeyInfo &key,
+/* Original */
+// void LevelMDB::PutEntry(const KeyInfo &key,
+//         const StatInfo &info) {
+//   MDBKey mdb_key(key.parent_id_, key.partition_id_, key.file_name_);
+//   MDBValue mdb_val(key.file_name_);
+//   mdb_val->SetInodeNo(info.id);
+//   mdb_val->SetFileSize(info.size);
+//   mdb_val->SetFileMode(info.mode);
+//   mdb_val->SetFileStatus(info.is_embedded ? kEmbedded : kRegular);
+//   mdb_val->SetZerothServer(info.zeroth_server);
+//   mdb_val->SetUserId(-1);
+//   mdb_val->SetGroupId(-1);
+//   mdb_val->SetChangeTime(info.ctime);
+//   mdb_val->SetModifyTime(info.mtime);
+//   db_->Put(write_async_, mdb_key.ToSlice(), mdb_val.ToSlice());
+// }
+
+/* Serverless IndexFS API */
+void LevelMDB::PutEntry(const KeyInfo_THRIFT &key,
         const StatInfo &info) {
   MDBKey mdb_key(key.parent_id_, key.partition_id_, key.file_name_);
   MDBValue mdb_val(key.file_name_);
@@ -379,6 +426,7 @@ void LevelMDB::PutEntry(const KeyInfo &key,
   mdb_val->SetChangeTime(info.ctime);
   mdb_val->SetModifyTime(info.mtime);
   db_->Put(write_async_, mdb_key.ToSlice(), mdb_val.ToSlice());
+  printf("PutEntry\n");
 }
 
 Status LevelMDB::PutEntryWithMode(const KeyInfo &key,
@@ -437,8 +485,8 @@ Status LevelMDB::DeleteEntry(const KeyInfo &key) {
   return db_->Delete(write_async_, mdb_key.ToSlice());
 }
 
-void LevelMDB::GetEntry(const KeyInfo_THRIFT &key,
-        const StatInfo& info) {
+/* Serverless IndexFS API */
+void LevelMDB::GetEntry(StatInfo& _return, const KeyInfo_THRIFT& key) {
   MDBKey mdb_key(key.parent_id_, key.partition_id_, key.file_name_);
   std::string buffer;
   Status s = db_->Get(read_fill_cache_, mdb_key.ToSlice(), &buffer);
@@ -447,15 +495,16 @@ void LevelMDB::GetEntry(const KeyInfo_THRIFT &key,
   }
   const char* ptr = buffer.data();
   const FileStat* file_stat = reinterpret_cast<const FileStat*>(ptr);
-  info.id = file_stat->InodeNo();
-  info.size = file_stat->FileSize();
-  info.mode = file_stat->FileMode();
-  info.is_embedded = IsEmbedded(file_stat->FileStatus());
-  info.zeroth_server = file_stat->ZerothServer();
-  info.gid = info->uid = -1;
-  info.ctime = file_stat->ChangeTime();
-  info.mtime = file_stat->ModifyTime();
+  _return.id = file_stat->InodeNo();
+  _return.size = file_stat->FileSize();
+  _return.mode = file_stat->FileMode();
+  _return.is_embedded = IsEmbedded(file_stat->FileStatus());
+  _return.zeroth_server = file_stat->ZerothServer();
+  _return.gid = _return.uid = -1;
+  _return.ctime = file_stat->ChangeTime();
+  _return.mtime = file_stat->ModifyTime();
   Status::OK();
+  printf("GetEntry\n");
 }
 
 Status LevelMDB::UpdateEntry(const KeyInfo &key,
@@ -500,6 +549,7 @@ Status LevelMDB::InsertEntry(const KeyInfo &key,
   return db_->Put(write_async_, mdb_key.ToSlice(), mdb_val.ToSlice());
 }
 
+/* Serverless IndexFS API */
 void LevelMDB::NewFile(const KeyInfo_THRIFT &key) {
   MDBKey mdb_key(key.parent_id_, key.partition_id_, key.file_name_);
   Status s = db_->Exists(read_fill_cache_, mdb_key.ToSlice());
@@ -516,9 +566,10 @@ void LevelMDB::NewFile(const KeyInfo_THRIFT &key) {
   mdb_val->SetGroupId(-1);
   mdb_val->SetTime(time(NULL));
   db_->Put(write_async_, mdb_key.ToSlice(), mdb_val.ToSlice());
-  printf("New File created.\n");
+  printf("NewFile\n");
 }
 
+/* Serverless IndexFS API */
 void LevelMDB::NewDirectory(const KeyInfo_THRIFT &key,
         int zeroth_server, i64 inode_no) {
   MDBKey mdb_key(key.parent_id_, key.partition_id_, key.file_name_);
@@ -536,20 +587,24 @@ void LevelMDB::NewDirectory(const KeyInfo_THRIFT &key,
   mdb_val->SetGroupId(-1);
   mdb_val->SetTime(time(NULL));
   db_->Put(write_async_, mdb_key.ToSlice(), mdb_val.ToSlice());
-  printf("New File created.\n");
+  printf("NewDirectory\n");
 }
 
+/* Serverless IndexFS API */
 void LevelMDB::GetServerList(std::vector<std::string> & _return) {
   int num_srv = config_->GetMetaDBNum();
   for (int i = 0; i < num_srv; i++) 
     _return.push_back(config_->GetMetaDBIP(i));
+  printf("GetServerList\n");
 }
 
-// void LevelMDB::GetPortList(std::vector<int16_t> & _return) {
-//   int num_srv = config_->GetMetaDBNum();
-//   for (int i = 0; i < num_srv; i++) 
-//     _return.push_back(config_->GetMetaDBPort(i));
-// }
+/* Serverless IndexFS API */
+void LevelMDB::GetPortList(std::vector<int32_t> & _return) {
+  int num_srv = config_->GetMetaDBNum();
+  for (int i = 0; i < num_srv; i++) 
+    _return.push_back(config_->GetMetaDBPort(i));
+  printf("GetPortList\n");
+}
 
 void LevelMDB::GetMapping(int64_t dir_id,
         std::string *dmap_data) {
