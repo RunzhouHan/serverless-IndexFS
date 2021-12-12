@@ -3,8 +3,9 @@ package edu.cmu.pdl.indexfs.srvless;
 import java.io.IOException;
 
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
 
-import org.json.JSONException;
+//import org.json.JSONException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -65,49 +66,49 @@ public class svrless_IndexFS_main {
         try {
 		// Management server IP address.
 		zeroth_server = args.getAsJsonPrimitive(srvless_IndexFS_keys.zeroth_server).getAsString();  //serverless run uncomment this
-        } catch (JSONException ex) {
+        } catch (JsonParseException ex) {
         	LOG.info("Please provide IP address of the management server.");
         }
         
         try {
 		// Management server port.
 		zeroth_port = args.getAsJsonPrimitive(srvless_IndexFS_keys.zeroth_port).getAsString();  //serverless run uncomment this
-        } catch (JSONException ex) {
+        } catch (JsonParseException ex) {
         	LOG.info("Please provide port number of the management server.");
         }
         
         try {        
 		// Pod ID.
 		instance_id = args.getAsJsonPrimitive(srvless_IndexFS_keys.instance_id).getAsString();  //serverless run uncomment this	
-	    } catch (JSONException ex) {
+	    } catch (JsonParseException ex) {
 	    	LOG.info("Please provide instance id.");
 	    }
         
         try {
 		// Serverless function ID (IndexFS server ID). 
 		deployment_id = args.getAsJsonPrimitive(srvless_IndexFS_keys.deployment_id).getAsString();  //serverless run uncomment this
-		} catch (JSONException ex) {
+		} catch (JsonParseException ex) {
 			LOG.info("Please provide deployment id for the serverless function.");
 		}
         
         try {
 		// Operation type (a metadata operation parameter).
 		path = args.getAsJsonPrimitive(srvless_IndexFS_keys.op_type).getAsString();  //serverless run uncomment this
-	    } catch (JSONException ex) {
+	    } catch (JsonParseException ex) {
 	    	LOG.info("Please provide the metadata operation type.");
 	    }
         
         try {
 		// Object path (a metadata operation parameter).
 		path = args.getAsJsonPrimitive(srvless_IndexFS_keys.path).getAsString();  //serverless run uncomment this
-	    } catch (JSONException ex) {
+	    } catch (JsonParseException ex) {
 	    	LOG.info("Please provide the object path of the metadata operation.");
 	    }
 	    
         try {
 		// OID (a metadata operation parameter). 
 		OID = args.getAsJsonPrimitive(srvless_IndexFS_keys.OID).getAsJsonObject();
-	    } catch (JSONException ex) {
+	    } catch (JsonParseException ex) {
 	    	LOG.info("Please provide OID of the metadata operation." );
 	    }
 				

@@ -116,7 +116,7 @@ public class srvless_IndexFS_driver {
 	}
 
 	/**
-	 * Helper function to parse OID in JSON format.
+	 * Helper function to deserialize JSONed OID.
 	 * @param oid
 	 * @return
 	 */
