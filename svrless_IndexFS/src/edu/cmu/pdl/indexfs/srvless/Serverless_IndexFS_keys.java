@@ -1,6 +1,6 @@
 package edu.cmu.pdl.indexfs.srvless;
 
-public class srvless_IndexFS_keys {
+public class Serverless_IndexFS_keys {
 	public static final String zeroth_server = "zeroth_server";
 	public static final String zeroth_port = "zeroth_port";
 	public static final String instance_id = "instance_id";

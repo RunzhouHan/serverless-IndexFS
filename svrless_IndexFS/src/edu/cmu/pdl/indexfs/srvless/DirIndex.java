@@ -5,7 +5,7 @@ import java.lang.Math;
 public class DirIndex {	
 	
 	private static DirIndexPolicy policy_;
-	public GetConfig config_;
+	public Config config_;
 	
 	public static class BytesRef {
 		public long[] fname;

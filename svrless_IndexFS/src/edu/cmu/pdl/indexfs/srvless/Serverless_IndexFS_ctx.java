@@ -6,7 +6,7 @@ import static org.junit.Assert.*;
 
 import java.util.List;
 
-public class svrless_IndexFS_ctx {
+public class Serverless_IndexFS_ctx {
 			
 	public List<String> GetServerList(MetaDBService.Client mdb_client) {
 		assertNotNull(mdb_client);

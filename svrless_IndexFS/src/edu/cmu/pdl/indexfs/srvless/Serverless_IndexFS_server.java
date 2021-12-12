@@ -11,16 +11,16 @@ import org.apache.thrift.transport.TSocket;
 import org.apache.thrift.transport.TTransport;
 import org.apache.thrift.transport.TTransportException;
 
-public class srvless_IndexFS_server {
+public class Serverless_IndexFS_server {
 	/**
 	 * Serverless IndexFS configuration
 	 */
-	private GetConfig config;
+	private Config config;
 	
 	/**
 	 * MetaDB APIs interface.
 	 */
-	private svrless_IndexFS_ctx ctx;
+	private Serverless_IndexFS_ctx ctx;
 	
 	/**
 	 * TCP payload listener
@@ -69,11 +69,11 @@ public class srvless_IndexFS_server {
 	 * Constructor
 	 */	
 	@SuppressWarnings("serial")
-	public srvless_IndexFS_server(GetConfig config) {
+	public Serverless_IndexFS_server(Config config) {
 		this.config = config;
-		this.ctx = new svrless_IndexFS_ctx();
-		srvless_IndexFS_server.didx = new DirIndex(config.GetMetaDBNum());
-		srvless_IndexFS_server.didx.config_ = config;
+		this.ctx = new Serverless_IndexFS_ctx();
+		Serverless_IndexFS_server.didx = new DirIndex(config.GetMetaDBNum());
+		Serverless_IndexFS_server.didx.config_ = config;
 		this.queue = new RPC_writeback_queue(config);
 		
 		cache = new LinkedHashMap<String, StatInfo>(config.LRU_capacity+1, .75F, true) {

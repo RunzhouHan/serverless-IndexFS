@@ -19,7 +19,7 @@ public class RPC_writeback_queue {
 	/**
 	 * Serverless IndexFS configuration.
 	 */
-	private GetConfig config;
+	private Config config;
 	
 	/**
 	 * Serverless IndexFS write-back cache capacity before commit.
@@ -34,7 +34,7 @@ public class RPC_writeback_queue {
 	/**
 	 * MetaDB RPC interface for serverless IndexFS.
 	 */
-	private svrless_IndexFS_ctx mdb_svrless_ctx;
+	private Serverless_IndexFS_ctx mdb_svrless_ctx;
 	
 	/**
 	 * Server id to ip map. This is set to be public because it will be used in 
@@ -63,9 +63,9 @@ public class RPC_writeback_queue {
 	 *  
 	 *  @param config Configuration passed to the serverless IndexFS server.
 	 */
-	public RPC_writeback_queue(GetConfig config) {
+	public RPC_writeback_queue(Config config) {
 		this.config = config;
-		this.mdb_svrless_ctx = new svrless_IndexFS_ctx();
+		this.mdb_svrless_ctx = new Serverless_IndexFS_ctx();
 		this.server_map = config.GetMetaDBMap();
 		this.op_map = new HashMap<Integer, ArrayList<Operation_parameters>>();
 		initialize_map(config.GetMetaDBNum());

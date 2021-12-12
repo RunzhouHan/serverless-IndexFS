@@ -6,9 +6,9 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import com.google.gson.JsonObject;
 
-public class srvless_IndexFS_driver {
+public class Serverless_IndexFS_driver {
 	
-	private GetConfig config;
+	private Config config;
 	
 	private String zeroth_server;
 	private int zeroth_port; 
@@ -18,7 +18,7 @@ public class srvless_IndexFS_driver {
 	/**
 	 * Serverless IndexFS server instance.
 	 */
-	private srvless_IndexFS_server index_srv_;
+	private Serverless_IndexFS_server index_srv_;
 	
 	/**
 	 * The ID allocated to the serverless IndexFS server instance.
@@ -28,15 +28,15 @@ public class srvless_IndexFS_driver {
 	/**
 	 * Constructor.
 	 */
-	public srvless_IndexFS_driver(String zeroth_server, String zeroth_port, 
+	public Serverless_IndexFS_driver(String zeroth_server, String zeroth_port, 
 			String instance_id, String serverless_server_id) {
 		this.zeroth_server = zeroth_server;
 		this.zeroth_port = Integer.parseInt(zeroth_port);
 		this.serverless_server_id = Integer.parseInt(serverless_server_id);
 		this.tcp_port = Integer.parseInt("0");
-		this.config = new GetConfig(this.zeroth_server, this.zeroth_port, 
+		this.config = new Config(this.zeroth_server, this.zeroth_port, 
 				this.serverless_server_id, this.tcp_port);
-	    this.index_srv_ = new srvless_IndexFS_server(config);
+	    this.index_srv_ = new Serverless_IndexFS_server(config);
 
 	}
 	

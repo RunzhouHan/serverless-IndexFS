@@ -10,7 +10,7 @@ import org.apache.thrift.transport.TSocket;
 import org.apache.thrift.transport.TTransport;
 import org.apache.thrift.transport.TTransportException;
 
-public class GetConfig {
+public class Config {
 	
 	/**
 	 * Serverless IndexFS server ID. Hardcoded to be 0 for now.
@@ -82,7 +82,7 @@ public class GetConfig {
 	 * @param serverless_server_id serverless IndexFS server ID.
 	 * @param tcp_port the port number of serverless TCP payload server.
 	 */
-	public GetConfig(String zeroth_server, int zeroth_port, 
+	public Config(String zeroth_server, int zeroth_port, 
 			int serverless_server_id, int tcp_port) {
 		this.zeroth_server = zeroth_server;
 		this.zeroth_port = zeroth_port;
@@ -100,7 +100,7 @@ public class GetConfig {
 	 * @return list of MetaDB cluster IP address.
 	 */
 	private List<String> BuildMetaDBList() {
-		svrless_IndexFS_ctx mdb_svrless_ctx = new svrless_IndexFS_ctx();
+		Serverless_IndexFS_ctx mdb_svrless_ctx = new Serverless_IndexFS_ctx();
 		TTransport socket = new TSocket(zeroth_server,zeroth_port);
 		TProtocol protocol = new TBinaryProtocol(socket);
     	MetaDBService.Client mdb_client = new MetaDBService.Client(protocol);
@@ -121,7 +121,7 @@ public class GetConfig {
 	 * @return list of MetaDB cluster IP address.
 	 */
 	private List<Integer> BuildPortList() {
-		svrless_IndexFS_ctx mdb_svrless_ctx = new svrless_IndexFS_ctx();
+		Serverless_IndexFS_ctx mdb_svrless_ctx = new Serverless_IndexFS_ctx();
 		TTransport socket = new TSocket(zeroth_server,zeroth_port);
 		TProtocol protocol = new TBinaryProtocol(socket);
     	MetaDBService.Client mdb_client = new MetaDBService.Client(protocol);

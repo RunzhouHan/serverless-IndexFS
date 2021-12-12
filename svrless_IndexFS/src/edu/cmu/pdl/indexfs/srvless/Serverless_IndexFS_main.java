@@ -9,44 +9,44 @@ import com.google.gson.JsonParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class svrless_IndexFS_main {
+public class Serverless_IndexFS_main {
 	
-	public static final String PACKAGE_VERSION = "0.0.0";
-	
-	public static boolean SERVER_START = false;
-		
-	public static final String FLAGS_logfn = "indexfs_server";
-	
-	public static final int FLAGS_srvid = -1;
-	  
-	public static final int FLAGS_logbufsecs = 5;
-	
-	public static final String FLAGS_log_dir = "/";
-	
-	public static srvless_IndexFS_driver driver;
-	
-	public static final Logger LOG = LoggerFactory.getLogger(svrless_IndexFS_main.class.getName());
-	
-	public static String zeroth_server;
-	
-	public static String zeroth_port;
-	
-	public static String instance_id;
-	
-	public static String deployment_id;
-	
-	public static String op_type;
-	
-	public static String path;
-	
-	public static JsonObject OID;
-	
-	public static void SignalHandler(int sig) {
-	  if (driver != null) {
-	    driver.Shutdown();
-	  }
-	  LOG.info("Receive external signal to stop server " + deployment_id + " ...");
-	}
+//	public static final String PACKAGE_VERSION = "0.0.0";
+//	
+//	public static boolean SERVER_START = false;
+//		
+//	public static final String FLAGS_logfn = "indexfs_server";
+//	
+//	public static final int FLAGS_srvid = -1;
+//	  
+//	public static final int FLAGS_logbufsecs = 5;
+//	
+//	public static final String FLAGS_log_dir = "/";
+//	
+//	public static Serverless_IndexFS_driver driver;
+//	
+//	public static final Logger LOG = LoggerFactory.getLogger(Serverless_IndexFS_main.class.getName());
+//	
+//	public static String zeroth_server;
+//	
+//	public static String zeroth_port;
+//	
+//	public static String instance_id;
+//	
+//	public static String deployment_id;
+//	
+//	public static String op_type;
+//	
+//	public static String path;
+//	
+//	public static JsonObject OID;
+//	
+//	public static void SignalHandler(int sig) {
+//	  if (driver != null) {
+//	    driver.Shutdown();
+//	  }
+//	  LOG.info("Receive external signal to stop server " + deployment_id + " ...");
+//	}
 	
 	/**
 	 * serverless version of main method.
