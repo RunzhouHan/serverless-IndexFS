@@ -54,7 +54,7 @@ public class svrless_IndexFS_main {
 	 * @return
 	 */
 	public static JsonObject main(JsonObject args) { //serverless run uncomment this.
-		
+		/*
 		// Terminate the serverless IndexFS server when receive SIGTERM sent from Kubernetes.
         Runtime.getRuntime().addShutdownHook(new Thread() {
         @Override
@@ -131,6 +131,7 @@ public class svrless_IndexFS_main {
 		}
 		
 		LOG.info("Everything disposed, server will now shutdown");
+		*/
 		
 		JsonObject ret = new JsonObject();
 		ret.addProperty("return value", "Succeed!");
