@@ -25,7 +25,7 @@ public class srvless_IndexFS_server {
 	/**
 	 * TCP payload listener
 	 */
-	private srvless_IndexFS_TCPlistener tcp_srv_;
+//	private srvless_IndexFS_TCPlistener tcp_srv_;
 
 	/**
 	 * An HTTP server listening to incoming metadata operation requests from IndexFS client.
@@ -86,7 +86,7 @@ public class srvless_IndexFS_server {
 		this.server_map = config.GetMetaDBMap();
 		this.op = new Operation_parameters();
 		this.stat = new StatInfo();
-		this.tcp_srv_ = new srvless_IndexFS_TCPlistener();
+//		this.tcp_srv_ = new srvless_IndexFS_TCPlistener();
 	}
 	
     /**
@@ -95,7 +95,7 @@ public class srvless_IndexFS_server {
      * @throws IOException
      */
 	public void StartTCPServer(int tcp_port) throws IOException {
-		tcp_srv_.start(tcp_port);
+//		tcp_srv_.start(tcp_port);
 	}
 	
     /**
