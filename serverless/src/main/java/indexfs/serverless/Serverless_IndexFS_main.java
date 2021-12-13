@@ -116,7 +116,7 @@ public class Serverless_IndexFS_main {
 		if (SERVER_START == false) {
 			LOG.info("============================================================");
 			LOG.info("set indexfs server rank " + deployment_id);
-			driver = new srvless_IndexFS_driver(zeroth_server, zeroth_port, instance_id, deployment_id); // serverless run uncomment this
+			driver = new Serverless_IndexFS_driver(zeroth_server, zeroth_port, instance_id, deployment_id); // serverless run uncomment this
 			try {
 				driver.StartServer();
 			} catch (IOException e) {
@@ -142,6 +142,6 @@ public class Serverless_IndexFS_main {
 	 * Local main method.
 	 */
 //    public static void main(String[] args) throws IOException { // local run uncomment this
-//		  driver = new srvless_IndexFS_driver(args[0], args[1], args[2], args[3]); // local run uncomment this
+//		  driver = new Serverless_IndexFS_driver(args[0], args[1], args[2], args[3]); // local run uncomment this
 //	}
 }
