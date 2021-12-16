@@ -19,10 +19,16 @@ public class ping {
 	public static final Logger LOG = LoggerFactory.getLogger(ping.class.getName());
 	
     public static JsonObject main(JsonObject args){
+//    public static void main(String[] args){
+
 		if (args.has("ip"))  {
 			// Operation type (a metadata operation parameter).
 			ip_ = args.getAsJsonPrimitive("ip").getAsString();  //serverless run uncomment this
-	    } else {
+	    } 
+//    	if (args.length == 1) {
+//    		ip_ = args[0];
+//    	}
+		else {
 //	    	LOG.info("Please provide target node IP address.");
 	    	System.out.println("Please provide param ip");
 	    }
@@ -30,9 +36,9 @@ public class ping {
 		try {
 			ip = InetAddress.getByName(ip_);
 			System.out.println(ip_ + " is successfully converted");
-		} catch (UnknownHostException e1) {
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
-			e1.printStackTrace();
+			e.printStackTrace();
 		}
 		
         try{            
