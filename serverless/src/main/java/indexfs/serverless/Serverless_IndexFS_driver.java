@@ -53,10 +53,10 @@ public class Serverless_IndexFS_driver {
 	 * @throws IOException 
 	 */
 	public void StartServer() throws IOException {
-		System.out.println("Following " + config.GetMetaDBNum() + " MetaDB server(s) detected: ");
-		System.out.println(Arrays.toString(config.GetMetaDBList().toArray()));
-		System.out.println(Arrays.toString(config.GetPortList().toArray()));
-	    System.out.println("\nIndexFS is ready for service, listening to incoming clients ... \n");
+//		System.out.println("Following " + config.GetMetaDBNum() + " MetaDB server(s) detected: ");
+//		System.out.println(Arrays.toString(config.GetMetaDBList().toArray()));
+//		System.out.println(Arrays.toString(config.GetPortList().toArray()));
+//	    System.out.println("\nIndexFS is ready for service, listening to incoming clients ... \n");
 
 //	    index_srv_.StartHTTPServer(this.http_port);
 
