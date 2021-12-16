@@ -15,9 +15,9 @@ public class ping {
 	public static InetAddress ip;
 	
 	public static boolean reachable;
-	
-	public static final Logger LOG = LoggerFactory.getLogger(ping.class.getName());
 	*/
+	public static final Logger LOG = LoggerFactory.getLogger(ping.class.getName());
+	
 	
     public static JsonObject main(JsonObject args){
 //    public static void main(String[] args){
