@@ -9,6 +9,7 @@ import com.google.gson.JsonObject;
 
 public class ping {
 	
+	/*
 	public static String ip_;
 	
 	public static InetAddress ip;
@@ -16,6 +17,7 @@ public class ping {
 	public static boolean reachable;
 	
 	public static final Logger LOG = LoggerFactory.getLogger(ping.class.getName());
+	*/
 	
     public static JsonObject main(JsonObject args){
 //    public static void main(String[] args){
