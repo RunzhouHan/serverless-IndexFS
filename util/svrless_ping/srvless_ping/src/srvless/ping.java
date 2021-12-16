@@ -31,7 +31,7 @@ public class ping {
 //	    	LOG.info("Please provide target node IP address.");
 	    	System.out.println("Please provide param ip");
 	    }
-		
+		/*
 		try {
 			ip = InetAddress.getByName(ip_);
 			System.out.println(ip_ + " is successfully converted");
@@ -39,6 +39,7 @@ public class ping {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		*/
 		/*
         try{            
             reachable = ip.isReachable(10000);
