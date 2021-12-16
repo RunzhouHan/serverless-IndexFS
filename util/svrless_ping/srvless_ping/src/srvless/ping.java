@@ -1,7 +1,6 @@
 package srvless;
 
 import java.net.InetAddress;
-import java.net.UnknownHostException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,14 +39,14 @@ public class ping {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+		/*
         try{            
             reachable = ip.isReachable(10000);
             System.out.println("Is host reachable? " + reachable);
         } catch (Exception e){
             e.printStackTrace();
         }
-        
+        */
         JsonObject response = new JsonObject();
         response.addProperty("Status", "Done");
         return response;
