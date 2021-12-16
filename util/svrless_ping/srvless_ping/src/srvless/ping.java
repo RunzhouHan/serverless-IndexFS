@@ -19,7 +19,7 @@ public class ping {
 	
     public static JsonObject main(JsonObject args){
 //    public static void main(String[] args){
-
+/*
 		if (args.has("ip"))  {
 			// Operation type (a metadata operation parameter).
 			ip_ = args.getAsJsonPrimitive("ip").getAsString();  //serverless run uncomment this
@@ -31,6 +31,7 @@ public class ping {
 //	    	LOG.info("Please provide target node IP address.");
 	    	System.out.println("Please provide param ip");
 	    }
+*/
 		/*
 		try {
 			ip = InetAddress.getByName(ip_);
