@@ -43,12 +43,7 @@ public class ping {
         }
         
         JsonObject response = new JsonObject();
-        if (reachable) {
-        	response.addProperty(ip_, "reachable");
-        }
-        else {
-        	response.addProperty(ip_, "unreachable");
-        }
+        response.addProperty("Status", "Done");
         return response;
     }
 }
