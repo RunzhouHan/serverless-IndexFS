@@ -28,6 +28,7 @@ public class Serverless_IndexFS_driver {
 	/**
 	 * Constructor.
 	 */
+	/**
 	public Serverless_IndexFS_driver(String zeroth_server, String zeroth_port, 
 			String instance_id, String serverless_server_id) {
 		this.zeroth_server = zeroth_server;
@@ -39,7 +40,21 @@ public class Serverless_IndexFS_driver {
 	    this.index_srv_ = new Serverless_IndexFS_server(config);
 
 	}
-	
+	**/
+
+	public Serverless_IndexFS_driver(String zeroth_server, int zeroth_port, 
+			int instance_id, int serverless_server_id) {
+		this.zeroth_server = zeroth_server;
+		this.zeroth_port = zeroth_port;
+		this.serverless_server_id = serverless_server_id;
+		this.tcp_port = Integer.parseInt("0");
+		this.config = new Config(this.zeroth_server, this.zeroth_port, 
+				this.serverless_server_id, this.tcp_port);
+	    	this.index_srv_ = new Serverless_IndexFS_server(config);
+
+	}
+
+
 	/**
 	 *  Monitoring thread for failure handling.
 	 *  Not implemented in this version 
@@ -134,35 +149,49 @@ public class Serverless_IndexFS_driver {
 	 * @param path Path of the target object.
 	 * @param OID OID of the target object.
 	 */
-	public void proceedClientRequest(String op_type, String path, 
+	public int proceedClientRequest(String op_type, String path, 
 			JsonObject oid) {
 		
-		OID obj_id = JsonToOID(oid);
-		
-		if (op_type == "Mknod") {
-			index_srv_.Mknod(path, obj_id, 0, zeroth_port);
-		}
-		else if (op_type == "Mkdir") {
-			int server_id = ThreadLocalRandom.current().nextInt(0, config.GetMetaDBNum());
-			index_srv_.Mkdir(path, obj_id, 0, server_id, 0, zeroth_port);
-		}
-		
-		else if (op_type == "Getattr") {
-			StatInfo info = index_srv_.Getattr(path, obj_id, zeroth_port);
-			// TODO Send object metadata back to IndexFS client.
-		}
-		
-		else if (op_type == "Chown") {
-			index_srv_.Chown(path, obj_id, (short)0, (short)0, zeroth_port);
-		}
+		OID obj_id = new OID();
 
-		else if (op_type == "Chmod") {
-			index_srv_.Chmod(path, obj_id, 0, zeroth_port);
+		try {		
+			obj_id = JsonToOID(oid);
+		}
+		catch (NullPointerException e) {
+			System.out.println("No I/O operation parameter provided");
+			return 1;
 		}
 		
-		else if (op_type == "FlushDB") {
-			index_srv_.FlushDB(zeroth_port);
+		if (obj_id != null) {
+			System.out.println(obj_id);
+			System.out.println(op_type);
+			if (op_type.equals("Mknod")) {
+				System.out.println("Mknod:"+path+", "+obj_id+", ");
+				index_srv_.Mknod(path, obj_id, 0, zeroth_port);
+			}
+			else if (op_type == "Mkdir") {
+				int server_id = ThreadLocalRandom.current().nextInt(0, config.GetMetaDBNum());
+				index_srv_.Mkdir(path, obj_id, 0, server_id, 0, zeroth_port);
+			}
+			
+			else if (op_type == "Getattr") {
+				StatInfo info = index_srv_.Getattr(path, obj_id, zeroth_port);
+				// TODO Send object metadata back to IndexFS client.
+			}
+			
+			else if (op_type == "Chown") {
+				index_srv_.Chown(path, obj_id, (short)0, (short)0, zeroth_port);
+			}
+
+			else if (op_type == "Chmod") {
+				index_srv_.Chmod(path, obj_id, 0, zeroth_port);
+			}
+			
+			else if (op_type == "FlushDB") {
+				index_srv_.FlushDB(zeroth_port);
+			}
 		}
+		return 0;
 	}
 
 	/**

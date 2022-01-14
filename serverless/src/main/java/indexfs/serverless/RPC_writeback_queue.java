@@ -107,6 +107,7 @@ public class RPC_writeback_queue {
 	 */
 	private int commit(short server_id, int port) {
 		int ret = 0;
+		System.out.println("Server ID: " + server_id + ": " + server_map.get((int)server_id) + ": " + port);
 		try {
 			TTransport socket = new TSocket(server_map.get((int)server_id),port);
 			TProtocol protocol = new TBinaryProtocol(socket);
@@ -121,6 +122,7 @@ public class RPC_writeback_queue {
 	    			// mknod
 	    			case 0:
 	                	mdb_svrless_ctx.newFile(mdb_client, op_param.key);
+				System.out.println("Mknod commited");
 	    				break;
 	    			// mkdir
 	    			case 1:

@@ -3,6 +3,8 @@ package main.java.indexfs.serverless;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Arrays;
+
 
 import org.apache.thrift.protocol.TBinaryProtocol;
 import org.apache.thrift.protocol.TProtocol;
@@ -60,13 +62,13 @@ public class Config {
 	/**
 	 * Serverless IndexFS LRU cache capacity.
 	 */
-	public final int LRU_capacity = 100000; // need to check IndexFS setting
+	public final int LRU_capacity = 1; // need to check IndexFS setting
 	
 	/**
 	 * Serverless IndexFS write-back cache capacity before commit.
 	 * Used when group a number of write operations to the same server.
 	 */
-	public final int NumtoCommit = 1000; // need to check IndexFS setting
+	public final int NumtoCommit = 1; // need to check IndexFS setting
 	
 	/**
 	 * Serverless IndexFS write-back cache commit time limit.
