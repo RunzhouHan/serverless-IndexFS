@@ -4,7 +4,7 @@ import org.apache.thrift.TException;
 
 import java.util.List;
 
-public class Serverless_IndexFS_ctx {
+public class ServerlessIndexFSCtx {
 			
 	public List<String> GetServerList(MetaDBService.Client mdb_client) {
 		List<String> server_list = null;		

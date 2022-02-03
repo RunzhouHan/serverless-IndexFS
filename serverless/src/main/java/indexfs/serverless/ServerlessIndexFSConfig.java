@@ -12,7 +12,7 @@ import org.apache.thrift.transport.TSocket;
 import org.apache.thrift.transport.TTransport;
 import org.apache.thrift.transport.TTransportException;
 
-public class Config {
+public class ServerlessIndexFSConfig {
 	
 	/**
 	 * Serverless IndexFS server ID. Hardcoded to be 0 for now.
@@ -84,11 +84,10 @@ public class Config {
 	 * @param serverless_server_id serverless IndexFS server ID.
 	 * @param tcp_port the port number of serverless TCP payload server.
 	 */
-	public Config(String zeroth_server, int zeroth_port, 
-			int serverless_server_id, int tcp_port) {
-		this.zeroth_server = zeroth_server;
-		this.zeroth_port = zeroth_port;
-		this.serverless_server_id = serverless_server_id;
+	public ServerlessIndexFSConfig(ServerlessIndexFSInputJsonParser parsed_args, int tcp_port) {
+		this.zeroth_server = parsed_args.zeroth_server;
+		this.zeroth_port = parsed_args.zeroth_port;
+		this.serverless_server_id = parsed_args.deployment_id;
 		this.MetaDB_list = BuildMetaDBList();
 		this.port_list = BuildPortList();
 		this.NumofMetaDBs = CountMetaDBNum();
@@ -102,7 +101,7 @@ public class Config {
 	 * @return list of MetaDB cluster IP address.
 	 */
 	private List<String> BuildMetaDBList() {
-		Serverless_IndexFS_ctx mdb_svrless_ctx = new Serverless_IndexFS_ctx();
+		ServerlessIndexFSCtx mdb_svrless_ctx = new ServerlessIndexFSCtx();
 		TTransport socket = new TSocket(zeroth_server,zeroth_port);
 		TProtocol protocol = new TBinaryProtocol(socket);
     	MetaDBService.Client mdb_client = new MetaDBService.Client(protocol);
@@ -123,7 +122,7 @@ public class Config {
 	 * @return list of MetaDB cluster IP address.
 	 */
 	private List<Integer> BuildPortList() {
-		Serverless_IndexFS_ctx mdb_svrless_ctx = new Serverless_IndexFS_ctx();
+		ServerlessIndexFSCtx mdb_svrless_ctx = new ServerlessIndexFSCtx();
 		TTransport socket = new TSocket(zeroth_server,zeroth_port);
 		TProtocol protocol = new TBinaryProtocol(socket);
     	MetaDBService.Client mdb_client = new MetaDBService.Client(protocol);
@@ -181,7 +180,7 @@ public class Config {
 	 * A public API to get serverless IndexFS server ID.
 	 * @return serverless IndexFS server ID.
 	 */
-	public int GetSrvID() {
+	public int GetSvrID() {
 		return this.serverless_server_id;
 	}
 	

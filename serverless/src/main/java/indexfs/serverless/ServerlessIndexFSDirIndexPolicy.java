@@ -1,6 +1,6 @@
 package main.java.indexfs.serverless;
 
-public class DirIndexPolicy {
+public class ServerlessIndexFSDirIndexPolicy {
 	// private variables
 	public short num_servers_;
 	public int max_vs_;

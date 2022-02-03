@@ -1,6 +1,6 @@
 package main.java.indexfs.serverless;
 
-public class Operation_parameters {
+public class ServerlessIndexFSOperationParameters {
 	/**
 	 * Operation parameters including operation type, Thrift Key, and inode number
 	 */
@@ -20,7 +20,7 @@ public class Operation_parameters {
 	 */
 	public long ino;
 	
-	public Operation_parameters() {
+	public ServerlessIndexFSOperationParameters() {
 		this.key = new KeyInfo_THRIFT();
 	}
 }

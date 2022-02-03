@@ -2,7 +2,7 @@ package main.java.indexfs.serverless;
 
 import java.nio.charset.Charset;
 
-public class MurmurHash3 {
+public class ServerlessIndexFSMurmurHash3 {
 	   private static final Charset UTF8 = Charset.forName("UTF-8");
 	
 	   static class State {

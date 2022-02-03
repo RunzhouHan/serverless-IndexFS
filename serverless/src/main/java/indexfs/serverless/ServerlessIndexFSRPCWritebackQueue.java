@@ -14,12 +14,12 @@ import org.apache.thrift.transport.TSocket;
 import org.apache.thrift.transport.TTransport;
 import org.apache.thrift.transport.TTransportException;
 
-public class RPC_writeback_queue {
+public class ServerlessIndexFSRPCWritebackQueue {
 	
 	/**
 	 * Serverless IndexFS configuration.
 	 */
-	private Config config;
+	private ServerlessIndexFSConfig config;
 	
 	/**
 	 * Serverless IndexFS write-back cache capacity before commit.
@@ -34,7 +34,7 @@ public class RPC_writeback_queue {
 	/**
 	 * MetaDB RPC interface for serverless IndexFS.
 	 */
-	private Serverless_IndexFS_ctx mdb_svrless_ctx;
+	private ServerlessIndexFSCtx mdb_svrless_ctx;
 	
 	/**
 	 * Server id to ip map. This is set to be public because it will be used in 
@@ -45,7 +45,7 @@ public class RPC_writeback_queue {
 	/**
 	 * Server id to operation map
 	 */
-	private HashMap<Integer, ArrayList<Operation_parameters>> op_map;
+	private HashMap<Integer, ArrayList<ServerlessIndexFSOperationParameters>> op_map;
 	
 	private Timer timer;
 	
@@ -63,11 +63,11 @@ public class RPC_writeback_queue {
 	 *  
 	 *  @param config Configuration passed to the serverless IndexFS server.
 	 */
-	public RPC_writeback_queue(Config config) {
+	public ServerlessIndexFSRPCWritebackQueue(ServerlessIndexFSConfig config) {
 		this.config = config;
-		this.mdb_svrless_ctx = new Serverless_IndexFS_ctx();
+		this.mdb_svrless_ctx = new ServerlessIndexFSCtx();
 		this.server_map = config.GetMetaDBMap();
-		this.op_map = new HashMap<Integer, ArrayList<Operation_parameters>>();
+		this.op_map = new HashMap<Integer, ArrayList<ServerlessIndexFSOperationParameters>>();
 		initialize_map(config.GetMetaDBNum());
 		this.NumtoCommit = config.NumtoCommit;
 		this.TimetoCommit = config.TimetoCommit;
@@ -94,7 +94,7 @@ public class RPC_writeback_queue {
 	
 	private void initialize_map(int srv_num) {
 		for (int i = 0; i < srv_num; i++) {
-			op_map.put(i, new ArrayList<Operation_parameters>());
+			op_map.put(i, new ArrayList<ServerlessIndexFSOperationParameters>());
 		}
 	}
 
@@ -115,7 +115,7 @@ public class RPC_writeback_queue {
 	    	socket.open(); 
 	    	for (int i = 0; i < NumtoCommit; i++) {
 //				System.out.println("start committing changes!");
-	    		Operation_parameters op_param = op_map.get((int)server_id).get(i);
+	    		ServerlessIndexFSOperationParameters op_param = op_map.get((int)server_id).get(i);
 	    		int op_type = op_param.op_type;
 //				System.out.println("operation type: " + op_type);
 	    		switch (op_type) {
@@ -156,7 +156,7 @@ public class RPC_writeback_queue {
 	 *  Insert write operations to the counter buffer and commit when reach the batch job size or reach time limitation. 
 	 * Clear buffer after commit. cache.get(path)
 	 */
-	public long write_counter(int server_id, int port, Operation_parameters op_param) {
+	public long write_counter(int server_id, int port, ServerlessIndexFSOperationParameters op_param) {
 		int ret = 0;
 		if (server_id < 0) 
 			server_id = ThreadLocalRandom.current().nextInt(0, config.GetMetaDBNum());

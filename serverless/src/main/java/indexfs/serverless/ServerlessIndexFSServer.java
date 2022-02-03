@@ -11,38 +11,28 @@ import org.apache.thrift.transport.TSocket;
 import org.apache.thrift.transport.TTransport;
 import org.apache.thrift.transport.TTransportException;
 
-public class Serverless_IndexFS_server {
+public class ServerlessIndexFSServer {
 	/**
 	 * Serverless IndexFS configuration
 	 */
-	private Config config;
+	private ServerlessIndexFSConfig config;
 	
 	/**
 	 * MetaDB APIs interface.
 	 */
-	private Serverless_IndexFS_ctx ctx;
-	
-	/**
-	 * TCP payload listener
-	 */
-//	private srvless_IndexFS_TCPlistener tcp_srv_;
-
-	/**
-	 * An HTTP server listening to incoming metadata operation requests from IndexFS client.
-	 */
-//	private srvless_IndexFS_HTTPlistener http_srv_;
-	
+	private ServerlessIndexFSCtx ctx;
+		
 	/**
 	 * Directory index used to decide which server should a metadata operation should 
 	 * be forwarded to.
 	 */
-	private static DirIndex didx;
+	private static ServerlessIndexFSDirIndex didx;
 	
 	/**
 	 * An buffer used as a write-back cache which groups a number of write operations
 	 * before starts a RPC socket to a specific server.
 	 */
-	private RPC_writeback_queue queue;
+	private ServerlessIndexFSRPCWritebackQueue queue;
 
 	/**
 	 * An LRU cache maintains metadata of most recently written/read objects.
@@ -52,7 +42,7 @@ public class Serverless_IndexFS_server {
 	/**
 	 * Stores every necessary for a metadata operation.
 	 */
-	private Operation_parameters op;
+	private ServerlessIndexFSOperationParameters op;
 	
 	/**
 	 * Object metadata.
@@ -69,12 +59,12 @@ public class Serverless_IndexFS_server {
 	 * Constructor
 	 */	
 	@SuppressWarnings("serial")
-	public Serverless_IndexFS_server(Config config) {
+	public ServerlessIndexFSServer(ServerlessIndexFSConfig config) {
 		this.config = config;
-		this.ctx = new Serverless_IndexFS_ctx();
-		Serverless_IndexFS_server.didx = new DirIndex(config.GetMetaDBNum());
-		Serverless_IndexFS_server.didx.config_ = config;
-		this.queue = new RPC_writeback_queue(config);
+		this.ctx = new ServerlessIndexFSCtx();
+		this.didx = new ServerlessIndexFSDirIndex(config.GetMetaDBNum());
+		this.didx.config_ = config;
+		this.queue = new ServerlessIndexFSRPCWritebackQueue(config);
 		
 		cache = new LinkedHashMap<String, StatInfo>(config.LRU_capacity+1, .75F, true) {
 	        // This method is called just after a new entry has been added
@@ -84,7 +74,7 @@ public class Serverless_IndexFS_server {
 	    };
 	    
 		this.server_map = config.GetMetaDBMap();
-		this.op = new Operation_parameters();
+		this.op = new ServerlessIndexFSOperationParameters();
 		this.stat = new StatInfo();
 //		this.tcp_srv_ = new srvless_IndexFS_TCPlistener();
 	}
@@ -187,7 +177,7 @@ public class Serverless_IndexFS_server {
 	 * @return
 	 */
 	public int GetMyRank() {
-		return config.GetSrvID();
+		return config.GetSvrID();
 	}
 
 	/**
@@ -220,13 +210,7 @@ public class Serverless_IndexFS_server {
 		// Put file metadata into LRU_cache.	
 		fillInStat(true, -1, 0);
 		cache.put(path, stat);
-		
-		// To be removed after test.
-//		System.out.println(path + ": " + stat);
-		
-		// To be removed after test.
-//		System.out.println(path + ": " + cache.get(path));
-		
+
 		// Compute the server id based on file path.
 		int server_id = didx.GetServer(path);
 		int obj_idx = 0;
@@ -365,7 +349,7 @@ public class Serverless_IndexFS_server {
 	 */
 	public void Chown(String path, OID obj_id, short uid, short gid, int port) {
 		/*
-//		  MonitorHelper helper(oChown, monitor_);
+		  MonitorHelper helper(oChown, monitor_);
 		  int obj_idx = 0;
 		  OBJ_LOCK(obj_id);
 

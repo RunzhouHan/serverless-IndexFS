@@ -2,19 +2,21 @@ package main.java.indexfs.serverless;
 
 import java.lang.Math;
 
-public class DirIndex {	
+public class ServerlessIndexFSDirIndex {	
 	
-	private static DirIndexPolicy policy_;
-	public Config config_;
+	private static ServerlessIndexFSDirIndexPolicy policy_;
+	public ServerlessIndexFSConfig config_;
 	
 	public static class BytesRef {
 		public long[] fname;
 		public int seed;
 	}
 	
-	/* Constructor */
-	public DirIndex(short srv_num) {
-		policy_ = new DirIndexPolicy();
+	/**
+	 *  Constructor 
+	*/
+	public ServerlessIndexFSDirIndex(short srv_num) {
+		policy_ = new ServerlessIndexFSDirIndexPolicy();
 		policy_.num_servers_ = srv_num;
 		policy_.max_vs_ = policy_.num_servers_;
 	}
@@ -33,7 +35,7 @@ public class DirIndex {
 	
 	// 8-byte (64-bit) Murmur hash
 	public static int MurmurHash(BytesRef value) {
-		return MurmurHash3.MurmurHash3_x64_32(value.fname, value.seed);
+		return ServerlessIndexFSMurmurHash3.MurmurHash3_x64_32(value.fname, value.seed);
 	}
 	
 	// Convert int32 to long
