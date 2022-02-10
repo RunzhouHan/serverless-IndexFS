@@ -13,6 +13,20 @@ public class ServerlessTCPClient {
 	
     public static JsonObject main(JsonObject args){
 //	public static void main(String[] args) {  
+		if (args.has("ip"))  {
+			ip = args.getAsJsonPrimitive("ip").getAsString(); 
+	    } 
+		else {
+	    	System.out.println("Please provide server ip");
+	    }
+
+		if (args.has("port"))  {
+			port = args.getAsJsonPrimitive("port").getAsInt(); 
+	    } 
+		else {
+	    	System.out.println("Please provide server port");
+	    }
+
 		try{      
 			// Replace with your server IP & port
 			Socket soc=new Socket(ip,port);  
