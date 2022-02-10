@@ -11,7 +11,6 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="/home/runzhou/indexfs-0.4/serverless-IndexFS/serverless/lib/commons-logging-1.2.jar"/>
 	<classpathentry kind="lib" path="/home/runzhou/indexfs-0.4/serverless-IndexFS/serverless/lib/gson-2.6.2.jar"/>
 	<classpathentry kind="lib" path="/home/runzhou/indexfs-0.4/serverless-IndexFS/serverless/lib/slf4j-api-1.7.12.jar"/>
 	<classpathentry kind="con" path="org.eclipse.m2e.MAVEN2_CLASSPATH_CONTAINER">

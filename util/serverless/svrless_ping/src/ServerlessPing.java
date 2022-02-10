@@ -1,36 +1,20 @@
-package srvless;
-
 import java.net.InetAddress;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.google.gson.JsonObject;
 
-public class ping {
-	
+public class ServerlessPing {
 	
 	public static String ip_;
 	
 	public static InetAddress ip;
 	
 	public static boolean reachable;
-	
-	//public static final Logger LOG = LoggerFactory.getLogger(ping.class.getName());
-	
-	
+		
     public static JsonObject main(JsonObject args){
 //    public static void main(String[] args){
-
 		if (args.has("ip"))  {
-			// Operation type (a metadata operation parameter).
-			ip_ = args.getAsJsonPrimitive("ip").getAsString();  //serverless run uncomment this
+			ip_ = args.getAsJsonPrimitive("ip").getAsString(); 
 	    } 
-//    	if (args.length == 1) {
-//    		ip_ = args[0];
-//    	}
 		else {
-//	    	LOG.info("Please provide target node IP address.");
 	    	System.out.println("Please provide param ip");
 	    }
 
@@ -38,7 +22,6 @@ public class ping {
 			ip = InetAddress.getByName(ip_);
 			System.out.println(ip_ + " is successfully converted");
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
         try{            
@@ -50,12 +33,12 @@ public class ping {
 
         JsonObject response = new JsonObject();
 
-	if (reachable) {
-		response.addProperty(ip_,"reachable");
-	}
-	else {
-		response.addProperty(ip_,"unreachable");
-	}
-        return response;
+		if (reachable) {
+			response.addProperty(ip_,"reachable");
+		}
+		else {
+			response.addProperty(ip_,"unreachable");
+		}
+	        return response;
     }
 }
