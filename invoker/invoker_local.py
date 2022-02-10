@@ -12,7 +12,7 @@ def tcp_server(num):
 	sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
 	# Bind the socket to the port
-	server_address = ('localhost', 10000)
+	server_address = ('127.0.0.1', 10000)
 	# print >> sys.stderr, 'starting up on %s port %s' % server_address
 	sock.bind(server_address)
 
@@ -32,6 +32,7 @@ def tcp_server(num):
 	            print (sys.stderr, 'received "%s"' % data)
 	            if data:
 	            	print (sys.stderr, 'sending data back to the client')
+	            	m1 = current_milli_time()
 	            	for i in range(0, num):
 		            	file_id = i
 		            	file_name = 'file_' + str(i)
@@ -42,6 +43,9 @@ def tcp_server(num):
 		            	PARAMS = {'zeroth_server':'35.223.120.109', 'zeroth_port':10086, 'instance_id':0, 'deployment_id':0, 'op_type': 'Mknod', 'path':file_path, 'OID': OID};
 		            	data = json.dumps(PARAMS)
 		            	connection.sendall(bytes(data,encoding="utf-8"))
+	            	m2 = current_milli_time()
+	            	time_elapsed = m2-m1
+	            	print("+ %d files creations used time(s): %d\n" % (num, time_elapsed))
 	            else:
 	                print (sys.stderr, 'no more data from', client_address)
 	                break
@@ -51,7 +55,7 @@ def tcp_server(num):
 	        connection.close()
 
 def run_test(num):
-	url = 'https://34.68.164.191:444/api/v1/web/guest/default/serverless_indexfs.json'
+	url = 'https://34.68.164.191:444/api/v1/web/guest/default/serverless_indexfs'
 	for i in range(0, num):
 		file_id = i
 		file_name = 'file_' + str(i)
@@ -66,10 +70,11 @@ def run_test(num):
 		# print(response.text)
 
 def main():
-	num = 100
-	tcp_server(num)
-	m1 = current_milli_time()
+	num = 1
 	run_test(num)
+	num = 1000
+	m1 = current_milli_time()
+	tcp_server(num)
 	m2 = current_milli_time()
 	time_elapsed = m2-m1
 	print("+ %d files creations used time(s): %d\n" % (num, time_elapsed))
