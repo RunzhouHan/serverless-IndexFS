@@ -83,12 +83,12 @@ public class ServerlessIndexFSMain {
 			
 			if (tcpClient != null) {
 				TCP_CLIENT_START = true;
-				System.out.println("indexfs TCP client" + parsed_args.deployment_id + "initialized");
+				System.out.println("indexfs TCP client " + parsed_args.deployment_id + " initialized");
 				// TCP reserves port 0
 				tcpClient.start(parsed_args.client_ip, parsed_args.client_port);
 			}
 			else 
-				System.out.println("indexfs TCP client" + parsed_args.deployment_id + "initialization failed");
+				System.out.println("indexfs TCP client " + parsed_args.deployment_id + " initialization failed");
 		}
 		
 
