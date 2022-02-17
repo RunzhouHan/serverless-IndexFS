@@ -89,7 +89,7 @@ public class ServerlessIndexFSTCPClient {
      */
     public void connect(String client_ip, int client_port) throws IOException {
     	clientSocket = new Socket(client_ip, client_port);
-        String ready = "Serverless IndexFS TCP client has been connected to IndexFS client" + '\n';
+        String ready = "Serverless IndexFS TCP client has been connected to IndexFS client";
         System.out.println(ready);
         try {
 			PrintWriter outToClient = new PrintWriter(new OutputStreamWriter(clientSocket.getOutputStream()));
