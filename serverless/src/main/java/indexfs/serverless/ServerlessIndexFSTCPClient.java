@@ -90,6 +90,7 @@ public class ServerlessIndexFSTCPClient {
      * @throws IOException
      */
     public void connect(String client_ip, int client_port) throws IOException {
+    	System.out.println("ServerlessIndexFSTCPClient.connect");
     	clientSocket = new Socket(client_ip, client_port);
         String ready = "Serverless IndexFS TCP client has been connected to IndexFS client";
         System.out.println(ready);
@@ -116,27 +117,31 @@ public class ServerlessIndexFSTCPClient {
      * the JsonObject the client sent as a String msg.
      * @throws IOException
      */
-    private void receiveJSON() throws IOException {
+    public void receiveJSON() throws IOException {
+    	System.out.println("ServerlessIndexFSTCPClient.receiveJSON");
         InputStream in = clientSocket.getInputStream();
         Reader reader = new InputStreamReader(in);  
-//		if (reader != null) {
-//			stream_alive = true;
-//		}
+		if (reader != null) {
+			stream_alive = true;
+		}
 		System.out.println("received JSON payload from IndexFS client");
 		System.out.println(reader);
 		JsonObject args = new JsonObject();
 		args_parsed.inputParse(args); 
 		System.out.println("Json payload parsed");
+		driver.proceedClientRequest();
+		System.out.println("Client I/O request proceeded");
     }
 
 
-    public void listen() throws IOException{
-		receiveJSON();
-  //  	while(stream_alive) {
-    		driver.proceedClientRequest();
-    		System.out.println("Client I/O request proceeded");
-    		stream_alive = false;
-    //		receiveJSON();
+//    public void listen() throws IOException{
+//    	System.out.println("ServerlessIndexFSTCPClient.listen");
+//		receiveJSON();
+//    	while(stream_alive) {
+//    		driver.proceedClientRequest();
+//    		System.out.println("Client I/O request proceeded");
+//    		stream_alive = false;
+//    		receiveJSON();
 //        }
-    }
+//    }
 }

@@ -87,7 +87,7 @@ public class ServerlessIndexFSMain {
 				// TCP reserves port 0
 				tcpClient.connect(parsed_args.client_ip, parsed_args.client_port);
 				// while (true) {
-					tcpClient.listen();
+					tcpClient.receiveJSON();
 				//}
 			}
 			else 
@@ -99,7 +99,7 @@ public class ServerlessIndexFSMain {
 				System.out.println("TCP communication has already been established with " + parsed_args.client_ip +
 									":"+ parsed_args.client_ip);
 //				while (true) {
-					tcpClient.listen();
+					tcpClient.receiveJSON();
 //				}
 			}
 			else 
