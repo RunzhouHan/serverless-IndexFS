@@ -109,38 +109,22 @@ public class ServerlessIndexFSTCPClient {
      */
     public JsonObject receiveJSON() throws IOException {
         InputStream in = clientSocket.getInputStream();
-		System.out.println("receiveJSON 1");
-
-//        Reader reader = new InputStreamReader(in, "UTF-8");
-        
-        Reader reader = new InputStreamReader(in);
-
-        
-		System.out.println("receiveJSON 2");
-        
-        Gson gson = new Gson();
-        
-		System.out.println("receiveJSON 3");
-
+        Reader reader = new InputStreamReader(in);        
 		System.out.println(reader);
-//        JsonObject args = gson.fromJson(reader, JsonObject.class);
 		JsonObject args = new JsonObject();
-		System.out.println("receiveJSON 4");
-
-//      System.out.println(json);
         return args;
     }
 
 
     public void start(String client_ip, int client_port) throws IOException{
     	connect(client_ip, client_port);
-    	while(true) {
+//    	while(true) {
     		JsonObject args = receiveJSON();
     		System.out.println("received JSON payload from IndexFS client");
     		args_parsed.inputParse(args); 
     		System.out.println("Json payload parsed");
     		driver.proceedClientRequest();
     		System.out.println("Client I/O request proceeded");
-        }
+//        }
     }
 }
