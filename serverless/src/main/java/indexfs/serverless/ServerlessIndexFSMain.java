@@ -86,9 +86,9 @@ public class ServerlessIndexFSMain {
 				System.out.println("indexfs TCP client " + parsed_args.deployment_id + " initialized");
 				// TCP reserves port 0
 				tcpClient.connect(parsed_args.client_ip, parsed_args.client_port);
-				// while (true) {
+				 while (true) {
 					tcpClient.receiveJSON();
-				//}
+				}
 			}
 			else 
 				System.out.println("indexfs TCP client " + parsed_args.deployment_id + "initialization failed");
@@ -98,9 +98,9 @@ public class ServerlessIndexFSMain {
 			if (tcpClient != null) {
 				System.out.println("TCP communication has already been established with " + parsed_args.client_ip +
 									":"+ parsed_args.client_ip);
-//				while (true) {
+				while (true) {
 					tcpClient.receiveJSON();
-//				}
+				}
 			}
 			else 
 				System.out.println("Error: TCP flag (true) conflicts with TCP client status (null)");
