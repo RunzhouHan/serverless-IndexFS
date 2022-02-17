@@ -67,7 +67,7 @@ public class ServerlessIndexFSTCPClient {
     
     private ServerlessIndexFSInputJsonParser args_parsed;
     
-    private boolean stream_alive;
+    private boolean stream_alive = false;
     
     
     /**
@@ -105,7 +105,7 @@ public class ServerlessIndexFSTCPClient {
 		}
     	client_ips.add(client_ip);
         System.out.println("IndexFS TCP client has been established on port " + client_port);
-        boolean stream_alive = true;
+        stream_alive = true;
     }
 
     /**
@@ -119,9 +119,9 @@ public class ServerlessIndexFSTCPClient {
     private void receiveJSON() throws IOException {
         InputStream in = clientSocket.getInputStream();
         Reader reader = new InputStreamReader(in);  
-		if (reader != null) {
-			stream_alive = true;
-		}
+//		if (reader != null) {
+//			stream_alive = true;
+//		}
 		System.out.println("received JSON payload from IndexFS client");
 		System.out.println(reader);
 		JsonObject args = new JsonObject();
@@ -132,11 +132,11 @@ public class ServerlessIndexFSTCPClient {
 
     public void listen() throws IOException{
 		receiveJSON();
-    	while(stream_alive) {
+  //  	while(stream_alive) {
     		driver.proceedClientRequest();
     		System.out.println("Client I/O request proceeded");
     		stream_alive = false;
-    		receiveJSON();
-        }
+    //		receiveJSON();
+//        }
     }
 }

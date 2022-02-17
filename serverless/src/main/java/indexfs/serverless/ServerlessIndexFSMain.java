@@ -86,9 +86,9 @@ public class ServerlessIndexFSMain {
 				System.out.println("indexfs TCP client " + parsed_args.deployment_id + " initialized");
 				// TCP reserves port 0
 				tcpClient.connect(parsed_args.client_ip, parsed_args.client_port);
-				while (true) {
+				// while (true) {
 					tcpClient.listen();
-				}
+				//}
 			}
 			else 
 				System.out.println("indexfs TCP client " + parsed_args.deployment_id + "initialization failed");
