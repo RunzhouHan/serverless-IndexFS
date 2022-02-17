@@ -98,9 +98,9 @@ public class ServerlessIndexFSMain {
 			if (tcpClient != null) {
 				System.out.println("TCP communication has already been established with " + parsed_args.client_ip +
 									":"+ parsed_args.client_ip);
-				while (true) {
+//				while (true) {
 					tcpClient.listen();
-				}
+//				}
 			}
 			else 
 				System.out.println("Error: TCP flag (true) conflicts with TCP client status (null)");
