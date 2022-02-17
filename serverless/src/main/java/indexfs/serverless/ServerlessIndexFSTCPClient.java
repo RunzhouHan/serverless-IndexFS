@@ -80,20 +80,26 @@ public class ServerlessIndexFSTCPClient {
     	this.args_parsed = new ServerlessIndexFSInputJsonParser();
 
     }
-
-    private void connect(String client_ip, int client_port) throws IOException {
-    	System.out.println(client_ip);
-    	System.out.println(client_port);
+    
+    /**
+     * Connect to IndexFS client (TCP server) with given IP & port
+     * @param client_ip
+     * @param client_port
+     * @throws IOException
+     */
+    public void connect(String client_ip, int client_port) throws IOException {
     	clientSocket = new Socket(client_ip, client_port);
         String ready = "Serverless IndexFS TCP client has been connected to IndexFS client" + '\n';
-        System.out.print(ready);
+        System.out.println(ready);
         try {
 			PrintWriter outToClient = new PrintWriter(new OutputStreamWriter(clientSocket.getOutputStream()));
 	        outToClient.print(ready);
             outToClient.flush();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			if (clientSocket != null) {
+                clientSocket.close();
+                System.out.println(String.format("Could not connect to: %s on port: %d", client_ip, client_port));
+            }
 		}
     	client_ips.add(client_ip);
         System.out.println("IndexFS TCP client has been established on port " + client_port);
@@ -116,8 +122,8 @@ public class ServerlessIndexFSTCPClient {
     }
 
 
-    public void start(String client_ip, int client_port) throws IOException{
-    	connect(client_ip, client_port);
+    public void listen() throws IOException{
+//    	connect(client_ip, client_port);
 //    	while(true) {
     		JsonObject args = receiveJSON();
     		System.out.println("received JSON payload from IndexFS client");
