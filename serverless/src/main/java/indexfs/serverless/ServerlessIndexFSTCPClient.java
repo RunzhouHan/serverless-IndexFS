@@ -7,6 +7,7 @@ import com.google.gson.JsonSyntaxException;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -49,6 +50,9 @@ public class ServerlessIndexFSTCPClient {
      * Client Socket.
      */    
     private Socket clientSocket;
+    
+    private DataInputStream  in   = null;
+    private DataOutputStream out     = null;
     
     /**
      * Serverless IndexFS I/O driver.
@@ -106,7 +110,7 @@ public class ServerlessIndexFSTCPClient {
 		}
     	client_ips.add(client_ip);
         System.out.println("IndexFS TCP client has been established on port " + client_port);
-        stream_alive = true;
+//        stream_alive = true;
     }
 
     /**
@@ -119,17 +123,35 @@ public class ServerlessIndexFSTCPClient {
      */
     public void receiveJSON() throws IOException {
     	System.out.println("ServerlessIndexFSTCPClient.receiveJSON");
-        InputStream in = clientSocket.getInputStream();
-        Reader reader = new InputStreamReader(in);  
-		if (reader != null) {
-			stream_alive = true;
+//        in = clientSocket.getInputStream();
+        in = new DataInputStream(clientSocket.getInputStream());
+        out = new DataOutputStream(clientSocket.getOutputStream());
+        String line = "";
+        // reads message from client until "Over" is sent
+        while (!line.equals("Over"))
+        {
+            try
+            {
+                line = in.readUTF();
+                System.out.println(line);
+
+            }
+            catch(IOException i)
+            {
+                System.out.println(i);
+            }
+        }
+        
+//        Reader reader = new InputStreamReader(in);  
+//		if (reader != null) {
+//			stream_alive = true;
 			System.out.println("received JSON payload from IndexFS client");
 			System.out.println(reader);
 			JsonObject args = new JsonObject();
 			args_parsed.inputParse(args); 
 			System.out.println("Json payload parsed");
-			driver.proceedClientRequest();
-			System.out.println("Client I/O request proceeded");
+//			driver.proceedClientRequest();
+//			System.out.println("Client I/O request proceeded");
 		}
     }
 
