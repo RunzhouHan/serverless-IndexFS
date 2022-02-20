@@ -146,13 +146,13 @@ public class ServerlessIndexFSTCPClient {
 //		if (reader != null) {
 //			stream_alive = true;
 			System.out.println("received JSON payload from IndexFS client");
-			System.out.println(reader);
+//			System.out.println(reader);
 			JsonObject args = new JsonObject();
 			args_parsed.inputParse(args); 
 			System.out.println("Json payload parsed");
 //			driver.proceedClientRequest();
 //			System.out.println("Client I/O request proceeded");
-		}
+//		}
     }
 
 
