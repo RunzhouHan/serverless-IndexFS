@@ -154,7 +154,24 @@ public class ServerlessIndexFSTCPClient {
 //			System.out.println("Client I/O request proceeded");
 //		}
     }
+    
+    /**
+     * Disconnect with TCP server
+     */
+    public void disconnect() {
+    	System.out.println("ServerlessIndexFSTCPClient.disconnect");
+        try {
+			out.close();
+	        in.close();
+	        clientSocket.close();
+	        System.out.println("disconnected TCP communication between serverless IndexFS and client");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			System.out.println("failed to disconnect TCP communication between serverless IndexFS and client");
+		}  
 
+    }
 
 //    public void listen() throws IOException{
 //    	System.out.println("ServerlessIndexFSTCPClient.listen");

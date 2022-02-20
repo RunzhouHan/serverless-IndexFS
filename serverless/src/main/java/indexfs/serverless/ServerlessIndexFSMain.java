@@ -88,6 +88,7 @@ public class ServerlessIndexFSMain {
 				tcpClient.connect(parsed_args.client_ip, parsed_args.client_port);
 //				 while (true) {
 					tcpClient.receiveJSON();
+					tcpClient.disconnect();
 //				}
 			}
 			else 
@@ -100,6 +101,7 @@ public class ServerlessIndexFSMain {
 									":"+ parsed_args.client_ip);
 //				while (true) {
 					tcpClient.receiveJSON();
+					tcpClient.disconnect();
 //				}
 			}
 			else 
