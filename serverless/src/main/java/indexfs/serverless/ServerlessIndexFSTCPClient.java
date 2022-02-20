@@ -128,7 +128,7 @@ public class ServerlessIndexFSTCPClient {
         out = new DataOutputStream(clientSocket.getOutputStream());
         String line = "";
         // reads message from client until "Over" is sent
-        while (in != null)
+        while (line != "finished")
         {
             try
             {
