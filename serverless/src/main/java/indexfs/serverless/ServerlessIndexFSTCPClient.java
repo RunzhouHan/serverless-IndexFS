@@ -127,20 +127,25 @@ public class ServerlessIndexFSTCPClient {
         in = new DataInputStream(clientSocket.getInputStream());
         out = new DataOutputStream(clientSocket.getOutputStream());
         String line = "";
+        
+        // test
+        line = in.readUTF();
+        System.out.println(line);
+        
         // reads message from client until "Over" is sent
-        while (line != "finished")
-        {
-            try
-            {
-                line = in.readUTF();
-                System.out.println(line);
-
-            }
-            catch(IOException i)
-            {
-                System.out.println(i);
-            }
-        }
+//        while (line != "finished")
+//        {
+//            try
+//            {
+//                line = in.readUTF();
+//                System.out.println(line);
+//
+//            }
+//            catch(IOException i)
+//            {
+//                System.out.println(i);
+//            }
+//        }
         
 //        Reader reader = new InputStreamReader(in);  
 //		if (reader != null) {
