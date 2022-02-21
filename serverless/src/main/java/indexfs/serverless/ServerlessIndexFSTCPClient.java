@@ -5,6 +5,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -130,7 +131,8 @@ public class ServerlessIndexFSTCPClient {
         
         // test
         line = in.readUTF();
-        System.out.println(line);
+//        line = BufferedReader.readLine();
+//        System.out.println(line);
         
         // reads message from client until "Over" is sent
 //        while (line != "finished")
