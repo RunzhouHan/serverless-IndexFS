@@ -74,6 +74,7 @@ public class ServerlessIndexFSTCPClient {
     
     private boolean stream_alive = false;
     
+    private InputStreamReader reader;
     
     /**
      * Constructor
@@ -110,7 +111,12 @@ public class ServerlessIndexFSTCPClient {
             }
 		}
     	client_ips.add(client_ip);
-        System.out.println("IndexFS TCP client has been established on port " + client_port);
+
+	in = new DataInputStream(clientSocket.getInputStream());
+        out = new DataOutputStream(clientSocket.getOutputStream());
+        reader = new InputStreamReader(in);
+
+	System.out.println("IndexFS TCP client has been established on port " + client_port);
 //        stream_alive = true;
     }
 
@@ -124,13 +130,24 @@ public class ServerlessIndexFSTCPClient {
      */
     public void receiveJSON() throws IOException {
     	System.out.println("ServerlessIndexFSTCPClient.receiveJSON");
-//        in = clientSocket.getInputStream();
-        in = new DataInputStream(clientSocket.getInputStream());
-        out = new DataOutputStream(clientSocket.getOutputStream());
+        in = clientSocket.getInputStream();
+       // in = new DataInputStream(clientSocket.getInputStream());
+       // out = new DataOutputStream(clientSocket.getOutputStream());
         String line = "";
         
         // test
-        line = in.readUTF();
+        //line = in.readUTF();
+	    reader = new InputStreamReader(in);
+ 
+            int character;
+            StringBuilder data = new StringBuilder();
+ 
+            while ((character = reader.read()) != -1) {
+                data.append((char) character);
+            }
+ 
+            System.out.println(data);
+	System.out.println("From IndexFS client: "+data);
 //        line = BufferedReader.readLine();
 //        System.out.println(line);
         
