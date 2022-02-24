@@ -128,8 +128,30 @@ public class ServerlessIndexFSTCPClient {
     public void receiveJSON() throws IOException {
     	System.out.println("ServerlessIndexFSTCPClient.receiveJSON");
     	DataInputStream in = new DataInputStream(clientSocket.getInputStream());
-    	DataOutputStream out = new DataOutputStream(clientSocket.getOutputStream());
-    	InputStreamReader reader = new InputStreamReader(in);
+//    	DataOutputStream out = new DataOutputStream(clientSocket.getOutputStream());
+//    	InputStreamReader reader = new InputStreamReader(in);
+//    	BufferedReader reader = new InputStreamReader(echoSocket.getInputStream());
+
+        try {
+            BufferedReader stdIn =new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+            PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
+            while(true){
+            	
+//                System.out.println("Trying to read...");
+                    String file_id = stdIn.readLine();
+                    System.out.println(file_id);
+//                    out.print("Try"+"\r\n");
+//                    System.out.println("Message sent");
+                }
+
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    	
+    	
+    	
+    	
 //        in = clientSocket.getInputStream();
        // in = new DataInputStream(clientSocket.getInputStream());
        // out = new DataOutputStream(clientSocket.getOutputStream());
@@ -140,11 +162,11 @@ public class ServerlessIndexFSTCPClient {
             int file_id;
 //            StringBuilder data = new StringBuilder();
  
-            while ((file_id = reader.read()) != -1) {
+//            while ((file_id = reader.read()) != -1) {
 //            while (reader.read() != 0) {
 //                data.append((char) character);
-                System.out.println("From IndexFS client: create file_"+ (char)file_id);
-            }
+//                System.out.println("From IndexFS client: create file_"+ (char)file_id);
+//            }
  
 //        line = BufferedReader.readLine();
 //        System.out.println(line);
