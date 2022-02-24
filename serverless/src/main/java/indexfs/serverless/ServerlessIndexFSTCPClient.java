@@ -133,21 +133,18 @@ public class ServerlessIndexFSTCPClient {
 //        in = clientSocket.getInputStream();
        // in = new DataInputStream(clientSocket.getInputStream());
        // out = new DataOutputStream(clientSocket.getOutputStream());
-        String line = "";
         
         // test
         //line = in.readUTF();
  
-            int character;
+            int file_id;
             StringBuilder data = new StringBuilder();
  
-            while ((character = reader.read()) != -1) {
-                data.append((char) character);
-                System.out.println(data);
+            while ((file_id = reader.read()) != -1) {
+//                data.append((char) character);
+                System.out.println("From IndexFS client: create file_"+ file_id);
             }
  
-            System.out.println(data);
-            System.out.println("From IndexFS client: "+data);
 //        line = BufferedReader.readLine();
 //        System.out.println(line);
         
