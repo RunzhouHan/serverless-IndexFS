@@ -52,8 +52,6 @@ public class ServerlessIndexFSTCPClient {
      */    
     private Socket clientSocket;
     
-    private DataInputStream  in   = null;
-    private DataOutputStream out     = null;
     
     /**
      * Serverless IndexFS I/O driver.
@@ -74,8 +72,9 @@ public class ServerlessIndexFSTCPClient {
     
     private boolean stream_alive = false;
     
-    private InputStreamReader reader;
-    
+    private DataInputStream in;
+    private DataOutputStream out;
+        
     /**
      * Constructor
      * @param config
@@ -112,9 +111,7 @@ public class ServerlessIndexFSTCPClient {
 		}
     	client_ips.add(client_ip);
 
-	in = new DataInputStream(clientSocket.getInputStream());
-        out = new DataOutputStream(clientSocket.getOutputStream());
-        reader = new InputStreamReader(in);
+
 
 	System.out.println("IndexFS TCP client has been established on port " + client_port);
 //        stream_alive = true;
@@ -130,24 +127,27 @@ public class ServerlessIndexFSTCPClient {
      */
     public void receiveJSON() throws IOException {
     	System.out.println("ServerlessIndexFSTCPClient.receiveJSON");
-        in = clientSocket.getInputStream();
+    	DataInputStream in = new DataInputStream(clientSocket.getInputStream());
+    	DataOutputStream out = new DataOutputStream(clientSocket.getOutputStream());
+    	InputStreamReader reader = new InputStreamReader(in);
+//        in = clientSocket.getInputStream();
        // in = new DataInputStream(clientSocket.getInputStream());
        // out = new DataOutputStream(clientSocket.getOutputStream());
         String line = "";
         
         // test
         //line = in.readUTF();
-	    reader = new InputStreamReader(in);
  
             int character;
             StringBuilder data = new StringBuilder();
  
             while ((character = reader.read()) != -1) {
                 data.append((char) character);
+                System.out.println(data);
             }
  
             System.out.println(data);
-	System.out.println("From IndexFS client: "+data);
+            System.out.println("From IndexFS client: "+data);
 //        line = BufferedReader.readLine();
 //        System.out.println(line);
         
