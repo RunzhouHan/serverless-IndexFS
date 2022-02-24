@@ -138,11 +138,12 @@ public class ServerlessIndexFSTCPClient {
         //line = in.readUTF();
  
             int file_id;
-            StringBuilder data = new StringBuilder();
+//            StringBuilder data = new StringBuilder();
  
             while ((file_id = reader.read()) != -1) {
+//            while (reader.read() != 0) {
 //                data.append((char) character);
-                System.out.println("From IndexFS client: create file_"+ file_id);
+                System.out.println("From IndexFS client: create file_"+ (char)file_id);
             }
  
 //        line = BufferedReader.readLine();
