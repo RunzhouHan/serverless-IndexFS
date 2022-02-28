@@ -129,7 +129,7 @@ public class ServerlessIndexFSTCPClient {
             	parsed_args = parser.inputStringParse(inputLine);
     			driver.proceedClientRequest(parsed_args);
             }
-			System.out.println("Client I/O request proceeded");
+			System.out.println("Client I/O request finished");
 
         } catch (IOException e) {
             // TODO Auto-generated catch block

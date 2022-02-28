@@ -70,10 +70,10 @@ public class ServerlessIndexFSDriver {
 		
 		if (obj_id != null) {
 			// TODO Remove prints after testing.
-			System.out.println(obj_id);
-			System.out.println(parsed_args.op_type);
+//			System.out.println(obj_id);
+//			System.out.println(parsed_args.op_type);
 			if (parsed_args.op_type.equals("Mknod")) {
-				System.out.println("Mknod:"+parsed_args.path+", "+obj_id+", ");
+//				System.out.println("Mknod:"+parsed_args.path+", "+obj_id+", ");
 				index_srv_.Mknod(parsed_args.path, obj_id, 0, zeroth_port);
 			}
 			else if (parsed_args.op_type == "Mkdir") {
