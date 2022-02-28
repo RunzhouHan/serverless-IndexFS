@@ -222,7 +222,7 @@ public class ServerlessIndexFSServer {
 		op.key.file_name_ = obj_id.obj_name;
 		// TASK-I: link the new file
 		queue.write_counter(server_id, port, op);
-		System.out.println("Mknod put in queue");
+//		System.out.println("Mknod put in queue");
 		reset_op();
 
 		/**

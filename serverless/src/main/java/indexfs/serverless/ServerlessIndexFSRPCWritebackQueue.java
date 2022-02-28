@@ -107,7 +107,7 @@ public class ServerlessIndexFSRPCWritebackQueue {
 	 */
 	private int commit(short server_id, int port) {
 		int ret = 0;
-		System.out.println("Server ID: " + server_id + ": " + server_map.get((int)server_id) + ": " + port);
+//		System.out.println("Server ID: " + server_id + ": " + server_map.get((int)server_id) + ": " + port);
 		try {
 			TTransport socket = new TSocket(server_map.get((int)server_id),port);
 			TProtocol protocol = new TBinaryProtocol(socket);
@@ -122,12 +122,12 @@ public class ServerlessIndexFSRPCWritebackQueue {
 	    			// mknod
 	    			case 0:
 	                	mdb_svrless_ctx.newFile(mdb_client, op_param.key);
-				System.out.println("Mknod commited");
+//	                	System.out.println("Mknod commited");
 	    				break;
 	    			// mkdir
 	    			case 1:
 	    		        mdb_svrless_ctx.newDirectory(mdb_client, op_param.key, server_id, op_param.ino);
-	    				System.out.println("newDirectory committed!");
+//	    				System.out.println("newDirectory committed!");
 	    				break;
 	    			// chmod
 	    			case 3:

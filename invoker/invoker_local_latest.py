@@ -5,7 +5,6 @@ import socket
 import sys
 import json
 
-SPLITER = ';'
 
 def current_milli_time():
     return round(time.time()*1000)
@@ -68,7 +67,6 @@ def tcp_server(num):
                 PARAMS = "35.223.120.109 10086 0 0 Mknod %s %d %d %s, \n"% (file_path, dir_id, path_depth, file_name);
                 print(PARAMS)
                 connection.sendall(bytes(PARAMS, encoding = "utf8"))
-                # connection.send(bytes(SPLITER, encoding = "utf8"))
             m2 = current_milli_time()
             time_elapsed = m2-m1
             print(sys.stdout, "Finished %d I/O requests in %d miliseconds" % (num,time_elapsed))
