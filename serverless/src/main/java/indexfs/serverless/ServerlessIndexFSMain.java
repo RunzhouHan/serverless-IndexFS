@@ -85,9 +85,13 @@ public class ServerlessIndexFSMain {
 			TCP_CLIENT_START = true;
 			System.out.println("indexfs TCP client " + parsed_args.deployment_id + " initialized");
 			// TCP reserves port 0
+			long startTime = System.nanoTime();
 			tcpClient.connect(parsed_args.client_ip, parsed_args.client_port);
 			tcpClient.receivePayload();
 			tcpClient.disconnect();
+			long endTime = System.nanoTime();
+			long duration = (endTime - startTime)/1000000;  //divide by 1000000 to get milliseconds.
+			System.out.println("tcp communication time: " + duration);
 		}
 		else 
 			System.out.println("indexfs TCP client " + parsed_args.deployment_id + "initialization failed");
