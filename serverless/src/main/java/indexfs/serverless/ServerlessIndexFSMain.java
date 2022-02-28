@@ -39,6 +39,16 @@ public class ServerlessIndexFSMain {
 //	  LOG.info("Receive external signal to stop server " + deployment_id + " ...");
 //	}
 	
+	/*
+	 *  Terminate the serverless IndexFS server when receive SIGTERM sent from Kubernetes.
+	 */
+//    Runtime.getRuntime().addShutdownHook(new Thread() {
+//    @Override
+//        public void run() {
+//            System.out.println("Shutdown Hook Registered.");
+//        }   
+//    }); 
+	
 	/**
 	 * serverless version of main method.
 	 * @param args
@@ -47,68 +57,55 @@ public class ServerlessIndexFSMain {
 	 */
 	public static JsonObject main(JsonObject args) throws IOException { //serverless run uncomment this.
 		
-		/*
-		 *  Terminate the serverless IndexFS server when receive SIGTERM sent from Kubernetes.
-		 */
-		//        Runtime.getRuntime().addShutdownHook(new Thread() {
-		//        @Override
-		//            public void run() {
-		//                System.out.println("Shutdown Hook Registered.");
-		//            }   
-		//        }); 
-        
-		ServerlessIndexFSInputJsonParser parsed_args = new ServerlessIndexFSInputJsonParser();
-		parsed_args.inputParse(args);
+		ServerlessIndexFSInputParser parser = new ServerlessIndexFSInputParser();
+		ServerlessIndexFSParsedArgs parsed_args = parser.inputJsonParse(args);
 	
-		if (TCP_CLIENT_START == false) {
+	if (TCP_CLIENT_START == false) {
 
-			System.out.println("============================================================");
-			System.out.println("set indexfs server rank " + parsed_args.deployment_id);
+		System.out.println("============================================================");
+		System.out.println("set indexfs server rank " + parsed_args.deployment_id);
 
-			config = new ServerlessIndexFSConfig(parsed_args,0);
-			
-			driver = new ServerlessIndexFSDriver(config, parsed_args); // serverless run uncomment this
-			
-			if (driver != null) {
-				try {
-					driver.StartServer();
-					// After the first success request, switch to TCP communication
-					tcpClient = new ServerlessIndexFSTCPClient(config, driver);
-					}
-				catch (IOException e) {
-					//TODO Auto-generated catch block
-					e.printStackTrace();
+		config = new ServerlessIndexFSConfig(parsed_args);
+		
+		driver = new ServerlessIndexFSDriver(config, parsed_args); // serverless run uncomment this
+		
+		if (driver != null) {
+			try {
+				driver.StartServer();
+				// After the first success request, switch to TCP communication
+				tcpClient = new ServerlessIndexFSTCPClient(config, driver);
 				}
+			catch (IOException e) {
+				//TODO Auto-generated catch block
+				e.printStackTrace();
 			}
-			
-			if (tcpClient != null) {
-				TCP_CLIENT_START = true;
-				System.out.println("indexfs TCP client " + parsed_args.deployment_id + " initialized");
-				// TCP reserves port 0
-				tcpClient.connect(parsed_args.client_ip, parsed_args.client_port);
-//				 while (true) {
-					tcpClient.receiveJSON();
-					tcpClient.disconnect();
-//				}
-			}
-			else 
-				System.out.println("indexfs TCP client " + parsed_args.deployment_id + "initialization failed");
 		}
 		
-		else {
-			if (tcpClient != null) {
-				System.out.println("TCP communication has already been established with " + parsed_args.client_ip +
-									":"+ parsed_args.client_ip);
-//				while (true) {
-					tcpClient.receiveJSON();
-					tcpClient.disconnect();
-//				}
-			}
-			else 
-				System.out.println("Error: TCP flag (true) conflicts with TCP client status (null)");
+		if (tcpClient != null) {
+			TCP_CLIENT_START = true;
+			System.out.println("indexfs TCP client " + parsed_args.deployment_id + " initialized");
+			// TCP reserves port 0
+			tcpClient.connect(parsed_args.client_ip, parsed_args.client_port);
+			tcpClient.receivePayload();
+			tcpClient.disconnect();
 		}
+		else 
+			System.out.println("indexfs TCP client " + parsed_args.deployment_id + "initialization failed");
+	}
+	
+	else {
+		if (tcpClient != null) {
+			System.out.println("TCP communication has already been established with " + parsed_args.client_ip +
+								":"+ parsed_args.client_ip);
+			tcpClient.receivePayload();
+			tcpClient.disconnect();
+		}
+		else 
+			System.out.println("Error: TCP flag (true) conflicts with TCP client status (null)");
+	}
 
-		LOG.info("Everything disposed, server will now shutdown");
+	LOG.info("Everything disposed, server will now shutdown");
+
 
 		return args;
 	}
@@ -136,20 +133,18 @@ public class ServerlessIndexFSMain {
 //    	args1.addProperty("op_type", "Mknod");
 //    	args1.addProperty("path", file_path);
 //    	args1.addProperty("client_ip",  "127.0.0.1");
-//    	args1.addProperty("client_port", 10000);
+//    	args1.addProperty("client_port", 2004);
 //    	args1.add("OID", OID);
-//    	
-//    	
-//    	ServerlessIndexFSInputJsonParser parsed_args = new ServerlessIndexFSInputJsonParser();
-//		parsed_args.inputParse(args1);
-//		
+//
+//		ServerlessIndexFSInputParser parser = new ServerlessIndexFSInputParser();
+//		ServerlessIndexFSParsedArgs parsed_args = parser.inputJsonParse(args1);
 //
 //		if (TCP_CLIENT_START == false) {
 //
 //			System.out.println("============================================================");
-//			System.out.println("Set indexfs server rank: " + parsed_args.deployment_id);
+//			System.out.println("set indexfs server rank " + parsed_args.deployment_id);
 //
-//			config = new ServerlessIndexFSConfig(parsed_args,0);
+//			config = new ServerlessIndexFSConfig(parsed_args);
 //			
 //			driver = new ServerlessIndexFSDriver(config, parsed_args); // serverless run uncomment this
 //			
@@ -169,14 +164,27 @@ public class ServerlessIndexFSMain {
 //				TCP_CLIENT_START = true;
 //				System.out.println("indexfs TCP client " + parsed_args.deployment_id + " initialized");
 //				// TCP reserves port 0
-//				tcpClient.start(parsed_args.client_ip, parsed_args.client_port);
+//				tcpClient.connect(parsed_args.client_ip, parsed_args.client_port);
+//				tcpClient.receivePayload();
+//				tcpClient.disconnect();
 //			}
 //			else 
-//				System.out.println("indexfs TCP client " + parsed_args.deployment_id + " initialization failed");
+//				System.out.println("indexfs TCP client " + parsed_args.deployment_id + "initialization failed");
 //		}
 //		
+//		else {
+//			if (tcpClient != null) {
+//				System.out.println("TCP communication has already been established with " + parsed_args.client_ip +
+//									":"+ parsed_args.client_ip);
+//				tcpClient.receivePayload();
+//				tcpClient.disconnect();
+//			}
+//			else 
+//				System.out.println("Error: TCP flag (true) conflicts with TCP client status (null)");
+//		}
 //
 //		LOG.info("Everything disposed, server will now shutdown");
+//
 //
 //    } // main end.
 }

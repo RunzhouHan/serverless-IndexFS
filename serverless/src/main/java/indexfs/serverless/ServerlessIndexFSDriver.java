@@ -25,27 +25,11 @@ public class ServerlessIndexFSDriver {
 	 */
 	private int serverless_server_id;
 	
-	private ServerlessIndexFSInputJsonParser parsed_args;
-
 	/**
 	 * Constructor.
 	 */
-	/**
-	public Serverless_IndexFS_driver(String zeroth_server, String zeroth_port, 
-			String instance_id, String serverless_server_id) {
-		this.zeroth_server = zeroth_server;
-		this.zeroth_port = Integer.parseInt(zeroth_port);
-		this.serverless_server_id = Integer.parseInt(serverless_server_id);
-		this.tcp_port = Integer.parseInt("0");
-		this.config = new Config(this.zeroth_server, this.zeroth_port, 
-				this.serverless_server_id, this.tcp_port);
-	    this.index_srv_ = new Serverless_IndexFS_server(config);
-
-	}
-	**/
-	public ServerlessIndexFSDriver(ServerlessIndexFSConfig config, ServerlessIndexFSInputJsonParser parsed_args) {
+	public ServerlessIndexFSDriver(ServerlessIndexFSConfig config, ServerlessIndexFSParsedArgs parsed_args) {
 		this.config = config;
-		this.parsed_args = parsed_args;
 		this.zeroth_server = parsed_args.zeroth_server;
 		this.zeroth_port = parsed_args.zeroth_port;
 		this.serverless_server_id = parsed_args.deployment_id;
@@ -80,7 +64,7 @@ public class ServerlessIndexFSDriver {
 	 * @param path Path of the target object.
 	 * @param OID OID of the target object.
 	 */
-	public int proceedClientRequest() {
+	public int proceedClientRequest(ServerlessIndexFSParsedArgs parsed_args) {
 		
 		OID obj_id = parsed_args.obj_id;
 		

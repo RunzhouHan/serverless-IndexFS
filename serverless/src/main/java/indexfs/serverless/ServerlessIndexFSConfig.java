@@ -84,7 +84,7 @@ public class ServerlessIndexFSConfig {
 	 * @param serverless_server_id serverless IndexFS server ID.
 	 * @param tcp_port the port number of serverless TCP payload server.
 	 */
-	public ServerlessIndexFSConfig(ServerlessIndexFSInputJsonParser parsed_args, int tcp_port) {
+	public ServerlessIndexFSConfig(ServerlessIndexFSParsedArgs parsed_args) {
 		this.zeroth_server = parsed_args.zeroth_server;
 		this.zeroth_port = parsed_args.zeroth_port;
 		this.serverless_server_id = parsed_args.deployment_id;
@@ -93,7 +93,7 @@ public class ServerlessIndexFSConfig {
 		this.NumofMetaDBs = CountMetaDBNum();
 		this.MetaDB_map = new HashMap<Integer, String>();
 		this.MetaDB_map = BuildMetaDBMap();
-		this.tcp_port= tcp_port;
+		this.tcp_port= parsed_args.client_port;
 	}
 	
 	/**
