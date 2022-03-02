@@ -124,17 +124,20 @@ public class ServerlessIndexFSTCPClient {
     	
         try {
         	String inputLine;
-        	long duration = 0;
-			long startTime = System.nanoTime();
+        	long duration_parse = 0; 
+        	long duration_proceed = 0;
+        	long tmp1, tmp2;
             while ((inputLine = b_reader.readLine()) != null) {
+            	tmp1 = System.nanoTime();
             	parsed_args = parser.inputStringParse(inputLine);
+            	duration_parse += System.nanoTime()-tmp1;
+            	tmp2 = System.nanoTime();
     			driver.proceedClientRequest(parsed_args);
+    			duration_proceed += System.nanoTime()-tmp2;
             }
 			System.out.println("Client I/O request finished");
-			long t1 = System.nanoTime();
-			duration = (t1 - startTime)/1000000;
-			System.out.println("readline duration(ms): " + duration);
-
+			System.out.println("readline duration(ms): " + duration_parse);
+			System.out.println("readline duration(ms): " + duration_proceed);
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
