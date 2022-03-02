@@ -80,7 +80,7 @@ def tcp_server(num):
                 #break
 
 def main():
-        num = 1000
+        num = 100
         m1 = current_milli_time()
         tcp_server(num)
         m2 = current_milli_time()
