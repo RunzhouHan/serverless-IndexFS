@@ -131,6 +131,7 @@ public class ServerlessIndexFSTCPClient {
     			driver.proceedClientRequest(parsed_args);
             }
 			System.out.println("Client I/O request finished");
+			long t1 = System.nanoTime();
 			duration = (t1 - startTime)/1000000;
 			System.out.println("readline duration(ms): " + duration);
 
