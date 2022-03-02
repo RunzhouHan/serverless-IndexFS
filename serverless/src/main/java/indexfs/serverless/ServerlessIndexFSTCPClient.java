@@ -129,7 +129,15 @@ public class ServerlessIndexFSTCPClient {
         	long tmp1, tmp2;
         	long startTime = System.nanoTime();
         	int i = 0;
+    		tmp1 = System.nanoTime();
+        	while(b_reader.ready() == false) {
+        		;
+        	}
+        	tmp2 = System.nanoTime();
+        	long duration_wait = (tmp1-tmp2)/1000000;
         	System.out.println("BufferedReader ready: " + b_reader.ready());
+        	System.out.println("Waited BufferedReader ready for (ms): " + duration_wait);
+        	
         	while(b_reader.ready()) {
         		inputLine = b_reader.readLine();
         		if (inputLine != null) {
