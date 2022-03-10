@@ -152,7 +152,7 @@ public class ServerlessIndexFSTCPClient {
 	    			duration_one = System.nanoTime() - tmp2;
 	    			duration_proceed += duration_one;
 	    			if ((duration_one/1000000) > 10) {
-	    				System.out.println("file_" + i + " duration " + duration_proceed);
+	    				System.out.println("file_" + i + " duration " + duration_one/1000000);
 	    			}
 	    			i++;
 
