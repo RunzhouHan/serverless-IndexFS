@@ -125,6 +125,7 @@ public class ServerlessIndexFSTCPClient {
         try {
         	String inputLine;
         	long duration_parse = 0; 
+        	long duration_one = 0;
         	long duration_proceed = 0;
         	long tmp1, tmp2;
         	long startTime = System.nanoTime();
@@ -134,7 +135,7 @@ public class ServerlessIndexFSTCPClient {
         		;
         	}
         	tmp2 = System.nanoTime();
-        	long duration_wait = (tmp1-tmp2)/1000000;
+        	long duration_wait = (tmp2-tmp1)/1000000;
         	System.out.println("BufferedReader ready: " + b_reader.ready());
         	System.out.println("Waited BufferedReader ready for (ms): " + duration_wait);
         	
@@ -142,15 +143,19 @@ public class ServerlessIndexFSTCPClient {
         		inputLine = b_reader.readLine();
         		if (inputLine != null) {
 //            while ((inputLine = b_reader.readLine()) != null) {
-        			System.out.println(inputLine);
+//        			System.out.println(inputLine);
 	            	tmp1 = System.nanoTime();
 	            	parsed_args = parser.inputStringParse(inputLine);
 	            	duration_parse += System.nanoTime()-tmp1;
 	            	tmp2 = System.nanoTime();
 	    			driver.proceedClientRequest(parsed_args);
-	    			duration_proceed += System.nanoTime()-tmp2;
+	    			duration_one = System.nanoTime() - tmp2;
+	    			duration_proceed += duration_one;
+	    			if ((duration_one/1000000) > 10) {
+	    				System.out.println("file_" + i + " duration " + duration_proceed);
+	    			}
 	    			i++;
-	    			System.out.println(i);
+
     			}
             }
 			long endTime = System.nanoTime();

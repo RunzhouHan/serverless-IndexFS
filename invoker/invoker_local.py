@@ -5,80 +5,74 @@ import socket
 import sys
 import json
 
+
 def current_milli_time():
     return round(time.time()*1000)
 
 def tcp_server(num):
-	sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        sock = socket.socket()
 
-	# Bind the socket to the port
-	server_address = ('127.0.0.1', 10000)
-	# print >> sys.stderr, 'starting up on %s port %s' % server_address
-	sock.bind(server_address)
+        print(sys.stdout,"sock ready")
 
-	# Listen for incoming connections
-	sock.listen(1)
+        # Bind the socket to the port
+        server_address = ("127.0.0.1", 2004)
 
-	while True:
-	    # Wait for a connection
-	    # print >>sys.stderr, 'waiting for a connection'
-	    connection, client_address = sock.accept()
-	    try:
-	        # print >>sys.stderr, 'connection from', client_address
+        sock.bind(server_address)
 
-	        # Receive the data in small chunks and retransmit it
-	        while True:
-	            data = connection.recv(512)
-	            print (sys.stderr, 'received "%s"' % data)
-	            if data:
-	            	print (sys.stderr, 'sending data back to the client')
-	            	m1 = current_milli_time()
-	            	for i in range(0, num):
-		            	file_id = i
-		            	file_name = 'file_' + str(i)
-		            	file_path = '/' + file_name
-		            	dir_id = 0
-		            	path_depth = 0
-		            	OID = {'dir_id': dir_id,'path_depth':path_depth, 'obj_name': file_name};
-		            	PARAMS = {'zeroth_server':'35.223.120.109', 'zeroth_port':10086, 'instance_id':0, 'deployment_id':0, 'op_type': 'Mknod', 'path':file_path, 'OID': OID};
-		            	data = json.dumps(PARAMS)
-		            	connection.sendall(bytes(data,encoding="utf-8"))
-	            	m2 = current_milli_time()
-	            	time_elapsed = m2-m1
-	            	print("+ %d files creations used time(s): %d\n" % (num, time_elapsed))
-	            else:
-	                print (sys.stderr, 'no more data from', client_address)
-	                break
-	            
-	    finally:
-	        # Clean up the connection
-	        connection.close()
+        # print(sys.stdout, "bind ready")
 
-def run_test(num):
-	url = 'https://34.68.164.191:444/api/v1/web/guest/default/serverless_indexfs'
-	for i in range(0, num):
-		file_id = i
-		file_name = 'file_' + str(i)
-		file_path = '/' + file_name
-		dir_id = 0
-		path_depth = 0
+        # Listen for incoming connections
+        sock.listen(2)
 
-		OID = {'dir_id': dir_id,'path_depth':path_depth, 'obj_name': file_name};
+        print(sys.stdout, "listening to incoming connection requests")
 
-		PARAMS = {'zeroth_server':'35.223.120.109', 'zeroth_port':10086, 'instance_id':0, 'deployment_id':0, 'op_type': 'Mknod', 'path':file_path, 'OID': OID};
-		response = requests.post(url, json=PARAMS, verify=False)
-		# print(response.text)
+        # first_request();
+        # print(sys.stdout, "The first HTTP request has been sent out to serverless IndexFS");
+
+        #connection = None
+
+        # Wait for a connection
+        try:
+            connection, client_address = sock.accept()
+            print(sys.stdout, "Waiting for a connection at %s/%d" % (client_address[0], client_address[1]))
+            #data = connection.recv(1024)
+            #print(sys.stdout, data)
+        except:
+            print(sys.stdout,"connection already set up")
+
+        try:
+            print(sys.stdout, "Sending workload to serverless IndexFS")
+            m1 = current_milli_time()
+            for i in range(0, num):
+                file_id = i
+                file_name = 'file_' + str(i)
+                file_path = '/' + file_name
+                dir_id = 0
+                path_depth = 0
+                PARAMS = "35.223.120.109 10086 0 0 Mknod %s %d %d %s, \n"% (file_path, dir_id, path_depth, file_name);
+                print(PARAMS)
+                connection.sendall(bytes(PARAMS, encoding = "utf8"))
+            m2 = current_milli_time()
+            time_elapsed = m2-m1
+            print(sys.stdout, "Finished %d I/O requests in %d miliseconds" % (num,time_elapsed))
+
+        finally:
+            # Clean up the connection
+            connection.close()
+        #except KeyboardInterrupt:
+            #if connection:
+                #connection.close()
+                #break
 
 def main():
-	num = 1
-	run_test(num)
-	num = 1000
-	m1 = current_milli_time()
-	tcp_server(num)
-	m2 = current_milli_time()
-	time_elapsed = m2-m1
-	print("+ %d files creations used time(s): %d\n" % (num, time_elapsed))
+        num = 5000
+        m1 = current_milli_time()
+        tcp_server(num)
+        m2 = current_milli_time()
+        time_elapsed = m2-m1
+        print("+ %d files creations used time(s): %d\n" % (num, time_elapsed))
 
 
 if __name__ == '__main__':
-	main()
+        main()
+
