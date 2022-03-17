@@ -35,8 +35,8 @@ then
   exit 1
 else
   # ensure legacy metadb clients can work correctly
-  rm -f /home/runzhou/Desktop/giga_conf
-  ln -fs $METADB_CONF_DIR/server_list /home/runzhou/Desktop/giga_conf
+  rm -f /mnt/beegfs/giga_conf
+  ln -fs $METADB_CONF_DIR/server_list /mnt/beegfs/giga_conf
 fi
 
 # check if we have the required configuration files
@@ -47,12 +47,12 @@ then
   exit 1
 else
   # ensure legacy metadb clients can work correctly
-  rm -f /home/runzhou/Desktop/idxfs_conf
-  ln -fs $METADB_CONF_DIR/metadb_conf /home/runzhou/Desktop/idxfs_conf
+  rm -f /mnt/beegfs/idxfs_conf
+  ln -fs $METADB_CONF_DIR/metadb_conf /mnt/beegfs/idxfs_conf
 fi
 
 METADB_ID=${METADB_ID:-"0"}
-METADB_ROOT=${METADB_ROOT:-"/home/runzhou/Desktop/metadb"}
+METADB_ROOT=${METADB_ROOT:-"/mnt/beegfs/metadb"}
 METADB_RUN=${METADB_RUN:-"$METADB_ROOT/run/s$METADB_ID"}
 METADB_LOGS=$METADB_RUN/logs
 METADB_OLD_LOGS=$METADB_RUN/old_logs
