@@ -49,7 +49,7 @@ def tcp_server(num):
                 file_path = '/' + file_name
                 dir_id = 0
                 path_depth = 0
-                PARAMS = "35.223.120.109 10086 0 0 Mknod %s %d %d %s, \n"% (file_path, dir_id, path_depth, file_name);
+                PARAMS = "127.0.0.1 10086 0 0 Mknod %s %d %d %s, \n"% (file_path, dir_id, path_depth, file_name);
                 print(PARAMS)
                 connection.sendall(bytes(PARAMS, encoding = "utf8"))
             m2 = current_milli_time()
@@ -58,14 +58,16 @@ def tcp_server(num):
 
         finally:
             # Clean up the connection
-            connection.close()
+            # time.sleep(5)
+            # connection.close()
+            pass
         #except KeyboardInterrupt:
             #if connection:
                 #connection.close()
                 #break
 
 def main():
-        num = 5000
+        num = 1000
         m1 = current_milli_time()
         tcp_server(num)
         m2 = current_milli_time()

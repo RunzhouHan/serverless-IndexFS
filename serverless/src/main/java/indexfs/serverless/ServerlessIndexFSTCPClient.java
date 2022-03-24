@@ -116,7 +116,7 @@ public class ServerlessIndexFSTCPClient {
      * @throws IOException
      */
     public void receivePayload() throws IOException {
-    	System.out.println("ServerlessIndexFSTCPClient.receiveJSON");
+    	System.out.println("ServerlessIndexFSTCPClient.receivePayload");
     	DataInputStream in = new DataInputStream(clientSocket.getInputStream());
     	InputStreamReader reader = new InputStreamReader(in);
     	BufferedReader b_reader = new BufferedReader(reader);
@@ -131,18 +131,18 @@ public class ServerlessIndexFSTCPClient {
         	long startTime = System.nanoTime();
         	int i = 0;
     		tmp1 = System.nanoTime();
-        	while(b_reader.ready() == false) {
-        		;
-        	}
-        	tmp2 = System.nanoTime();
-        	long duration_wait = (tmp2-tmp1)/1000000;
-        	System.out.println("BufferedReader ready: " + b_reader.ready());
-        	System.out.println("Waited BufferedReader ready for (ms): " + duration_wait);
+//        	while(b_reader.ready() == false) {
+//        		;
+//        	}
+//        	tmp2 = System.nanoTime();
+//        	long duration_wait = (tmp2-tmp1)/1000000;
+//        	System.out.println("BufferedReader ready: " + b_reader.ready());
+//        	System.out.println("Waited BufferedReader ready for (ms): " + duration_wait);
         	
-        	while(b_reader.ready()) {
-        		inputLine = b_reader.readLine();
-        		if (inputLine != null) {
-//            while ((inputLine = b_reader.readLine()) != null) {
+//        	while(b_reader.ready()) {
+//        		inputLine = b_reader.readLine();
+//        		if (inputLine != null) {
+            while ((inputLine = b_reader.readLine()) != null) {
 //        			System.out.println(inputLine);
 	            	tmp1 = System.nanoTime();
 	            	parsed_args = parser.inputStringParse(inputLine);
@@ -155,9 +155,8 @@ public class ServerlessIndexFSTCPClient {
 	    				System.out.println("file_" + i + " duration " + duration_one/1000000);
 	    			}
 	    			i++;
-
     			}
-            }
+//            }
 			long endTime = System.nanoTime();
 			long duration = (endTime - startTime)/1000000;
 			System.out.println("Client I/O request finished");
@@ -166,7 +165,7 @@ public class ServerlessIndexFSTCPClient {
 			System.out.println("readline duration(ms): " + duration);
         } catch (IOException e) {
             // TODO Auto-generated catch block
-            e.printStackTrace();
+            e.printStackTrace(); disconnect();;
         }
     }
     

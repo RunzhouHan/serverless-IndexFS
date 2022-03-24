@@ -216,14 +216,13 @@ Status Config::SetMetaDBs(IPList& metadbs) {
   return Status::OK();
 }
 
-// by runzhou
+// by runzhou <<
 // Directly set the member servers by injecting a list of servers into the configuration
 // object. No action will be taken if the provided server list is empty, otherwise,
 // the original set of member servers will be overridden in its entirety.
 // In addition to setting the servers, we will, if necessary, try to figure out our
 // own server ID by comparing IP addresses of the local machine
 // with IP addresses on the server list.
-// by runzhou << 
 Status Config::SetMetaDBs(IPPortList& metadbs) {
   if (!metadbs.empty()) {
     metadb_addrs_.clear();
@@ -242,6 +241,7 @@ Status Config::SetMetaDBs(IPPortList& metadbs) {
   }
   return Status::OK();
 }
+// >> by runzhou
 
 // Retrieve a fixed set of member servers by loading their IP addresses and port numbers
 // from a user-specified server list file. If we already have a set of member servers, then

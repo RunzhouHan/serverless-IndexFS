@@ -53,11 +53,16 @@ public class ServerlessIndexFSConfig {
 	 * List of MetaDB server port.
 	 */
 	private List<Integer> port_list;
-	
+		
 	/**
 	 * MetaDB server ID to IP map.
 	 */
 	private Map<Integer, String> MetaDB_map;
+	
+	/**
+	 * MetaDB server ID to port map.
+	 */
+	private Map<Integer, Integer> port_map;
 
 	/**
 	 * Serverless IndexFS LRU cache capacity.
@@ -91,8 +96,8 @@ public class ServerlessIndexFSConfig {
 		this.MetaDB_list = BuildMetaDBList();
 		this.port_list = BuildPortList();
 		this.NumofMetaDBs = CountMetaDBNum();
-		this.MetaDB_map = new HashMap<Integer, String>();
 		this.MetaDB_map = BuildMetaDBMap();
+		this.port_map = BuildPortMap();
 		this.tcp_port= parsed_args.client_port;
 	}
 	
@@ -105,16 +110,16 @@ public class ServerlessIndexFSConfig {
 		TTransport socket = new TSocket(zeroth_server,zeroth_port);
 		TProtocol protocol = new TBinaryProtocol(socket);
     	MetaDBService.Client mdb_client = new MetaDBService.Client(protocol);
-    	MetaDB_list = null;
+    	this.MetaDB_list = null;
     	try {
 			socket.open();
-			MetaDB_list = mdb_svrless_ctx.GetServerList(mdb_client);
+			this.MetaDB_list = mdb_svrless_ctx.GetServerList(mdb_client);
 	    	socket.close(); 
 		} catch (TTransportException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} 
-    	return MetaDB_list;
+    	return this.MetaDB_list;
 	}
 	
 	/**
@@ -126,16 +131,16 @@ public class ServerlessIndexFSConfig {
 		TTransport socket = new TSocket(zeroth_server,zeroth_port);
 		TProtocol protocol = new TBinaryProtocol(socket);
     	MetaDBService.Client mdb_client = new MetaDBService.Client(protocol);
-    	port_list = null;
+    	this.port_list = null;
     	try {
 			socket.open();
-			port_list = mdb_svrless_ctx.GetPortList(mdb_client);
+			this.port_list = mdb_svrless_ctx.GetPortList(mdb_client);
 	    	socket.close(); 
 		} catch (TTransportException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} 
-    	return port_list;
+    	return this.port_list;
 	}
 	
 	/**
@@ -144,7 +149,7 @@ public class ServerlessIndexFSConfig {
 	 */
 	private short CountMetaDBNum() {
 		// Number of server usually will not exceed short's capacity
-		return (short) MetaDB_list.size();
+		return (short) this.MetaDB_list.size();
 	}
 	
 	/**
@@ -153,12 +158,28 @@ public class ServerlessIndexFSConfig {
 	 */
 	private Map<Integer, String> BuildMetaDBMap() {
 		int sid = 0;
-		for (String srv_ip : MetaDB_list ) {
-			MetaDB_map.put(sid, srv_ip);
+		this.MetaDB_map = new HashMap<Integer, String>();
+		for (String srv_ip : this.MetaDB_list ) {
+			this.MetaDB_map.put(sid, srv_ip);
 			sid++;
 		}
-		return MetaDB_map;
+		return this.MetaDB_map;
 	}
+	
+	/**
+	 * Build MetaDB server port to ID map
+	 * @return MetaDB server IP to ID map.
+	 */
+	private Map<Integer, Integer> BuildPortMap() {
+		int sid = 0;
+		this.port_map = new HashMap<Integer, Integer>();
+		for (Integer srv_ip : this.port_list ) {
+			this.port_map.put(sid, srv_ip);
+			sid++;
+		}
+		return this.port_map;
+	}
+	
 	
 	/**
 	 * A public API to get serverless TCP server port.
@@ -193,7 +214,7 @@ public class ServerlessIndexFSConfig {
 	}
 	
 	/**
-	 * A public API to get serverless IndexFS server ID.
+	 * A public API to get serverless IndexFS server ID list.
 	 * @return MetaDB server IP list.
 	 */
 	public List<String> GetMetaDBList() {
@@ -201,7 +222,7 @@ public class ServerlessIndexFSConfig {
 	}
 	
 	/**
-	 * A public API to get serverless IndexFS server ID.
+	 * A public API to get serverless IndexFS server port list.
 	 * @return MetaDB server port list.
 	 */
 	public List<Integer> GetPortList() {
@@ -209,11 +230,19 @@ public class ServerlessIndexFSConfig {
 	}
 	
 	/**
-	 * A public API to get serverless IndexFS server ID.
+	 * A public API to get serverless IndexFS server ID map.
 	 * @return MetaDB server ID-IP mapping.
 	 */
 	public Map<Integer, String> GetMetaDBMap() {
 		return this.MetaDB_map;
+	}
+	
+	/**
+	 * A public API to get serverless IndexFS server port map.
+	 * @return MetaDB server ID-IP mapping.
+	 */
+	public Map<Integer, Integer> GetPortMap() {
+		return this.port_map;
 	}
 	
 	public void PrintMetaDBList() {

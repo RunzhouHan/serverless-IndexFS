@@ -78,7 +78,7 @@ fi
 if test ! -e $METADB_BUILD/metadb
 then
   echo "Cannot find the metadb server binary -- oops"
-  echo "It is supposed to be found at $METADB_BUILD/metadb"
+  echo "It is supposed to be found at $METADB_BUILD/metadb_server"
   exit 1
 fi
 
@@ -148,13 +148,14 @@ for srv_addr in \
 do
   METADB_ID=$((${METADB_ID:-"-1"} + 1)) # starts from 0
   METADB_RUN=$METADB_ROOT/run/s$METADB_ID
-  ssh $(echo $srv_addr | cut -d':' -f1) "env \
+  # ssh $(echo $srv_addr | cut -d':' -f1) 
+  env \
       METADB_ID=$METADB_ID \
       METADB_CONF_DIR=$METADB_CONF_DIR \
       METADB_ROOT=$METADB_ROOT \
       METADB_RUN=$METADB_RUN \
       METADB_BUILD=$METADB_BUILD \
-  $METADB_HOME/sbin/start-metadb.sh $srv_addr" || report_error $srv_addr
+  $METADB_HOME/sbin/start-metadb.sh $srv_addr || report_error $srv_addr
 done
 
 exit 0

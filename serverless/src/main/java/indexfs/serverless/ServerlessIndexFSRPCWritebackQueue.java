@@ -43,6 +43,12 @@ public class ServerlessIndexFSRPCWritebackQueue {
 	public Map<Integer, String> server_map;
 	
 	/**
+	 * Server id to ip map. This is set to be public because it will be used in 
+	 * srvless_IndexFS_server.NextInode().
+	 */
+	public Map<Integer, Integer> port_map;
+	
+	/**
 	 * Server id to operation map
 	 */
 	private HashMap<Integer, ArrayList<ServerlessIndexFSOperationParameters>> op_map;
@@ -67,6 +73,7 @@ public class ServerlessIndexFSRPCWritebackQueue {
 		this.config = config;
 		this.mdb_svrless_ctx = new ServerlessIndexFSCtx();
 		this.server_map = config.GetMetaDBMap();
+		this.port_map = config.GetPortMap();
 		this.op_map = new HashMap<Integer, ArrayList<ServerlessIndexFSOperationParameters>>();
 		initialize_map(config.GetMetaDBNum());
 		this.NumtoCommit = config.NumtoCommit;
@@ -109,7 +116,8 @@ public class ServerlessIndexFSRPCWritebackQueue {
 		int ret = 0;
 //		System.out.println("Server ID: " + server_id + ": " + server_map.get((int)server_id) + ": " + port);
 		try {
-			TTransport socket = new TSocket(server_map.get((int)server_id),port);
+			System.out.println("ServerlessIndexFSRPCWritebackQueue: commit(): " + "commit to " + server_map.get((int)server_id) + ":" + port_map.get((int)server_id));
+			TTransport socket = new TSocket(server_map.get((int)server_id),port_map.get((int)server_id));
 			TProtocol protocol = new TBinaryProtocol(socket);
 	    	MetaDBService.Client mdb_client = new MetaDBService.Client(protocol);
 	    	socket.open(); 
@@ -169,6 +177,7 @@ public class ServerlessIndexFSRPCWritebackQueue {
 			op_map.get(server_id).add(op_param);
 			short server_id_ = server_id > Short.MAX_VALUE ? Short.MAX_VALUE : server_id < Short.MIN_VALUE ? Short.MIN_VALUE : (short)server_id;
 			ret = commit(server_id_, port);
+			System.out.println("ServerlessIndexFSRPCWritebackQueue: write_counter(): " + "commit to " + String.valueOf(server_id_));
 			empty_map(server_id);
 		}
 		
