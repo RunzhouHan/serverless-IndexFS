@@ -1,2 +1,3 @@
-file_dir=/home/osboxes/Desktop/metadb/_DATA_
-db_root=/home/osboxes/Desktop/metadb/_META_
+file_dir=/mnt/beegfs/metadb/_DATA_
+db_root=/mnt/beegfs/metadb/_META_
+

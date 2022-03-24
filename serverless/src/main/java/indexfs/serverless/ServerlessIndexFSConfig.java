@@ -215,4 +215,14 @@ public class ServerlessIndexFSConfig {
 	public Map<Integer, String> GetMetaDBMap() {
 		return this.MetaDB_map;
 	}
+	
+	public void PrintMetaDBList() {
+		if (this.MetaDB_list != null) {
+			System.out.println("MetaDB server list: ");
+			for(int i=0; i < this.MetaDB_list.size(); i++){
+			    System.out.println(this.MetaDB_list.get(i) 
+			    		+ ":" + this.port_list.get(i));
+			} 
+		}
+	}
 }
