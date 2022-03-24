@@ -66,6 +66,7 @@ public class ServerlessIndexFSMain {
 		System.out.println("set indexfs server rank " + parsed_args.deployment_id);
 
 		config = new ServerlessIndexFSConfig(parsed_args);
+		config.PrintMetaDBList();
 		
 		driver = new ServerlessIndexFSDriver(config, parsed_args); // serverless run uncomment this
 		

@@ -224,5 +224,8 @@ public class ServerlessIndexFSConfig {
 			    		+ ":" + this.port_list.get(i));
 			} 
 		}
+		else {
+			System.out.println("MetaDB server is null!");
+		}
 	}
 }
