@@ -54,6 +54,11 @@ public class ServerlessIndexFSServer {
 	 * srvless_IndexFS_server.NextInode().
 	 */
 	public Map<Integer, String> server_map;	
+	
+	/**
+	 * Cache hit count 
+	 */
+	public long cache_hit;
 
 	/** 
 	 * Constructor
@@ -76,7 +81,8 @@ public class ServerlessIndexFSServer {
 		this.server_map = config.GetMetaDBMap();
 		this.op = new ServerlessIndexFSOperationParameters();
 		this.stat = new StatInfo();
-//		this.tcp_srv_ = new srvless_IndexFS_TCPlistener();
+		this.cache_hit = 0;
+		
 	}
 	
     /**
@@ -307,6 +313,7 @@ public class ServerlessIndexFSServer {
 	 */
 	public StatInfo Getattr(String path, OID obj_id, int port) {
 		// Look into LRU cache first. 
+		int cache_hit = 0;
 		StatInfo stat = cache.get(path);		
 		if (stat == null) {
 		    // Object not in cache. Send RPC request and put metadata in LRU cache.
@@ -339,7 +346,10 @@ public class ServerlessIndexFSServer {
 				System.out.println(path + " doesn't exist!");
 			}
 		}
-		System.out.println("ServerlessIndexFSServer:Getattr: " + path + ": " + stat);
+		else {
+			cache_hit += 1;
+		}
+		System.out.println("ServerlessIndexFSServer:Getattr: " + path + ": " + stat + "Cache hit: " + cache_hit);
 
 		return stat;
 	}
