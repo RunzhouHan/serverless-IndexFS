@@ -70,10 +70,7 @@ public class ServerlessIndexFSTCPClient {
     
     private ServerlessIndexFSInputParser parser;
     
-        
-    private DataInputStream in;
-    private DataOutputStream out;
-        
+       
     /**
      * Constructor
      * @param config
@@ -118,6 +115,8 @@ public class ServerlessIndexFSTCPClient {
     public void receivePayload() throws IOException {
     	System.out.println("ServerlessIndexFSTCPClient.receivePayload");
     	DataInputStream in = new DataInputStream(clientSocket.getInputStream());
+    	DataOutputStream out = new DataOutputStream(clientSocket.getOutputStream());
+    	PrintWriter strwriter = new PrintWriter(clientSocket.getOutputStream());
     	InputStreamReader reader = new InputStreamReader(in);
     	BufferedReader b_reader = new BufferedReader(reader);
     	ServerlessIndexFSParsedArgs parsed_args = new ServerlessIndexFSParsedArgs();
@@ -143,12 +142,19 @@ public class ServerlessIndexFSTCPClient {
 //        		inputLine = b_reader.readLine();
 //        		if (inputLine != null) {
             while ((inputLine = b_reader.readLine()) != null) {
-//        			System.out.println(inputLine);
 	            	tmp1 = System.nanoTime();
 	            	parsed_args = parser.inputStringParse(inputLine);
 	            	duration_parse += System.nanoTime()-tmp1;
 	            	tmp2 = System.nanoTime();
-	    			driver.proceedClientRequest(parsed_args);
+	    			int op_type = driver.proceedClientRequest(parsed_args);
+	    			if(op_type == 1) {
+	    				// Read operation. Send result back to IndexFS client
+	    				System.out.println("Send out read result: " + String.valueOf(driver.stat.id));
+//	    				out.writeBytes(String.valueOf(driver.stat.id));
+//	    				out.flush();
+	    				strwriter.print(String.valueOf(driver.stat.id));
+	    				strwriter.flush();
+	    			}
 	    			duration_one = System.nanoTime() - tmp2;
 	    			duration_proceed += duration_one;
 	    			if ((duration_one/1000000) > 10) {
@@ -163,6 +169,9 @@ public class ServerlessIndexFSTCPClient {
 			System.out.println("readline parse duration(ms): " + duration_parse/1000000);
 			System.out.println("readline proceed duration(ms): " + duration_proceed/1000000);
 			System.out.println("readline duration(ms): " + duration);
+			
+			strwriter.close();
+			
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace(); disconnect();;

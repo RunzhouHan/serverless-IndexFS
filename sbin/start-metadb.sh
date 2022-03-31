@@ -107,7 +107,7 @@ metadb_addr=${1-"`hostname -s`"}
 echo "Starting metadb server $METADB_ID at $metadb_addr, logging to $METADB_LOGS ..."
 
 # start metadb server
-nohup $METADB_BUILD/metadb \
+# nohup $METADB_BUILD/metadb \
 $METADB_BUILD/metadb \
     --metadbid="$METADB_ID" \
     --log_dir="$METADB_LOGS" \
@@ -115,7 +115,7 @@ $METADB_BUILD/metadb \
     --db_root="$METADB_ROOT/_META_" \
     --configfn="$METADB_CONF_DIR/metadb_conf" \
     --metadblstfn="$METADB_CONF_DIR/server_list" \
-  1>$METADB_LOGS/metadb.STDOUT 2>$METADB_LOGS/metadb.STDERR </dev/null &
+  # 1>$METADB_LOGS/metadb.STDOUT 2>$METADB_LOGS/metadb.STDERR </dev/null &
 
 echo "$!" | tee $METADB_PID_FILE &>/dev/null
 

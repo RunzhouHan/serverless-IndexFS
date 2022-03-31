@@ -35,13 +35,14 @@ def tcp_server(num):
         try:
             connection, client_address = sock.accept()
             print(sys.stdout, "Waiting for a connection at %s/%d" % (client_address[0], client_address[1]))
-            #data = connection.recv(1024)
-            #print(sys.stdout, data)
+            data = connection.recv(1024)
+            print(sys.stdout, data)
         except:
             print(sys.stdout,"connection already set up")
 
         try:
             print(sys.stdout, "Sending workload to serverless IndexFS")
+            # Write
             m1 = current_milli_time()
             for i in range(0, num):
                 file_id = i
@@ -49,17 +50,33 @@ def tcp_server(num):
                 file_path = '/' + file_name
                 dir_id = 0
                 path_depth = 0
-                PARAMS = "127.0.0.1 10086 0 0 Mknod %s %d %d %s, \n"% (file_path, dir_id, path_depth, file_name);
-                print(PARAMS)
+                PARAMS = "127.0.0.1 10086 0 0 Mknod %s %d %d %s \n"% (file_path, dir_id, path_depth, file_name);
+                # print(PARAMS)
                 connection.sendall(bytes(PARAMS, encoding = "utf8"))
+
             m2 = current_milli_time()
             time_elapsed = m2-m1
-            print(sys.stdout, "Finished %d I/O requests in %d miliseconds" % (num,time_elapsed))
+            print(sys.stdout, "Finished %d file create in %d miliseconds" % (num,time_elapsed))
+           
+            # Read
+            m1 = current_milli_time()
+            for i in range(0, num):
+                file_id = i
+                file_name = 'file_' + str(i)
+                file_path = '/' + file_name
+                dir_id = 0
+                path_depth = 0
+                PARAMS = "127.0.0.1 10086 0 0 Getattr %s %d %d %s \n"% (file_path, dir_id, path_depth, file_name);
+                connection.sendall(bytes(PARAMS, encoding = "utf8"))
+                data = connection.recv(1024)
+                print(sys.stdout, data)
+            m2 = current_milli_time()
+            time_elapsed = m2-m1
+            print(sys.stdout, "Finished %d file read in %d miliseconds" % (num,time_elapsed))
 
         finally:
             # Clean up the connection
-            # time.sleep(5)
-            # connection.close()
+            connection.close()
             pass
         #except KeyboardInterrupt:
             #if connection:
@@ -67,7 +84,7 @@ def tcp_server(num):
                 #break
 
 def main():
-        num = 1000
+        num = 10
         m1 = current_milli_time()
         tcp_server(num)
         m2 = current_milli_time()

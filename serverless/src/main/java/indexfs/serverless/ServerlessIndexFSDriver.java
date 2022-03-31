@@ -26,6 +26,17 @@ public class ServerlessIndexFSDriver {
 	private int serverless_server_id;
 	
 	/**
+	 * 0: write
+	 * 1: read 
+	 */
+	int op_type;
+	
+	/**
+	 * A stat buffer for read result
+	 */
+	StatInfo stat;
+	
+	/**
 	 * Constructor.
 	 */
 	public ServerlessIndexFSDriver(ServerlessIndexFSConfig config, ServerlessIndexFSParsedArgs parsed_args) {
@@ -65,40 +76,44 @@ public class ServerlessIndexFSDriver {
 	 * @param OID OID of the target object.
 	 */
 	public int proceedClientRequest(ServerlessIndexFSParsedArgs parsed_args) {
-		
+		System.out.println("ServerlessIndexFSDriver:proceedClientRequest(): " 
+				+ parsed_args.op_type + ": "+parsed_args.obj_id);
+
 		OID obj_id = parsed_args.obj_id;
 		
 		if (obj_id != null) {
 			// TODO Remove prints after testing.
-//			System.out.println(obj_id);
-//			System.out.println(parsed_args.op_type);
 			if (parsed_args.op_type.equals("Mknod")) {
-//				System.out.println("Mknod:"+parsed_args.path+", "+obj_id+", ");
 				index_srv_.Mknod(parsed_args.path, obj_id, 0, zeroth_port);
+				this.op_type = 0;
 			}
-			else if (parsed_args.op_type == "Mkdir") {
+			else if (parsed_args.op_type.equals("Mkdir")) {
 				int server_id = ThreadLocalRandom.current().nextInt(0, config.GetMetaDBNum());
 				index_srv_.Mkdir(parsed_args.path, obj_id, 0, server_id, 0, zeroth_port);
+				this.op_type = 0;
 			}
 			
-			else if (parsed_args.op_type == "Getattr") {
-				StatInfo info = index_srv_.Getattr(parsed_args.path, obj_id, zeroth_port);
-				// TODO Send object metadata back to IndexFS client.
+			else if (parsed_args.op_type.equals("Getattr")) {
+				stat = index_srv_.Getattr(parsed_args.path, obj_id, zeroth_port);
+				this.op_type = 1;
 			}
 			
-			else if (parsed_args.op_type == "Chown") {
+			else if (parsed_args.op_type.equals("Chown")) {
 				index_srv_.Chown(parsed_args.path, obj_id, (short)0, (short)0, zeroth_port);
+				this.op_type = 0;
 			}
 
-			else if (parsed_args.op_type == "Chmod") {
+			else if (parsed_args.op_type.equals("Chmod")) {
 				index_srv_.Chmod(parsed_args.path, obj_id, 0, zeroth_port);
+				this.op_type = 0;
 			}
 			
-			else if (parsed_args.op_type == "FlushDB") {
+			else if (parsed_args.op_type.equals("FlushDB")) {
 				index_srv_.FlushDB(zeroth_port);
+				this.op_type = 0;
 			}
 		}
-		return 0;
+		return this.op_type;
 	}
 
 	/**

@@ -223,7 +223,6 @@ public class ServerlessIndexFSServer {
 		// TASK-I: link the new file
 		queue.write_counter(server_id, port, op);
 		System.out.println("ServerlessIndexFSServer:Mknod: " + path + ": " + server_id);
-//		System.out.println("Mknod put in queue");
 		reset_op();
 
 		/**
@@ -308,8 +307,7 @@ public class ServerlessIndexFSServer {
 	 */
 	public StatInfo Getattr(String path, OID obj_id, int port) {
 		// Look into LRU cache first. 
-		StatInfo stat = cache.get(path);
-		
+		StatInfo stat = cache.get(path);		
 		if (stat == null) {
 		    // Object not in cache. Send RPC request and put metadata in LRU cache.
 			int obj_idx = 0;
@@ -341,6 +339,8 @@ public class ServerlessIndexFSServer {
 				System.out.println(path + " doesn't exist!");
 			}
 		}
+		System.out.println("ServerlessIndexFSServer:Getattr: " + path + ": " + stat);
+
 		return stat;
 	}
 		
