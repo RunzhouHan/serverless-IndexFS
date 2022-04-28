@@ -21,7 +21,7 @@ SUBDIRS += util
 SUBDIRS += ipc
 SUBDIRS += metadb
 # SUBDIRS += server
-# SUBDIRS += client
+SUBDIRS += client
 
 # --------------------------------
 # Performance Testing
@@ -39,8 +39,14 @@ SUBDIRS += metadb
 # Client Toolkit
 # --------------------------------
 
-# SUBDIRS += c
-# SUBDIRS += bin
+SUBDIRS += c
+SUBDIRS += bin
+
+# --------------------------------
+# Serverless Function Invoker
+# --------------------------------
+SUBDIRS += c_serverless
+
 
 #if BUILD_FUSE
 #  SUBDIRS += fuse

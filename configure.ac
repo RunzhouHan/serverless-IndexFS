@@ -592,6 +592,7 @@ AC_CONFIG_FILES([Makefile
                  server/Makefile
                  client/Makefile
                  c/Makefile
+		 c_serverless/Makefile
                  bin/Makefile
                  io_test/Makefile])
 AC_OUTPUT

@@ -4,18 +4,22 @@ import time
 import socket
 import sys
 import json
+import threading
 
 
 def current_milli_time():
     return round(time.time()*1000)
 
-def tcp_server(num):
+# def tcp_server(num):
+def tcp_server(num, num_of_clients):
+        num = 10000
         sock = socket.socket()
 
         print(sys.stdout,"sock ready")
 
         # Bind the socket to the port
-        server_address = ("127.0.0.1", 2004)
+        server_address = ("127.0.0.1", 2004+num_of_clients)
+        print(2004+num_of_clients)
 
         sock.bind(server_address)
 
@@ -69,7 +73,7 @@ def tcp_server(num):
                 PARAMS = "127.0.0.1 10086 0 0 Getattr %s %d %d %s \n"% (file_path, dir_id, path_depth, file_name);
                 connection.sendall(bytes(PARAMS, encoding = "utf8"))
                 data = connection.recv(1024)
-                print(sys.stdout, data)
+                # print(sys.stdout, data)
             m2 = current_milli_time()
             time_elapsed = m2-m1
             print(sys.stdout, "Finished %d file read in %d miliseconds" % (num,time_elapsed))
@@ -84,11 +88,19 @@ def tcp_server(num):
                 #break
 
 def main():
-        num = 1000
+        num = 5000
         m1 = current_milli_time()
-        tcp_server(num)
+        num_of_clients = 64
+        threads = list()
+        for index in range(num_of_clients): 
+            x = threading.Thread(target=tcp_server, args=(num_of_clients, index))
+            threads.append(x)
+            x.start()
+        # tcp_server(num, num_of_clients)
+        # tcp_server(num)
         m2 = current_milli_time()
         time_elapsed = m2-m1
+        x.join()
         print("+ %d files creations used time(s): %d\n" % (num, time_elapsed))
 
 

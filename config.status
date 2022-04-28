@@ -393,7 +393,7 @@ on `(hostname || uname -n) 2>/dev/null | sed 1q`
 "
 
 # Files that config.status was made for.
-config_files=" Makefile lib/leveldb/Makefile thrift/Makefile common/Makefile util/Makefile metadb/Makefile ipc/Makefile server/Makefile client/Makefile c/Makefile bin/Makefile io_test/Makefile"
+config_files=" Makefile lib/leveldb/Makefile thrift/Makefile common/Makefile util/Makefile metadb/Makefile ipc/Makefile server/Makefile client/Makefile c/Makefile c_serverless/Makefile bin/Makefile io_test/Makefile"
 config_headers=" config.h"
 config_commands=" depfiles libtool"
 
@@ -654,7 +654,7 @@ hardcode_minus_L='no'
 hardcode_shlibpath_var='unsupported'
 hardcode_automatic='no'
 inherit_rpath='no'
-link_all_deplibs='no'
+link_all_deplibs='unknown'
 always_export_symbols='no'
 export_symbols_cmds='$NM $libobjs $convenience | $global_symbol_pipe | $SED '\''s/.* //'\'' | sort | uniq > $export_symbols'
 exclude_expsyms='_GLOBAL_OFFSET_TABLE_|_GLOBAL__F[ID]_.*'
@@ -726,7 +726,7 @@ hardcode_minus_L_CXX='no'
 hardcode_shlibpath_var_CXX='unsupported'
 hardcode_automatic_CXX='no'
 inherit_rpath_CXX='no'
-link_all_deplibs_CXX='no'
+link_all_deplibs_CXX='unknown'
 always_export_symbols_CXX='no'
 export_symbols_cmds_CXX='$NM $libobjs $convenience | $global_symbol_pipe | $SED '\''s/.* //'\'' | sort | uniq > $export_symbols'
 exclude_expsyms_CXX='_GLOBAL_OFFSET_TABLE_|_GLOBAL__F[ID]_.*'
@@ -815,6 +815,7 @@ do
     "server/Makefile") CONFIG_FILES="$CONFIG_FILES server/Makefile" ;;
     "client/Makefile") CONFIG_FILES="$CONFIG_FILES client/Makefile" ;;
     "c/Makefile") CONFIG_FILES="$CONFIG_FILES c/Makefile" ;;
+    "c_serverless/Makefile") CONFIG_FILES="$CONFIG_FILES c_serverless/Makefile" ;;
     "bin/Makefile") CONFIG_FILES="$CONFIG_FILES bin/Makefile" ;;
     "io_test/Makefile") CONFIG_FILES="$CONFIG_FILES io_test/Makefile" ;;
 
@@ -973,11 +974,11 @@ S["MKDIR_P"]="/bin/mkdir -p"
 S["INSTALL_STRIP_PROGRAM"]="$(install_sh) -c -s"
 S["STRIP"]="strip"
 S["install_sh"]="${SHELL} /home/runzhou/indexfs-0.4/serverless-IndexFS/install-sh"
-S["MAKEINFO"]="makeinfo"
-S["AUTOHEADER"]="autoheader"
-S["AUTOMAKE"]="automake-1.15"
-S["AUTOCONF"]="autoconf"
-S["ACLOCAL"]="aclocal-1.15"
+S["MAKEINFO"]="${SHELL} /home/runzhou/indexfs-0.4/serverless-IndexFS/missing makeinfo"
+S["AUTOHEADER"]="${SHELL} /home/runzhou/indexfs-0.4/serverless-IndexFS/missing autoheader"
+S["AUTOMAKE"]="${SHELL} /home/runzhou/indexfs-0.4/serverless-IndexFS/missing automake-1.15"
+S["AUTOCONF"]="${SHELL} /home/runzhou/indexfs-0.4/serverless-IndexFS/missing autoconf"
+S["ACLOCAL"]="${SHELL} /home/runzhou/indexfs-0.4/serverless-IndexFS/missing aclocal-1.15"
 S["VERSION"]="0.4.1"
 S["PACKAGE"]="indexfs"
 S["CYGPATH_W"]="echo"
@@ -1566,6 +1567,7 @@ $as_echo X"$file" |
     cat <<_LT_EOF >> "$cfgfile"
 #! $SHELL
 # Generated automatically by $as_me ($PACKAGE) $VERSION
+# Libtool was configured on host `(hostname || uname -n) 2>/dev/null | sed 1q`:
 # NOTE: Changes made to this file will be lost: look at ltmain.sh.
 
 # Provide generalized library-building support services.

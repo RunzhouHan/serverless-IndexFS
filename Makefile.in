@@ -162,8 +162,7 @@ CTAGS = ctags
 CSCOPE = cscope
 DIST_SUBDIRS = $(SUBDIRS)
 am__DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/config.h.in ar-lib \
-	compile config.guess config.sub depcomp install-sh ltmain.sh \
-	missing
+	compile config.guess config.sub install-sh ltmain.sh missing
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 distdir = $(PACKAGE)-$(VERSION)
 top_distdir = $(distdir)
@@ -343,9 +342,7 @@ ACLOCAL_AMFLAGS = -I m4 ${ACLOCAL_FLAGS}
 # --------------------------------
 # Main Modules
 # --------------------------------
-SUBDIRS = lib/leveldb thrift common util ipc metadb
 # SUBDIRS += server
-# SUBDIRS += client
 
 # --------------------------------
 # Performance Testing
@@ -363,8 +360,11 @@ SUBDIRS = lib/leveldb thrift common util ipc metadb
 # Client Toolkit
 # --------------------------------
 
-# SUBDIRS += c
-# SUBDIRS += bin
+# --------------------------------
+# Serverless Function Invoker
+# --------------------------------
+SUBDIRS = lib/leveldb thrift common util ipc metadb client c bin \
+	c_serverless
 
 #if BUILD_FUSE
 #  SUBDIRS += fuse

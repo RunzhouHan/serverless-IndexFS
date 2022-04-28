@@ -6,6 +6,8 @@
 #define _INDEXFS_C_CLI_SERVERLESS_INTERFACE_H_
 
 #include "c/cli_types.h"
+#include <string>
+
 
 #ifdef __cplusplus
 extern "C" {
@@ -33,11 +35,11 @@ extern int idxfs_destroy_client(cli_t* cli);
 
 // Create a new file at the given path.
 //
-extern int idxfs_mknod(cli_t* cli, const char* path, mode_t mode);
+std::string idxfs_mknod(const std::string path, const std::string file_name, mode_t mode);
 
 // Make a new directory at the given path.
 //
-extern int idxfs_mkdir(cli_t* cli, const char* path, mode_t mode);
+std::string idxfs_mkdir(const std::string path, const std::string file_name, mode_t mode);
 
 // Remove an empty directory identified by the given path.
 //

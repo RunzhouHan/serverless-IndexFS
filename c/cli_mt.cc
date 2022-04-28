@@ -7,7 +7,6 @@
 #include "c/libclient.h"
 
 #ifdef _HAS_IDXFS
-#include "c/cli_svrless.h"
 #else
 #include "c/cli.h"
 #endif

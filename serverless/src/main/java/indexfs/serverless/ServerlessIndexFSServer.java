@@ -37,7 +37,8 @@ public class ServerlessIndexFSServer {
 	/**
 	 * An LRU cache maintains metadata of most recently written/read objects.
 	 */
-	LinkedHashMap<String, StatInfo> cache;
+//	LinkedHashMap<String, StatInfo> cache;
+	InMemoryStatInfoCache cache;
 
 	/**
 	 * Stores every necessary for a metadata operation.
@@ -58,7 +59,7 @@ public class ServerlessIndexFSServer {
 	/**
 	 * Cache hit count 
 	 */
-	public long cache_hit;
+	public long cache_hit = 0;
 
 	/** 
 	 * Constructor
@@ -71,13 +72,13 @@ public class ServerlessIndexFSServer {
 		this.didx.config_ = config;
 		this.queue = new ServerlessIndexFSRPCWritebackQueue(config);
 		
-		cache = new LinkedHashMap<String, StatInfo>(config.LRU_capacity+1, .75F, true) {
-	        // This method is called just after a new entry has been added
-	        public boolean removeEldestEntry(Map.Entry<String, StatInfo> eldest) {
-	            return size() > config.LRU_capacity;
-	        }
-	    };
-	    
+//		this.cache = new LinkedHashMap<String, StatInfo>(config.cache_capacity+1, .75F, true) {
+//	        // This method is called just after a new entry has been added
+//	        public boolean removeEldestEntry(Map.Entry<String, StatInfo> eldest) {
+//	            return size() > config.cache_capacity;
+//	        }
+//	    };
+		this.cache = new InMemoryStatInfoCache(config, 1000, 0.75F);
 		this.server_map = config.GetMetaDBMap();
 		this.op = new ServerlessIndexFSOperationParameters();
 		this.stat = new StatInfo();
@@ -215,7 +216,8 @@ public class ServerlessIndexFSServer {
 	public void Mknod(String path, OID obj_id, int perm, int port) {
 		// Put file metadata into LRU_cache.	
 		fillInStat(true, -1, 0);
-		cache.put(path, stat);
+//		cache.put(path, stat);
+		cache.put(path, stat.id, stat);
 
 		// Compute the server id based on file path.
 		int server_id = didx.GetServer(path);
@@ -263,7 +265,8 @@ public class ServerlessIndexFSServer {
 		
 		// Put directory metadata into LRU_cache.	
 		fillInStat(false, ino, 0);
-		cache.put(path, stat);
+//		cache.put(path, stat);
+		cache.put(path, stat.id, stat);
 		reset_op();
 		
 		int obj_idx = 0;
@@ -313,8 +316,13 @@ public class ServerlessIndexFSServer {
 	 */
 	public StatInfo Getattr(String path, OID obj_id, int port) {
 		// Look into LRU cache first. 
-		int cache_hit = 0;
-		StatInfo stat = cache.get(path);		
+//		StatInfo stat = cache.get(path);
+		StatInfo stat = cache.getByPath(path);	
+		System.out.println(stat);
+
+//		System.out.println("ServerlessIndexFSServer:Getattr: " + path + ": " 
+//				+ stat.id + "Cache miss: " + cache.getNumCacheMissesCurrentRequest());
+		
 		if (stat == null) {
 		    // Object not in cache. Send RPC request and put metadata in LRU cache.
 			int obj_idx = 0;
@@ -339,7 +347,8 @@ public class ServerlessIndexFSServer {
 			
 			// Object is found, put it in LRU cache.
 			if (stat != null) {
-				cache.put(path, stat);
+//				cache.put(path, stat);
+				cache.put(path, stat.id, stat);
 			}
 			// Object is not found in MetaDB.
 			else {
@@ -347,9 +356,10 @@ public class ServerlessIndexFSServer {
 			}
 		}
 		else {
-			cache_hit += 1;
+			this.cache_hit += 1;
 		}
-		System.out.println("ServerlessIndexFSServer:Getattr: " + path + ": " + stat + "Cache hit: " + cache_hit);
+		System.out.println("ServerlessIndexFSServer:Getattr: " + path + ": " 
+				+ stat.id + " Cache hit: " + this.cache_hit);
 
 		return stat;
 	}

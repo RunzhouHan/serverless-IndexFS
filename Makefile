@@ -162,8 +162,7 @@ CTAGS = ctags
 CSCOPE = cscope
 DIST_SUBDIRS = $(SUBDIRS)
 am__DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/config.h.in ar-lib \
-	compile config.guess config.sub depcomp install-sh ltmain.sh \
-	missing
+	compile config.guess config.sub install-sh ltmain.sh missing
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 distdir = $(PACKAGE)-$(VERSION)
 top_distdir = $(distdir)
@@ -206,13 +205,13 @@ distuninstallcheck_listfiles = find . -type f -print
 am__distuninstallcheck_listfiles = $(distuninstallcheck_listfiles) \
   | sed 's|^\./|$(prefix)/|' | grep -v '$(infodir)/dir$$'
 distcleancheck_listfiles = find . -type f -print
-ACLOCAL = aclocal-1.15
+ACLOCAL = ${SHELL} /home/runzhou/indexfs-0.4/serverless-IndexFS/missing aclocal-1.15
 AMTAR = $${TAR-tar}
 AM_DEFAULT_VERBOSITY = 0
 AR = ar
-AUTOCONF = autoconf
-AUTOHEADER = autoheader
-AUTOMAKE = automake-1.15
+AUTOCONF = ${SHELL} /home/runzhou/indexfs-0.4/serverless-IndexFS/missing autoconf
+AUTOHEADER = ${SHELL} /home/runzhou/indexfs-0.4/serverless-IndexFS/missing autoheader
+AUTOMAKE = ${SHELL} /home/runzhou/indexfs-0.4/serverless-IndexFS/missing automake-1.15
 AWK = mawk
 BACKEND_FLAGS = -DNFS
 CC = gcc
@@ -254,7 +253,7 @@ LIPO =
 LN_S = ln -s
 LTLIBOBJS = 
 LT_SYS_LIBRARY_PATH = 
-MAKEINFO = makeinfo
+MAKEINFO = ${SHELL} /home/runzhou/indexfs-0.4/serverless-IndexFS/missing makeinfo
 MANIFEST_TOOL = :
 MKDIR_P = /bin/mkdir -p
 MPICC = mpicc
@@ -343,9 +342,7 @@ ACLOCAL_AMFLAGS = -I m4 ${ACLOCAL_FLAGS}
 # --------------------------------
 # Main Modules
 # --------------------------------
-SUBDIRS = lib/leveldb thrift common util ipc metadb
 # SUBDIRS += server
-# SUBDIRS += client
 
 # --------------------------------
 # Performance Testing
@@ -363,8 +360,11 @@ SUBDIRS = lib/leveldb thrift common util ipc metadb
 # Client Toolkit
 # --------------------------------
 
-# SUBDIRS += c
-# SUBDIRS += bin
+# --------------------------------
+# Serverless Function Invoker
+# --------------------------------
+SUBDIRS = lib/leveldb thrift common util ipc metadb client c bin \
+	c_serverless
 
 #if BUILD_FUSE
 #  SUBDIRS += fuse

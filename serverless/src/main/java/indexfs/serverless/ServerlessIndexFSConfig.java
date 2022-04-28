@@ -65,9 +65,9 @@ public class ServerlessIndexFSConfig {
 	private Map<Integer, Integer> port_map;
 
 	/**
-	 * Serverless IndexFS LRU cache capacity.
+	 * Serverless IndexFS cache capacity.
 	 */
-	public final int LRU_capacity = 1; // need to check IndexFS setting
+	public final int cache_capacity = 1000; // need to check IndexFS setting
 	
 	/**
 	 * Serverless IndexFS write-back cache capacity before commit.
