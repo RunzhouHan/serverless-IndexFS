@@ -376,7 +376,7 @@ COMM_FLAGS = $(BACKEND_FLAGS) $(SNAPPY_FLAGS) $(PLATFORM) \
 	-DLEVELDB_PLATFORM_POSIX
 AM_CFLAGS = $(EXTRA_INCLUDES) $(COMM_FLAGS) $(EXTRA_CFLAGS)
 AM_CXXFLAGS = $(EXTRA_INCLUDES) $(COMM_FLAGS) $(EXTRA_CFLAGS)
-noinst_HEADERS = cli.h cli_types.h libclient.h cli_svrless.h
+noinst_HEADERS = cli.h cli_types.h libclient.h
 noinst_LTLIBRARIES = libclient_c_idxfs.la
 libclient_c_idxfs_la_SOURCES = cli.cc
 nobase_lib_LTLIBRARIES = libindexfs_st.la libindexfs_mt.la

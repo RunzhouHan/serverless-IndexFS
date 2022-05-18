@@ -429,8 +429,8 @@ client.lo: client.cc /usr/include/stdc-predef.h ../client/client.h \
  /usr/include/c++/5/bits/ostream.tcc /usr/include/c++/5/bits/istream.tcc \
  /usr/include/c++/5/bits/sstream.tcc /usr/local/include/glog/logging.h \
  /usr/local/include/glog/log_severity.h \
- /usr/local/include/glog/vlog_is_on.h /usr/local/include/gflags/gflags.h \
- ../ipc/membset.h ../thrift/MetaDBService.h \
+ /usr/local/include/glog/vlog_is_on.h ../ipc/membset.h \
+ ../thrift/MetadataIndexService.h \
  /usr/local/include/thrift/TDispatchProcessor.h \
  /usr/local/include/thrift/TProcessor.h \
  /usr/local/include/thrift/async/TConcurrentClientSyncInfo.h \
@@ -635,7 +635,8 @@ client.lo: client.cc /usr/include/stdc-predef.h ../client/client.h \
  /usr/include/boost/mpl/aux_/preprocessed/gcc/template_arity.hpp \
  /usr/include/boost/mpl/aux_/preprocessed/gcc/full_lambda.hpp \
  /usr/include/boost/mpl/aux_/preprocessed/gcc/apply.hpp \
- ../thrift/indexfs_types.h ../util/str_hash.h ../common/dirlock.h \
+ ../thrift/indexfs_types.h ../util/str_hash.h ../client/tcp_socket.h \
+ ../c/cli_types.h /usr/include/arpa/inet.h ../common/dirlock.h \
  ../common/dirguard.h ../common/dirctrl.h ../common/didxcache.h \
  ../common/gigaidx.h ../common/lookupcache.h
 
@@ -1671,11 +1672,9 @@ client.lo: client.cc /usr/include/stdc-predef.h ../client/client.h \
 
 /usr/local/include/glog/vlog_is_on.h:
 
-/usr/local/include/gflags/gflags.h:
-
 ../ipc/membset.h:
 
-../thrift/MetaDBService.h:
+../thrift/MetadataIndexService.h:
 
 /usr/local/include/thrift/TDispatchProcessor.h:
 
@@ -2110,6 +2109,12 @@ client.lo: client.cc /usr/include/stdc-predef.h ../client/client.h \
 ../thrift/indexfs_types.h:
 
 ../util/str_hash.h:
+
+../client/tcp_socket.h:
+
+../c/cli_types.h:
+
+/usr/include/arpa/inet.h:
 
 ../common/dirlock.h:
 

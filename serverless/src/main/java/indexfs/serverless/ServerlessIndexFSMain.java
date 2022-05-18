@@ -123,7 +123,7 @@ public class ServerlessIndexFSMain {
 
 		return args;
 	}
-      
+
 	/**
 	 * Local main method.
 	 */
@@ -190,6 +190,7 @@ public class ServerlessIndexFSMain {
 //				duration2 = (t2 - t1)/1000000;
 //				
 //				tcpClient.disconnect();
+//				System.out.println("TCP communication disconnected"); 
 //				long endTime = System.nanoTime();
 //				duration3 = (endTime - startTime)/1000000;
 //				System.out.println("tcpClient.connect() duration(ms): " + duration1);
@@ -206,6 +207,7 @@ public class ServerlessIndexFSMain {
 //									":"+ parsed_args.client_ip);
 //				tcpClient.receivePayload();
 //				tcpClient.disconnect();
+//				System.out.println("TCP communication disconnected"); 
 //			}
 //			else 
 //				System.out.println("Error: TCP flag (true) conflicts with TCP client status (null)");

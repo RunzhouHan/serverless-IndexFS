@@ -10,6 +10,9 @@
 #include "common/config.h"
 #include "common/common.h"
 
+
+using namespace std;
+
 namespace indexfs {
 
 class Client;
@@ -77,13 +80,16 @@ class Client {
   virtual Status Noop() = 0;
   virtual Status Dispose() = 0;
   virtual Status FlushWriteBuffer() = 0;
+  virtual Status FlushWriteBufferTCP() = 0;
+
 
   virtual Status Mknod(const std::string& path, i16 perm) = 0;
   virtual Status Mknod_Flush() = 0;
   virtual Status Mknod_Buffered(const std::string& path, i16 perm) = 0;
   virtual Status Mkdir(const std::string& path, i16 perm) = 0;
   virtual Status Mkdir_Presplit(const std::string& path, i16 perm) = 0;
-  virtual Status Getattr(const std::string& path, StatInfo* info) = 0;
+  // virtual Status Getattr(const std::string& path, StatInfo* info) = 0;
+  virtual Status Getattr(const std::string& path, std::string& info) = 0;
   virtual Status Chmod(const std::string& path, i16 perm, bool* is_dir) = 0;
   virtual Status Chown(const std::string& path, i16 uid, i16 gid, bool* is_dir) = 0;
 

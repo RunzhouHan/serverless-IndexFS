@@ -28,7 +28,7 @@ extern "C" {
 
 #include "common/config.h"
 #include "common/logging.h"
-#include "client/libclient.h"
+#include "c/libclient.h"
 
 using ::leveldb::DB;
 using ::leveldb::Env;

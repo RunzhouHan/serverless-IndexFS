@@ -77,6 +77,15 @@ Status BatchClient::FlushWriteBuffer() {
   return s;
 }
 
+
+Status BatchClient::FlushWriteBufferTCP() {
+  Status s;
+  if (mdb_ != NULL) {
+    s = mdb_->Flush();
+  }
+  return s;
+}
+
 Status BatchClient::Dispose() {
   if (mdb_ != NULL) {
     Status s_ = mdb_->Flush();
@@ -141,18 +150,33 @@ static Status Local_Getattr(MetaDB* db, const OID& oid,
 }
 }
 
-namespace {
-static Status Remote_Getattr(RPC* rpc, const OID& oid, DirIndex* dir_idx,
-                             StatInfo* info) {
-  DLOG_ASSERT(dir_idx != NULL);
-  Status s;
-  int srv_id = dir_idx->SelectServer(oid.obj_name);
-  rpc->GetClient(srv_id)->Getattr(*info, oid);
-  return s;
-}
-}
+// namespace {
+// static Status Remote_Getattr(RPC* rpc, const OID& oid, DirIndex* dir_idx,
+//                              StatInfo* info) {
+//   DLOG_ASSERT(dir_idx != NULL);
+//   Status s;
+//   int srv_id = dir_idx->SelectServer(oid.obj_name);
+//   rpc->GetClient(srv_id)->Getattr(*info, oid);
+//   return s;
+// }
+// }
 
-Status BatchClient::Getattr(const std::string& path, StatInfo* info) {
+// namespace {
+// static
+// Status Remote_Getattr(tcp_socket* socket, int deployment, 
+//         const std::string& path, const OID& oid, std::string& info) {
+//   Status s;
+//   try {
+//     socket->Getattr(deployment, path, oid, info);
+//   } catch (FileNotFoundException &nf) {
+//     s = Status::NotFound(Slice());
+//   }
+//   return s;
+// }
+// }
+
+
+Status BatchClient::Getattr(const std::string& path, std::string& info) {
   Status s;
   OID oid;
   int16_t zeroth_server;
@@ -161,9 +185,9 @@ Status BatchClient::Getattr(const std::string& path, StatInfo* info) {
     return s;
   }
   if (!FLAGS_batch_client_remote_read_mode) {
-    s = Local_Getattr(mdb_, oid, info);
+    // s = Local_Getattr(mdb_, oid, info);
   } else {
-    s = Remote_Getattr(rpc_, oid, dir_idx_, info);
+    // s = Remote_Getattr(rpc_, oid, dir_idx_, info);
   }
   return s;
 }

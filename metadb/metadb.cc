@@ -390,7 +390,7 @@ inline
 int64_t LevelMDB::ReserveNextInodeNo() {
   MutexLock lock(&inode_mu_);
   inode_counter_ += DEFAULT_MAX_NUM_SERVERS;
-  printf("ReserveNextInodeNo\n");
+  printf("ReserveNextInodeNo %d\n", inode_counter_);
   return inode_counter_;
 }
 

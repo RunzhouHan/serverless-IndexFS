@@ -46,7 +46,7 @@ public class ServerlessIndexFSTCPClient extends Thread {
     /**
      * Serverless IndexFS I/O driver.
      */
-    private static ServerlessIndexFSDriver driver;
+    private ServerlessIndexFSDriver driver;
     
     /**
      * Number of Serverless IndexFS clients.
@@ -120,39 +120,33 @@ public class ServerlessIndexFSTCPClient extends Thread {
         	long startTime = System.nanoTime();
         	int i = 0;
     		tmp1 = System.nanoTime();
-//        	while(b_reader.ready() == false) {
-//        		;
-//        	}
-//        	tmp2 = System.nanoTime();
-//        	long duration_wait = (tmp2-tmp1)/1000000;
-//        	System.out.println("BufferedReader ready: " + b_reader.ready());
-//        	System.out.println("Waited BufferedReader ready for (ms): " + duration_wait);
-        	
-//        	while(b_reader.ready()) {
-//        		inputLine = b_reader.readLine();
-//        		if (inputLine != null) {
+
             while ((inputLine = b_reader.readLine()) != null) {
-	            	tmp1 = System.nanoTime();
-	            	parsed_args = parser.inputStringParse(inputLine);
-	            	duration_parse += System.nanoTime()-tmp1;
-	            	tmp2 = System.nanoTime();
-	    			int op_type = driver.proceedClientRequest(parsed_args);
-	    			if(op_type == 1) {
-	    				// Read operation. Send result back to IndexFS client
-	    				System.out.println("Send out read result: " + String.valueOf(driver.stat.id));
-//	    				out.writeBytes(String.valueOf(driver.stat.id));
-//	    				out.flush();
-	    				strwriter.print(String.valueOf(driver.stat.id));
-	    				strwriter.flush();
-	    			}
-	    			duration_one = System.nanoTime() - tmp2;
-	    			duration_proceed += duration_one;
-	    			if ((duration_one/1000000) > 10) {
-	    				System.out.println("file_" + i + " duration " + duration_one/1000000);
-	    			}
-	    			i++;
+            	if (inputLine.length() == 1) {
+            		break;
+            	}
+            	tmp1 = System.nanoTime();
+            	parsed_args = parser.inputStringParse(inputLine);
+            	
+            	duration_parse += System.nanoTime()-tmp1;
+            	tmp2 = System.nanoTime();
+            	int op_type = -1;
+            	if (parsed_args != null) {
+            		op_type = driver.proceedClientRequest(parsed_args);
+            	}
+    			if(op_type == 1) {
+    				// Read operation. Send result back to IndexFS client
+    				System.out.println("Send out read result: " + String.valueOf(driver.stat.id));
+    				strwriter.write(String.valueOf(driver.stat.id));
+    				strwriter.flush();
     			}
-//            }
+    			duration_one = System.nanoTime() - tmp2;
+    			duration_proceed += duration_one;
+    			if ((duration_one/1000000) > 10) {
+    				System.out.println("file_" + i + " duration " + duration_one/1000000);
+    			}
+    			i++;
+			}
 			long endTime = System.nanoTime();
 			long duration = (endTime - startTime)/1000000;
 			System.out.println("Client I/O request finished");

@@ -8,6 +8,7 @@
 #include "ipc/rpc.h"
 #include "util/str_hash.h"
 #include "client/client.h"
+#include "client/tcp_socket.h"
 
 #include "common/logging.h"
 #include "common/dirlock.h"
@@ -44,7 +45,7 @@ class RPCEngine {
 
   Status Getattr(const OID& oid, StatInfo* info);
   Status ReadDir(i64 dir_id, NameList* names);
-  // Status ListDir(i64 dir_id, NameList* names, StatList* stats);
+  Status ListDir(i64 dir_id, NameList* names, StatList* stats);
 
  private:
   int srv_id_;
@@ -59,6 +60,45 @@ class RPCEngine {
   RPCEngine& operator=(const RPCEngine&);
 };
 
+
+class TCPEngine {
+ public:
+
+  explicit TCPEngine(int deployment_id, tcp_socket* socket) :
+      socket_(socket), deployment_id_(deployment_id) {
+  }
+
+  ~TCPEngine() { }
+
+  Status Access(const OID& oid, LookupInfo* info);
+  Status Renew(const OID& oid, LookupInfo* info);
+
+  Status Mknod(const std::string& path, const OID& oid, i16 perm);
+  Status Mknods(const OIDS& oids, int srv_id, i16 perm);
+  Status Mkdir(const std::string& path, const OID& oid, i16 perm);
+  Status Msdir(const OID& oid, i16 perm, i16 hint_srv);
+  // Status Chmod(const OID& oid, i16 perm, bool* is_dir);
+  // Status Chown(const OID& oid, i16 uid, i16 gid, bool* is_dir);
+
+  Status Getattr(const std::string& path, const OID& oid, std::string& info);
+  Status Flush(int deployment);
+
+  // Status ReadDir(i64 dir_id, NameList* names);
+  // Status ListDir(i64 dir_id, NameList* names, StatList* stats);
+
+ private:
+  int deployment_id_;
+  tcp_socket* socket_;
+  // DirIndex* dir_idx_;
+
+  // Max number of server redirection allowed
+  enum { kNumRedirect = 10 };
+
+  // No copying allowed
+  TCPEngine(const TCPEngine&);
+  TCPEngine& operator=(const TCPEngine&);
+};
+
 class ClientImpl: virtual public Client {
  public:
 
@@ -70,6 +110,8 @@ class ClientImpl: virtual public Client {
   Status Noop();
   Status Dispose();
   Status FlushWriteBuffer();
+  Status FlushWriteBufferTCP();
+
 
   void PrintMeasurements(FILE* output) { }
 
@@ -81,7 +123,7 @@ class ClientImpl: virtual public Client {
   Status Chmod(const std::string& path, i16 perm, bool* is_dir);
   Status Chown(const std::string& path, i16 uid, i16 gid, bool* is_dir);
 
-  Status Getattr(const std::string& path, StatInfo* info);
+  Status Getattr(const std::string& path, std::string&  info);
   Status AccessDir(const std::string& path);
   Status ListDir(const std::string& path,
       NameList* names, StatList stats);
@@ -99,65 +141,7 @@ class ClientImpl: virtual public Client {
   Config* config_;
   LookupCache* lookup_cache_;
 
-  static int RandomServer(const std::string& path) {
-    return GetStrHash(path.data(), path.size(), 0)
-            % DEFAULT_MAX_NUM_SERVERS;
-  }
-
-  struct MknodBuffer;
-  std::map<int64_t, MknodBuffer*> mknod_bufmap_;
-  typedef std::map<int64_t, MknodBuffer*>::iterator BufferIter;
-
-  Status FlushBuffer(MknodBuffer* buffer);
-  Status Lookup(const OID& oid, int16_t zeroth_server,
-      LookupInfo* info, bool is_renew);
-  DirIndexEntry* FetchIndex(int64_t dir_id, int16_t zeroth_server);
-  Status ResolvePath(const std::string& path, OID* oid, int16_t* zeroth_server);
-
-  // No copy allowed
-  ClientImpl(const ClientImpl&);
-  ClientImpl& operator=(const ClientImpl&);
-};
-
-class ClientImplHttp: virtual public Client {
- public:
-
-  ClientImplHttp(Config* config, Env* env);
-
-  virtual ~ClientImplHttp();
-
-  Status Init();
-  Status Noop();
-  Status Dispose();
-  Status FlushWriteBuffer();
-
-  void PrintMeasurements(FILE* output) { }
-
-  Status Mknod(const std::string& path, i16 perm);
-  Status Mknod_Flush();
-  Status Mknod_Buffered(const std::string& path, i16 perm);
-  Status Mkdir(const std::string& path, i16 perm);
-  Status Mkdir_Presplit(const std::string& path, i16 perm);
-  Status Chmod(const std::string& path, i16 perm, bool* is_dir);
-  Status Chown(const std::string& path, i16 uid, i16 gid, bool* is_dir);
-
-  Status Getattr(const std::string& path, StatInfo* info);
-  Status AccessDir(const std::string& path);
-  Status ListDir(const std::string& path,
-      NameList* names, StatList stats);
-  Status ReadDir(const std::string& path, NameList* names);
-
-  Status Close(FileHandle* handle);
-  Status Open(const std::string& path, int mode, FileHandle** handle);
-
- private:
-  RPC* rpc_;
-  DirIndexCache* index_cache_;
-  DirIndexPolicy* index_policy_;
-
-  Env* env_;
-  Config* config_;
-  LookupCache* lookup_cache_;
+  tcp_socket* socket_;
 
   static int RandomServer(const std::string& path) {
     return GetStrHash(path.data(), path.size(), 0)
@@ -173,6 +157,7 @@ class ClientImplHttp: virtual public Client {
       LookupInfo* info, bool is_renew);
   DirIndexEntry* FetchIndex(int64_t dir_id, int16_t zeroth_server);
   Status ResolvePath(const std::string& path, OID* oid, int16_t* zeroth_server);
+  Status ResolvePath_serverless(const std::string& path, OID* oid, int16_t* zeroth_server);
 
   // No copy allowed
   ClientImpl(const ClientImpl&);

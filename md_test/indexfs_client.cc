@@ -4,7 +4,7 @@
 
 #include "common/config.h"
 #include "common/logging.h"
-#include "client/libclient.h"
+#include "c/libclient.h"
 
 // libclient's C based interface has already been fully
 // self-implemented in the client module. Here we only need to
@@ -12,11 +12,11 @@
 
 namespace indexfs {
 
-DEFINE_string(configfn, "", /* empty */
-    "please use ENV 'IDXFS_CONFIG_FILE' to set this option");
+// DEFINE_string(configfn, "", /* empty */
+//     "please use ENV 'IDXFS_CONFIG_FILE' to set this option");
 
-DEFINE_string(srvlstfn, "", /* empty */
-    "please use ENV 'IDXFS_SERVER_LIST' to set this option");
+// DEFINE_string(srvlstfn, "", /* empty */
+//     "please use ENV 'IDXFS_SERVER_LIST' to set this option");
 
 #ifdef HDFS
 DEFINE_string(hconfigfn, "", /* empty */

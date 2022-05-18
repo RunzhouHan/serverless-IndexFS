@@ -175,7 +175,8 @@ Status IndexFSClient::MakeDirectories(Path &path) {
     printf("mkdirs %s ... \n", path.c_str());
   }
 # endif
-  StatInfo info;
+  // StatInfo info;
+  std::string info;
   std::string buffer;
   buffer.reserve(path.size());
   size_t entry = path.rfind('/');
@@ -278,7 +279,8 @@ Status IndexFSClient::GetAttr(Path &path) {
     printf("getattr %s ... ", path.c_str());
   }
 # endif
-  StatInfo info;
+  // StatInfo info;
+  std::string info;
   s = cli_->Getattr(path, &info);
 # ifndef NDEBUG
   if (FLAGS_print_ops) {

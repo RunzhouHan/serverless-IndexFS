@@ -434,7 +434,7 @@ cli.lo: cli.cc /usr/include/stdc-predef.h ../c/cli.h ../c/cli_types.h \
  /usr/include/c++/5/bits/ostream.tcc /usr/include/c++/5/bits/istream.tcc \
  /usr/include/c++/5/bits/sstream.tcc /usr/local/include/glog/logging.h \
  /usr/local/include/glog/log_severity.h \
- /usr/local/include/glog/vlog_is_on.h /usr/local/include/gflags/gflags.h
+ /usr/local/include/glog/vlog_is_on.h
 
 /usr/include/stdc-predef.h:
 
@@ -1477,5 +1477,3 @@ cli.lo: cli.cc /usr/include/stdc-predef.h ../c/cli.h ../c/cli_types.h \
 /usr/local/include/glog/log_severity.h:
 
 /usr/local/include/glog/vlog_is_on.h:
-
-/usr/local/include/gflags/gflags.h:

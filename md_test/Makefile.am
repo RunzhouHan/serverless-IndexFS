@@ -60,7 +60,7 @@ noinst_HEADERS += filestat.h
 
 noinst_PROGRAMS =
 noinst_PROGRAMS += mdtest_nobk
-noinst_PROGRAMS += mdtest_bkin
+# noinst_PROGRAMS += mdtest_bkin
 noinst_PROGRAMS += mdtest_posix
 
 if BACKEND_HDFS
@@ -85,25 +85,26 @@ mdtest_nobk_SOURCES += md_test.c
 mdtest_nobk_SOURCES += indexfs_client.cc
 
 mdtest_nobk_LDADD =
-mdtest_nobk_LDADD += $(top_builddir)/client/libclient_c_idxfs.la
-mdtest_nobk_LDADD += $(top_builddir)/client/libclient_idxfs.la
-mdtest_nobk_LDADD += $(top_builddir)/backends/libbackends_idxfs.la
-mdtest_nobk_LDADD += $(top_builddir)/communication/librpc_idxfs.la
+mdtest_nobk_LDADD += $(top_builddir)/c/libclient_c_idxfs.la
+mdtest_nobk_LDADD += $(top_builddir)/c/libindexfs_mt.la
+#mdtest_nobk_LDADD += $(top_builddir)/client/libclient_idxfs.la
+#mdtest_nobk_LDADD += $(top_builddir)/backends/libbackends_idxfs.la
+#mdtest_nobk_LDADD += $(top_builddir)/communication/librpc_idxfs.la
 mdtest_nobk_LDADD += $(top_builddir)/common/libcommon_idxfs.la
 mdtest_nobk_LDADD += $(top_builddir)/thrift/libthrift_idxfs.la
 mdtest_nobk_LDADD += $(top_builddir)/lib/leveldb/libleveldb.la
 
 # -- mdtest on indexfs with bulk insertion
-mdtest_bkin_CFLAGS = $(AM_CFLAGS) $(BULKIN_FLAGS)
-mdtest_bkin_CXXFLAGS = $(AM_CXXFLAGS) $(BULKIN_FLAGS)
+# mdtest_bkin_CFLAGS = $(AM_CFLAGS) $(BULKIN_FLAGS)
+# mdtest_bkin_CXXFLAGS = $(AM_CXXFLAGS) $(BULKIN_FLAGS)
 
-mdtest_bkin_SOURCES =
-mdtest_bkin_SOURCES += city.cc
-mdtest_bkin_SOURCES += md_test.c
-mdtest_bkin_SOURCES += leveldb_client.cc
+# mdtest_bkin_SOURCES =
+# mdtest_bkin_SOURCES += city.cc
+# mdtest_bkin_SOURCES += md_test.c
+# mdtest_bkin_SOURCES += leveldb_client.cc
 
-mdtest_bkin_LDADD =
-mdtest_bkin_LDADD += $(top_builddir)/common/libcommon_idxfs.la
-mdtest_bkin_LDADD += $(top_builddir)/lib/leveldb/libleveldb.la
+# mdtest_bkin_LDADD =
+# mdtest_bkin_LDADD += $(top_builddir)/common/libcommon_idxfs.la
+# mdtest_bkin_LDADD += $(top_builddir)/lib/leveldb/libleveldb.la
 
 ## -------------------------------------------------------------------------

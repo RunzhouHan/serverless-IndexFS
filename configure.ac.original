@@ -592,9 +592,9 @@ AC_CONFIG_FILES([Makefile
                  server/Makefile
                  client/Makefile
                  c/Makefile
+		 c_serverless/Makefile
                  bin/Makefile
-                 io_test/Makefile
-		 md_test/Makefile])
+                 io_test/Makefile])
 AC_OUTPUT
 
 AC_MSG_NOTICE([

@@ -54,7 +54,7 @@
 
 /******************************************************************************************/
 #ifdef _HAS_IDXFS
-#include "client/libclient.h"
+#include "c/libclient.h"
 #endif
 /******************************************************************************************/
 
@@ -422,9 +422,9 @@ void create_remove_items_helper(int dirs,
           }
         }
 #elif defined(_HAS_IDXFS)
-        if (IDX_Rmdir(curr_item) != 0) {
-          FAIL("unable to idxfs_rmdir directory");
-        }
+        // if (IDX_Rmdir(curr_item) != 0) {
+        //   FAIL("unable to idxfs_rmdir directory");
+        // }
 #else
         if (rmdir(curr_item) == -1) {
           FAIL("unable to remove directory");
@@ -660,9 +660,9 @@ void create_remove_items_helper(int dirs,
             fflush( stdout );
           }
 
-          if (IDX_Pwrite(fd, write_buffer, 0, write_bytes) != write_bytes) {
-              FAIL("unable to write file");
-          }
+          // if (IDX_Pwrite(fd, write_buffer, 0, write_bytes) != write_bytes) {
+          //     FAIL("unable to write file");
+          // }
 #else
           if (rank == 0 && verbose >= 3) {
             printf( "V-3: create_remove_items_helper: write...\n" );
@@ -1187,7 +1187,7 @@ void mdtest_stat(int random, int dirs, char *path) {
       }
     }
 #elif defined(_HAS_IDXFS)
-    if (IDX_GetAttr(item, &buf) == -1) {
+    if (IDX_Getattr(item, &buf) == -1) {
       if (dirs) {
         if ( verbose >= 3 ) {
           fprintf( stdout, "V-3: Stat'ing directory \"%s\"\n", item );
@@ -2392,7 +2392,7 @@ void create_remove_directory_tree(int create,
   }
 
   if (currDepth == 0) {
-    sprintf(dir, "%s/%s.%d/", path, base_tree_name, dirNum);
+    sprintf(dir, "%s/%s.%d", path, base_tree_name, dirNum);
 
     if (create) {
       if (rank == 0 && verbose >= 2) {
@@ -2456,7 +2456,7 @@ void create_remove_directory_tree(int create,
     int currDir = dirNum;
 
     for (i=0; i<branch_factor; i++) {
-      sprintf(dir, "%s.%d/", base_tree_name, currDir);
+      sprintf(dir, "%s.%d", base_tree_name, currDir);
       strcat(temp_path, dir);
 
       if (create) {
@@ -2559,6 +2559,12 @@ int main(int argc, char **argv) {
     if (IDX_Init(NULL) != 0) {
       FAIL("unable to idxfs_init fs");
     }
+    // int port_base = 2004;
+    // struct tcp_socket* socket = tcp_socket(1, port_base);
+    // if(tcp_connect(socket, 1, port_base, "connect")) {
+    //     printf("tcp connection faild\n");
+    //     return 1;
+    // }
 #endif
 
     nodeCount = size / count_tasks_per_node();

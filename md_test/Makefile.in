@@ -96,8 +96,8 @@ host_triplet = @host@
 # BULKIN_FLAGS += -DIDXFS_USE_SYS_STAT
 @BACKEND_HDFS_TRUE@am__append_1 = -DIDXFS_USE_HDFS
 @BACKEND_PVFS2_TRUE@am__append_2 = -DIDXFS_USE_PVFS
-noinst_PROGRAMS = mdtest_nobk$(EXEEXT) mdtest_bkin$(EXEEXT) \
-	mdtest_posix$(EXEEXT) $(am__EXEEXT_1)
+noinst_PROGRAMS = mdtest_nobk$(EXEEXT) mdtest_posix$(EXEEXT) \
+	$(am__EXEEXT_1)
 @BACKEND_HDFS_TRUE@am__append_3 = mdtest_hdfs
 subdir = md_test
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -116,33 +116,21 @@ CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 @BACKEND_HDFS_TRUE@am__EXEEXT_1 = mdtest_hdfs$(EXEEXT)
 PROGRAMS = $(noinst_PROGRAMS)
-am_mdtest_bkin_OBJECTS = mdtest_bkin-city.$(OBJEXT) \
-	mdtest_bkin-md_test.$(OBJEXT) \
-	mdtest_bkin-leveldb_client.$(OBJEXT)
-mdtest_bkin_OBJECTS = $(am_mdtest_bkin_OBJECTS)
-mdtest_bkin_DEPENDENCIES = $(top_builddir)/common/libcommon_idxfs.la \
-	$(top_builddir)/lib/leveldb/libleveldb.la
-AM_V_lt = $(am__v_lt_@AM_V@)
-am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
-am__v_lt_0 = --silent
-am__v_lt_1 = 
-mdtest_bkin_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(mdtest_bkin_CXXFLAGS) \
-	$(CXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
 am_mdtest_hdfs_OBJECTS = mdtest_hdfs-md_test.$(OBJEXT) \
 	mdtest_hdfs-hdfs_client.$(OBJEXT)
 mdtest_hdfs_OBJECTS = $(am_mdtest_hdfs_OBJECTS)
 mdtest_hdfs_LDADD = $(LDADD)
+AM_V_lt = $(am__v_lt_@AM_V@)
+am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
+am__v_lt_0 = --silent
+am__v_lt_1 = 
 mdtest_hdfs_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(mdtest_hdfs_CXXFLAGS) \
 	$(CXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
 am_mdtest_nobk_OBJECTS = md_test.$(OBJEXT) indexfs_client.$(OBJEXT)
 mdtest_nobk_OBJECTS = $(am_mdtest_nobk_OBJECTS)
-mdtest_nobk_DEPENDENCIES =  \
-	$(top_builddir)/client/libclient_c_idxfs.la \
-	$(top_builddir)/client/libclient_idxfs.la \
-	$(top_builddir)/backends/libbackends_idxfs.la \
-	$(top_builddir)/communication/librpc_idxfs.la \
+mdtest_nobk_DEPENDENCIES = $(top_builddir)/c/libclient_c_idxfs.la \
+	$(top_builddir)/c/libindexfs_mt.la \
 	$(top_builddir)/common/libcommon_idxfs.la \
 	$(top_builddir)/thrift/libthrift_idxfs.la \
 	$(top_builddir)/lib/leveldb/libleveldb.la
@@ -204,10 +192,10 @@ AM_V_CXXLD = $(am__v_CXXLD_@AM_V@)
 am__v_CXXLD_ = $(am__v_CXXLD_@AM_DEFAULT_V@)
 am__v_CXXLD_0 = @echo "  CXXLD   " $@;
 am__v_CXXLD_1 = 
-SOURCES = $(mdtest_bkin_SOURCES) $(mdtest_hdfs_SOURCES) \
-	$(mdtest_nobk_SOURCES) $(mdtest_posix_SOURCES)
-DIST_SOURCES = $(mdtest_bkin_SOURCES) $(mdtest_hdfs_SOURCES) \
-	$(mdtest_nobk_SOURCES) $(mdtest_posix_SOURCES)
+SOURCES = $(mdtest_hdfs_SOURCES) $(mdtest_nobk_SOURCES) \
+	$(mdtest_posix_SOURCES)
+DIST_SOURCES = $(mdtest_hdfs_SOURCES) $(mdtest_nobk_SOURCES) \
+	$(mdtest_posix_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -394,19 +382,13 @@ mdtest_hdfs_CXXFLAGS = -I$(top_srcdir) -D_HAS_IDXFS $(EXTRA_CFLAGS)
 
 # -- mdtest on indexfs without bulk insertion
 mdtest_nobk_SOURCES = md_test.c indexfs_client.cc
-mdtest_nobk_LDADD = $(top_builddir)/client/libclient_c_idxfs.la \
-	$(top_builddir)/client/libclient_idxfs.la \
-	$(top_builddir)/backends/libbackends_idxfs.la \
-	$(top_builddir)/communication/librpc_idxfs.la \
+#mdtest_nobk_LDADD += $(top_builddir)/client/libclient_idxfs.la
+#mdtest_nobk_LDADD += $(top_builddir)/backends/libbackends_idxfs.la
+#mdtest_nobk_LDADD += $(top_builddir)/communication/librpc_idxfs.la
+mdtest_nobk_LDADD = $(top_builddir)/c/libclient_c_idxfs.la \
+	$(top_builddir)/c/libindexfs_mt.la \
 	$(top_builddir)/common/libcommon_idxfs.la \
 	$(top_builddir)/thrift/libthrift_idxfs.la \
-	$(top_builddir)/lib/leveldb/libleveldb.la
-
-# -- mdtest on indexfs with bulk insertion
-mdtest_bkin_CFLAGS = $(AM_CFLAGS) $(BULKIN_FLAGS)
-mdtest_bkin_CXXFLAGS = $(AM_CXXFLAGS) $(BULKIN_FLAGS)
-mdtest_bkin_SOURCES = city.cc md_test.c leveldb_client.cc
-mdtest_bkin_LDADD = $(top_builddir)/common/libcommon_idxfs.la \
 	$(top_builddir)/lib/leveldb/libleveldb.la
 all: all-am
 
@@ -451,10 +433,6 @@ clean-noinstPROGRAMS:
 	echo " rm -f" $$list; \
 	rm -f $$list
 
-mdtest_bkin$(EXEEXT): $(mdtest_bkin_OBJECTS) $(mdtest_bkin_DEPENDENCIES) $(EXTRA_mdtest_bkin_DEPENDENCIES) 
-	@rm -f mdtest_bkin$(EXEEXT)
-	$(AM_V_CXXLD)$(mdtest_bkin_LINK) $(mdtest_bkin_OBJECTS) $(mdtest_bkin_LDADD) $(LIBS)
-
 mdtest_hdfs$(EXEEXT): $(mdtest_hdfs_OBJECTS) $(mdtest_hdfs_DEPENDENCIES) $(EXTRA_mdtest_hdfs_DEPENDENCIES) 
 	@rm -f mdtest_hdfs$(EXEEXT)
 	$(AM_V_CXXLD)$(mdtest_hdfs_LINK) $(mdtest_hdfs_OBJECTS) $(mdtest_hdfs_LDADD) $(LIBS)
@@ -475,9 +453,6 @@ distclean-compile:
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/indexfs_client.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/md_test.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mdtest_bkin-city.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mdtest_bkin-leveldb_client.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mdtest_bkin-md_test.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mdtest_hdfs-hdfs_client.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mdtest_hdfs-md_test.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mdtest_posix-md_test.Po@am__quote@
@@ -505,20 +480,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LTCOMPILE) -c -o $@ $<
-
-mdtest_bkin-md_test.o: md_test.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(mdtest_bkin_CFLAGS) $(CFLAGS) -MT mdtest_bkin-md_test.o -MD -MP -MF $(DEPDIR)/mdtest_bkin-md_test.Tpo -c -o mdtest_bkin-md_test.o `test -f 'md_test.c' || echo '$(srcdir)/'`md_test.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/mdtest_bkin-md_test.Tpo $(DEPDIR)/mdtest_bkin-md_test.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='md_test.c' object='mdtest_bkin-md_test.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(mdtest_bkin_CFLAGS) $(CFLAGS) -c -o mdtest_bkin-md_test.o `test -f 'md_test.c' || echo '$(srcdir)/'`md_test.c
-
-mdtest_bkin-md_test.obj: md_test.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(mdtest_bkin_CFLAGS) $(CFLAGS) -MT mdtest_bkin-md_test.obj -MD -MP -MF $(DEPDIR)/mdtest_bkin-md_test.Tpo -c -o mdtest_bkin-md_test.obj `if test -f 'md_test.c'; then $(CYGPATH_W) 'md_test.c'; else $(CYGPATH_W) '$(srcdir)/md_test.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/mdtest_bkin-md_test.Tpo $(DEPDIR)/mdtest_bkin-md_test.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='md_test.c' object='mdtest_bkin-md_test.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(mdtest_bkin_CFLAGS) $(CFLAGS) -c -o mdtest_bkin-md_test.obj `if test -f 'md_test.c'; then $(CYGPATH_W) 'md_test.c'; else $(CYGPATH_W) '$(srcdir)/md_test.c'; fi`
 
 mdtest_hdfs-md_test.o: md_test.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(mdtest_hdfs_CFLAGS) $(CFLAGS) -MT mdtest_hdfs-md_test.o -MD -MP -MF $(DEPDIR)/mdtest_hdfs-md_test.Tpo -c -o mdtest_hdfs-md_test.o `test -f 'md_test.c' || echo '$(srcdir)/'`md_test.c
@@ -571,34 +532,6 @@ mdtest_posix-md_test.obj: md_test.c
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LTCXXCOMPILE) -c -o $@ $<
-
-mdtest_bkin-city.o: city.cc
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(mdtest_bkin_CXXFLAGS) $(CXXFLAGS) -MT mdtest_bkin-city.o -MD -MP -MF $(DEPDIR)/mdtest_bkin-city.Tpo -c -o mdtest_bkin-city.o `test -f 'city.cc' || echo '$(srcdir)/'`city.cc
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/mdtest_bkin-city.Tpo $(DEPDIR)/mdtest_bkin-city.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='city.cc' object='mdtest_bkin-city.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(mdtest_bkin_CXXFLAGS) $(CXXFLAGS) -c -o mdtest_bkin-city.o `test -f 'city.cc' || echo '$(srcdir)/'`city.cc
-
-mdtest_bkin-city.obj: city.cc
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(mdtest_bkin_CXXFLAGS) $(CXXFLAGS) -MT mdtest_bkin-city.obj -MD -MP -MF $(DEPDIR)/mdtest_bkin-city.Tpo -c -o mdtest_bkin-city.obj `if test -f 'city.cc'; then $(CYGPATH_W) 'city.cc'; else $(CYGPATH_W) '$(srcdir)/city.cc'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/mdtest_bkin-city.Tpo $(DEPDIR)/mdtest_bkin-city.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='city.cc' object='mdtest_bkin-city.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(mdtest_bkin_CXXFLAGS) $(CXXFLAGS) -c -o mdtest_bkin-city.obj `if test -f 'city.cc'; then $(CYGPATH_W) 'city.cc'; else $(CYGPATH_W) '$(srcdir)/city.cc'; fi`
-
-mdtest_bkin-leveldb_client.o: leveldb_client.cc
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(mdtest_bkin_CXXFLAGS) $(CXXFLAGS) -MT mdtest_bkin-leveldb_client.o -MD -MP -MF $(DEPDIR)/mdtest_bkin-leveldb_client.Tpo -c -o mdtest_bkin-leveldb_client.o `test -f 'leveldb_client.cc' || echo '$(srcdir)/'`leveldb_client.cc
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/mdtest_bkin-leveldb_client.Tpo $(DEPDIR)/mdtest_bkin-leveldb_client.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='leveldb_client.cc' object='mdtest_bkin-leveldb_client.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(mdtest_bkin_CXXFLAGS) $(CXXFLAGS) -c -o mdtest_bkin-leveldb_client.o `test -f 'leveldb_client.cc' || echo '$(srcdir)/'`leveldb_client.cc
-
-mdtest_bkin-leveldb_client.obj: leveldb_client.cc
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(mdtest_bkin_CXXFLAGS) $(CXXFLAGS) -MT mdtest_bkin-leveldb_client.obj -MD -MP -MF $(DEPDIR)/mdtest_bkin-leveldb_client.Tpo -c -o mdtest_bkin-leveldb_client.obj `if test -f 'leveldb_client.cc'; then $(CYGPATH_W) 'leveldb_client.cc'; else $(CYGPATH_W) '$(srcdir)/leveldb_client.cc'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/mdtest_bkin-leveldb_client.Tpo $(DEPDIR)/mdtest_bkin-leveldb_client.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='leveldb_client.cc' object='mdtest_bkin-leveldb_client.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(mdtest_bkin_CXXFLAGS) $(CXXFLAGS) -c -o mdtest_bkin-leveldb_client.obj `if test -f 'leveldb_client.cc'; then $(CYGPATH_W) 'leveldb_client.cc'; else $(CYGPATH_W) '$(srcdir)/leveldb_client.cc'; fi`
 
 mdtest_hdfs-hdfs_client.o: hdfs_client.cc
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(mdtest_hdfs_CXXFLAGS) $(CXXFLAGS) -MT mdtest_hdfs-hdfs_client.o -MD -MP -MF $(DEPDIR)/mdtest_hdfs-hdfs_client.Tpo -c -o mdtest_hdfs-hdfs_client.o `test -f 'hdfs_client.cc' || echo '$(srcdir)/'`hdfs_client.cc
@@ -825,6 +758,19 @@ uninstall-am:
 
 .PRECIOUS: Makefile
 
+
+# -- mdtest on indexfs with bulk insertion
+# mdtest_bkin_CFLAGS = $(AM_CFLAGS) $(BULKIN_FLAGS)
+# mdtest_bkin_CXXFLAGS = $(AM_CXXFLAGS) $(BULKIN_FLAGS)
+
+# mdtest_bkin_SOURCES =
+# mdtest_bkin_SOURCES += city.cc
+# mdtest_bkin_SOURCES += md_test.c
+# mdtest_bkin_SOURCES += leveldb_client.cc
+
+# mdtest_bkin_LDADD =
+# mdtest_bkin_LDADD += $(top_builddir)/common/libcommon_idxfs.la
+# mdtest_bkin_LDADD += $(top_builddir)/lib/leveldb/libleveldb.la
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

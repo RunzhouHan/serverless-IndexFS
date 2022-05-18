@@ -6,6 +6,7 @@
 
 #include <time.h>
 #include <stdio.h>
+#include <stdio.h>
 #include <fcntl.h>
 
 #include "client/client.h"
@@ -76,8 +77,8 @@ int idxfs_exists(cli_t* cli, const char* path) {
   Status s;
   std::string p = path;
   Client* client = (Client*) cli->rep;
-  StatInfo info;
-  s = client->Getattr(p, &info);
+  string info;
+  s = client->Getattr(p, info);
   return CheckErrors(__func__, s);
 }
 
@@ -93,19 +94,29 @@ int idxfs_getinfo(cli_t* cli, const char* path, info_t* _return) {
   Status s;
   std::string p = path;
   Client* client = (Client*) cli->rep;
-  StatInfo info;
-  s = client->Getattr(p, &info);
+  string info;
+  s = client->Getattr(p, info);
   if (s.ok()) {
-    _return->mode = info.mode;
-    _return->size = info.size;
-    _return->uid = info.uid;
-    _return->gid = info.gid;
-    _return->mtime = info.mtime;
-    _return->ctime = info.ctime;
-    _return->is_dir = S_ISDIR(info.mode);
+    // _return->mode = info.mode;
+    // _return->size = info.size;
+    // _return->uid = info.uid;
+    // _return->gid = info.gid;
+    // _return->mtime = info.mtime;
+    // _return->ctime = info.ctime;
+    // _return->is_dir = S_ISDIR(info.mode);
+    // std::cout << info << std::endl;
   }
   return CheckErrors(__func__, s);
 }
+
+int idxfs_fsync(cli_t* cli) {
+  Status s;
+  Client* client = (Client*) cli->rep;
+  s = client->FlushWriteBufferTCP();
+  printf("cli.cc: idxfs_fsync()\n");
+  return CheckErrors(__func__, s);
+}
+
 
 int idxfs_chmod(cli_t* cli, const char* path,
                 mode_t mode, bool* is_dir) {

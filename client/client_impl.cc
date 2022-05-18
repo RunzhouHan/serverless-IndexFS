@@ -3,14 +3,22 @@
 // found in the LICENSE file. See the AUTHORS file for names of contributors.
 
 #include <vector>
+#include <stdio.h>
+
 
 #include "client/rpc_exec.h"
 #include "client/client_impl.h"
+// #include "client/deployment_cache.h"
+
 
 namespace indexfs {
 
 Status ClientImpl::Init() {
-  return rpc_->Init();
+  // return rpc_->Init();
+  Status s;
+  socket_ = new tcp_socket(0, 2004);
+  socket_->connect(" ");
+  return s;
 }
 
 Status ClientImpl::FlushWriteBuffer() {
@@ -21,9 +29,47 @@ Status ClientImpl::FlushWriteBuffer() {
   } else {
     int srv_id = cli_id;
     for (; srv_id < config_->GetSrvNum(); srv_id += config_->GetNumClients()) {
-      rpc_->GetClient(srv_id)->FlushDB();
+      // rpc_->GetClient(srv_id)->FlushDB();
     }
   }
+  return s;
+}
+
+
+namespace {
+static
+Status TCP_Flush(tcp_socket* socket, int deployment) {
+  Status s;
+  try {
+    socket->Flush(deployment);
+  } catch (ServerInternalError &ae) {
+    s = Status::Corruption(Slice());
+  }
+  return s;
+}
+}
+
+Status TCPEngine::Flush(int deployment) {
+    return TCP_Flush(socket_, deployment);
+}
+
+
+Status ClientImpl::FlushWriteBufferTCP() {
+  Status s;
+  int deployment = 0;
+  int cli_id = config_->GetClientId();
+  printf("ClientImpl::FlushWriteBufferTCP: GetClientId: %d\n", cli_id);
+  // if (cli_id < 0) {
+  //   s = Status::Corruption(Slice());
+  // } else {
+    printf("ClientImpl::FlushWriteBufferTCP: here\n");
+    // int srv_id = 0;
+    // for (; srv_id < config_->GetSrvNum(); srv_id += config_->GetNumClients()) {
+      // rpc_->GetClient(srv_id)->FlushDB();
+      s = TCPEngine(deployment, socket_).Flush(deployment);
+      printf("ClientImpl::FlushWriteBufferTCP: Flush\n");
+  //   }
+  // }
   return s;
 }
 
@@ -155,21 +201,45 @@ Status RPCEngine::Mknod(const OID& oid, i16 perm) {
   EXEC_WITH_RETRY_CATCH();
 }
 
+
+namespace {
+static
+Status TCP_Mknod(tcp_socket* socket, int deployment, const std::string& path, 
+                                                const OID& oid, i16 perm) {
+  Status s;
+  try {
+    // rpc->GetClient(srv)->Mknod(oid, perm);
+    socket->Mknod(deployment, path, oid, perm);
+  } catch (FileAlreadyExistsException &ae) {
+    s = Status::AlreadyExists(Slice());
+  }
+  return s;
+}
+}
+
+Status TCPEngine::Mknod(const std::string& path, const OID& oid, i16 perm) {
+    return TCP_Mknod(socket_, deployment_id_, path, oid, perm);
+}
+
 Status ClientImpl::Mknod(const std::string& path, i16 perm) {
   Status s;
   OID oid;
   int16_t zeroth_server;
-  s = ResolvePath(path, &oid, &zeroth_server);
+  s = ResolvePath_serverless(path, &oid, &zeroth_server);
   if (!s.ok()) {
     return s;
   }
-  DirIndexEntry* entry = FetchIndex(oid.dir_id, zeroth_server);
-  if (entry == NULL) {
-    s = Status::Corruption("Missing index");
-  }
+  // DirIndexEntry* entry = FetchIndex(oid.dir_id, zeroth_server);
+  int deployment = 0;  // to be implemented later
+  // int deployment = GetDeployment();  // to be implemented later
+  // if (deployment_ == NULL) {
+  //   s = Status::Corruption("Missing deployment");
+  // }
   if (s.ok()) {
-    DirIndexGuard idx_guard(entry);
-    s = RPCEngine(entry->index, rpc_).Mknod(oid, perm);
+    // DirIndexGuard idx_guard(entry);
+    // s = RPCEngine(entry->index, rpc_).Mknod(oid, perm);
+    s = TCPEngine(deployment, socket_).Mknod(path, oid, perm);
+
   }
   return s;
 }
@@ -198,21 +268,43 @@ Status RPCEngine::Mkdir(const OID& oid, i16 perm, i16 hint_srv) {
   EXEC_WITH_RETRY_CATCH();
 }
 
+
+namespace {
+static
+Status TCP_Mkdir(tcp_socket* socket, int deployment, const std::string& path,  
+                                                  const OID& oid, i16 perm) {
+  Status s;
+  try {
+    // rpc->GetClient(srv)->Mknod(oid, perm);
+    socket->Mkdir(deployment, path, oid, perm);
+  } catch (FileAlreadyExistsException &ae) {
+    s = Status::AlreadyExists(Slice());
+  }
+  return s;
+}
+}
+
+Status TCPEngine::Mkdir(const std::string& path, const OID& oid, i16 perm) {
+    return TCP_Mkdir(socket_, deployment_id_, path, oid, perm);
+}
+
 Status ClientImpl::Mkdir(const std::string& path, i16 perm) {
   Status s;
   OID oid;
   int16_t zeroth_server;
-  s = ResolvePath(path, &oid, &zeroth_server);
+  s = ResolvePath_serverless(path, &oid, &zeroth_server);
   if (!s.ok()) {
     return s;
   }
-  DirIndexEntry* entry = FetchIndex(oid.dir_id, zeroth_server);
-  if (entry == NULL) {
-    s = Status::Corruption("Missing index");
-  }
+  // DirIndexEntry* entry = FetchIndex(oid.dir_id, zeroth_server);
+  int deployment = 0;  // to be implemented later
+  // int deployment = GetDeployment();  // to be implemented later  
+  // if (deployment_ == NULL) {
+  //   s = Status::Corruption("Missing deployment");
+  // }
   if (s.ok()) {
-    DirIndexGuard idx_guard(entry);
-    s = RPCEngine(entry->index, rpc_).Mkdir(oid, perm, RandomServer(path));
+    // DirIndexGuard idx_guard(entry);
+    s = TCPEngine(deployment, socket_).Mkdir(path, oid, perm);
   }
   return s;
 }
@@ -337,21 +429,44 @@ Status RPCEngine::Getattr(const OID& oid, StatInfo* info) {
   EXEC_WITH_RETRY_CATCH();
 }
 
-Status ClientImpl::Getattr(const std::string& path, StatInfo* info) {
+
+namespace {
+static
+Status TCP_Getattr(tcp_socket* socket, int deployment, 
+        const std::string& path, const OID& oid, std::string& info) {
+  Status s;
+  try {
+    socket->Getattr(deployment, path, oid, info);
+  } catch (FileNotFoundException &nf) {
+    s = Status::NotFound(Slice());
+  }
+  return s;
+}
+}
+
+Status TCPEngine::Getattr(const std::string& path, const OID& oid, 
+                                                std::string& info) {
+    return TCP_Getattr(socket_, deployment_id_, path, oid, info);
+  }
+
+
+Status ClientImpl::Getattr(const std::string& path, std::string& info) {
   Status s;
   OID oid;
   int16_t zeroth_server;
-  s = ResolvePath(path, &oid, &zeroth_server);
+  s = ResolvePath_serverless(path, &oid, &zeroth_server);
   if (!s.ok()) {
     return s;
   }
-  DirIndexEntry* entry = FetchIndex(oid.dir_id, zeroth_server);
-  if (entry == NULL) {
-    s = Status::Corruption("Missing index");
-  }
+  // DirIndexEntry* entry = FetchIndex(oid.dir_id, zeroth_server);
+  int deployment = 0;
+  // int deployment = GetDeployment();  // to be implemented later
+  // if (deployment == NULL) {
+  //   s = Status::Corruption("Missing deployment");
+  // }
   if (s.ok()) {
-    DirIndexGuard idx_guard(entry);
-    s = RPCEngine(entry->index, rpc_).Getattr(oid, info);
+    // DirIndexGuard idx_guard(entry);
+    s = TCPEngine(deployment, socket_).Getattr(path, oid, info);
   }
   return s;
 }

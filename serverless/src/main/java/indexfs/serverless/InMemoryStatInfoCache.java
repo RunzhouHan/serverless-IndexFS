@@ -54,7 +54,7 @@ public class InMemoryStatInfoCache {
     /**
      * Cache that is used when not using a prefix.
      */
-    private final ConcurrentHashMap<String, StatInfo> fullPathMetadataCache;
+    public final ConcurrentHashMap<String, StatInfo> fullPathMetadataCache;
 
     /**
      * Mapping between StatInfo IDs and their names.

@@ -119,7 +119,8 @@ am__v_lt_0 = --silent
 am__v_lt_1 = 
 libclient_idxfs_la_LIBADD =
 am_libclient_idxfs_la_OBJECTS = client.lo client_impl.lo file_io.lo \
-	mkdir_split.lo mknod_buf.lo read_dir.lo resolve_path.lo
+	mkdir_split.lo mknod_buf.lo read_dir.lo resolve_path.lo \
+	tcp_socket.lo deployment_cache.lo
 libclient_idxfs_la_OBJECTS = $(am_libclient_idxfs_la_OBJECTS)
 AM_V_P = $(am__v_P_$(V))
 am__v_P_ = $(am__v_P_$(AM_DEFAULT_VERBOSITY))
@@ -322,10 +323,12 @@ COMM_FLAGS = -DNBULK_INSERT $(BACKEND_FLAGS) $(SNAPPY_FLAGS) \
 	$(PLATFORM) -DLEVELDB_PLATFORM_POSIX
 AM_CFLAGS = $(EXTRA_INCLUDES) $(COMM_FLAGS) $(EXTRA_CFLAGS)
 AM_CXXFLAGS = $(EXTRA_INCLUDES) $(COMM_FLAGS) $(EXTRA_CFLAGS)
-noinst_HEADERS = rpc_exec.h client.h client_impl.h batch_client.h
+noinst_HEADERS = rpc_exec.h client.h client_impl.h batch_client.h \
+	tcp_socket.h deployment_cache.h
 noinst_LTLIBRARIES = libclient_idxfs.la libbatchclient_idxfs.la
 libclient_idxfs_la_SOURCES = client.cc client_impl.cc file_io.cc \
-	mkdir_split.cc mknod_buf.cc read_dir.cc resolve_path.cc
+	mkdir_split.cc mknod_buf.cc read_dir.cc resolve_path.cc \
+	tcp_socket.cc deployment_cache.cc
 libbatchclient_idxfs_la_SOURCES = batch_ctrl.cc batch_client.cc
 all: all-am
 
@@ -388,11 +391,13 @@ include ./$(DEPDIR)/batch_client.Plo
 include ./$(DEPDIR)/batch_ctrl.Plo
 include ./$(DEPDIR)/client.Plo
 include ./$(DEPDIR)/client_impl.Plo
+include ./$(DEPDIR)/deployment_cache.Plo
 include ./$(DEPDIR)/file_io.Plo
 include ./$(DEPDIR)/mkdir_split.Plo
 include ./$(DEPDIR)/mknod_buf.Plo
 include ./$(DEPDIR)/read_dir.Plo
 include ./$(DEPDIR)/resolve_path.Plo
+include ./$(DEPDIR)/tcp_socket.Plo
 
 .cc.o:
 	$(AM_V_CXX)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\

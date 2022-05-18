@@ -9,6 +9,46 @@ namespace indexfs {
 // Resolve the given full path by looking up intermediate entries until
 // we reach the last component.
 //
+
+Status ClientImpl::ResolvePath_serverless(const std::string& path,
+                               OID* oid, int16_t* zeroth_server) {
+  Status s;
+  *zeroth_server = -1;
+  oid->dir_id = -1;
+  oid->path_depth = 0;
+  oid->obj_name = "/";
+  if (path.empty()) {
+    return Status::InvalidArgument("Empty path");
+  }
+  if (path.at(0) != '/') {
+    return Status::InvalidArgument("Relative path");
+  }
+  if (path.size() == 1) {
+    return s; // This is root, which always exists
+  }
+  if (path.at(path.length() - 1) == '/') {
+    return Status::InvalidArgument("Path ends with slash");
+  }
+  *zeroth_server = 0;
+  oid->dir_id = 0;
+  size_t now = 0, last = 0, end = path.rfind("/");
+  while (last < end) {
+    now = path.find("/", last + 1);
+    if (now - last > 1) {
+      oid->path_depth++;
+      oid->obj_name = path.substr(last + 1, now - last - 1);
+      // oid->dir_id = entry->inode_no;
+      oid->dir_id = 0; // Temporarily set to 0
+      // lookup_cache_->Release(entry);
+    }
+    last = now;
+  }
+  oid->path_depth++;
+  oid->obj_name = path.substr(end + 1);
+  return s;
+}
+
+
 Status ClientImpl::ResolvePath(const std::string& path,
                                OID* oid, int16_t* zeroth_server) {
   Status s;

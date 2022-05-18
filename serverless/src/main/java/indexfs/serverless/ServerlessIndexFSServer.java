@@ -44,12 +44,7 @@ public class ServerlessIndexFSServer {
 	 * Stores every necessary for a metadata operation.
 	 */
 	private ServerlessIndexFSOperationParameters op;
-	
-	/**
-	 * Object metadata.
-	 */
-	private StatInfo stat;
-		
+			
 	/**
 	 * Server id to ip map. This is set to be public because it will be used in 
 	 * srvless_IndexFS_server.NextInode().
@@ -72,16 +67,17 @@ public class ServerlessIndexFSServer {
 		this.didx.config_ = config;
 		this.queue = new ServerlessIndexFSRPCWritebackQueue(config);
 		
-//		this.cache = new LinkedHashMap<String, StatInfo>(config.cache_capacity+1, .75F, true) {
+//		this.cache = new LinkedHashMap<String, StatInfo>(config.cache_capacity+1, .75F, false) {
 //	        // This method is called just after a new entry has been added
 //	        public boolean removeEldestEntry(Map.Entry<String, StatInfo> eldest) {
 //	            return size() > config.cache_capacity;
 //	        }
 //	    };
-		this.cache = new InMemoryStatInfoCache(config, 1000, 0.75F);
+		this.cache = new InMemoryStatInfoCache(config, config.cache_capacity, 0.75F);
+	    System.out.println("config.cache_capacity: " + config.cache_capacity);
+	    System.out.println("Cache capacity: " + this.cache.size());
 		this.server_map = config.GetMetaDBMap();
 		this.op = new ServerlessIndexFSOperationParameters();
-		this.stat = new StatInfo();
 		this.cache_hit = 0;
 		
 	}
@@ -117,7 +113,7 @@ public class ServerlessIndexFSServer {
 	/**
 	 * Fill in StatInfo (object metadata) before put into LRU cache.
 	 */
-	private void fillInStat(boolean embeded, long ino, int mode) {
+	private void fillInStat(StatInfo stat, boolean embeded, long ino, int mode) {
 		stat.id = ino;
 		stat.size = -1;
 		stat.mode = mode; 
@@ -140,6 +136,10 @@ public class ServerlessIndexFSServer {
 	 */
 	private long NextInode(int server_id, int port) {
 		long ino = 0;
+		/**
+		 * Don't send RPC to leveldb to get inode number as it will inccur too much latency.
+		 * Allocate here directly.
+		 */
 		TTransport socket = new TSocket(queue.server_map.get((int)server_id),port);
 		TProtocol protocol = new TBinaryProtocol(socket);
     	MetaDBService.Client mdb_client = new MetaDBService.Client(protocol);
@@ -151,6 +151,7 @@ public class ServerlessIndexFSServer {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} 
+//		System.out.println("ServerlessIndexFSServer:NextInode: " + ino);
     	return ino;
 	}
 	
@@ -215,14 +216,18 @@ public class ServerlessIndexFSServer {
 	 */
 	public void Mknod(String path, OID obj_id, int perm, int port) {
 		// Put file metadata into LRU_cache.	
-		fillInStat(true, -1, 0);
-//		cache.put(path, stat);
-		cache.put(path, stat.id, stat);
-
 		// Compute the server id based on file path.
 		int server_id = didx.GetServer(path);
 		int obj_idx = 0;
 		OBJ_LOCK(obj_id);
+		
+		StatInfo stat = new StatInfo();
+		
+		fillInStat(stat, true, NextInode(server_id, port), 0);
+		
+//		cache.put(path, stat);
+		cache.put(path, stat.id, stat);
+					
 		// file in operation parameters and put in writeback cache
 		op.op_type = 0;
 		op.key.parent_id_ = obj_id.dir_id;
@@ -230,7 +235,7 @@ public class ServerlessIndexFSServer {
 		op.key.file_name_ = obj_id.obj_name;
 		// TASK-I: link the new file
 		queue.write_counter(server_id, port, op);
-		System.out.println("ServerlessIndexFSServer:Mknod: " + path + ": " + server_id);
+
 		reset_op();
 
 		/**
@@ -262,11 +267,13 @@ public class ServerlessIndexFSServer {
 		
 		// Get Next available inode number.
 		long ino = NextInode(hint_server1, 10086);
-		
+		StatInfo stat = new StatInfo();
 		// Put directory metadata into LRU_cache.	
-		fillInStat(false, ino, 0);
+		fillInStat(stat, false, ino, 0);
+		
 //		cache.put(path, stat);
 		cache.put(path, stat.id, stat);
+		
 		reset_op();
 		
 		int obj_idx = 0;
@@ -318,11 +325,11 @@ public class ServerlessIndexFSServer {
 		// Look into LRU cache first. 
 //		StatInfo stat = cache.get(path);
 		StatInfo stat = cache.getByPath(path);	
-		System.out.println(stat);
-
-//		System.out.println("ServerlessIndexFSServer:Getattr: " + path + ": " 
-//				+ stat.id + "Cache miss: " + cache.getNumCacheMissesCurrentRequest());
 		
+//		for (String key : cache.fullPathMetadataCache.keySet()) {
+//		    System.out.println(key + " " + cache.fullPathMetadataCache.get(key));
+//		}
+
 		if (stat == null) {
 		    // Object not in cache. Send RPC request and put metadata in LRU cache.
 			int obj_idx = 0;

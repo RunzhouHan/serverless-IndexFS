@@ -74,6 +74,8 @@ extern int idxfs_chown(cli_t* cli, const char* path,
 //
 extern int idxfs_getinfo(cli_t* cli, const char* path, info_t* info);
 
+extern int idxfs_fsync(cli_t* cli);
+
 #ifdef __cplusplus
 }  /* end extern "C" */
 #endif

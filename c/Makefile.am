@@ -21,7 +21,6 @@ noinst_HEADERS =
 noinst_HEADERS += cli.h
 noinst_HEADERS += cli_types.h
 noinst_HEADERS += libclient.h
-noinst_HEADERS += cli_svrless.h
 
 ## -------------------------------------------------------------------------
 ## C Interface

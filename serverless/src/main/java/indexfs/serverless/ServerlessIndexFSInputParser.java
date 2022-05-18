@@ -36,7 +36,8 @@ public class ServerlessIndexFSInputParser {
 		ServerlessIndexFSParsedArgs parsed_args = new ServerlessIndexFSParsedArgs();
 		splited_args_string = args.split("\\s+");
 		if (splited_args_string.length != NUM_OF_PARAMS) {
-			System.out.println("missing parameter(s) in tcp payload");
+			System.out.println("ServerlessIndexFSInputParser:ServerlessIndexFSParsedArgs(): missing parameter(s) in tcp payload\n"
+					+ args);
 		}
 		else {
 			parsed_args.zeroth_server = splited_args_string[0];

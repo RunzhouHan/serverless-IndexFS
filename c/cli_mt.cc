@@ -5,11 +5,8 @@
 #include <pthread.h>
 
 #include "c/libclient.h"
-
-#ifdef _HAS_IDXFS
-#else
 #include "c/cli.h"
-#endif
+#include <stdio.h>
 
 extern "C" {
 
@@ -147,7 +144,14 @@ int IDX_Create(const char* path, mode_t mode) {
 }
 
 int IDX_Fsync(int fd) {
-  return 0;
+  cli_t* cli = (cli_t*) pthread_getspecific(cli_key);
+  if (cli == NULL) {
+    abort();
+  }
+
+  printf("cli_mt.cc: IDX_Fsync()\n");
+
+  return idxfs_fsync(cli);
 }
 
 int IDX_Close(int fd) {

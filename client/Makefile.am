@@ -23,6 +23,8 @@ noinst_HEADERS += rpc_exec.h
 noinst_HEADERS += client.h
 noinst_HEADERS += client_impl.h
 noinst_HEADERS += batch_client.h
+noinst_HEADERS += tcp_socket.h
+noinst_HEADERS += deployment_cache.h
 
 ## -------------------------------------------------------------------------
 ## Static Lib
@@ -39,6 +41,8 @@ libclient_idxfs_la_SOURCES += mkdir_split.cc
 libclient_idxfs_la_SOURCES += mknod_buf.cc
 libclient_idxfs_la_SOURCES += read_dir.cc
 libclient_idxfs_la_SOURCES += resolve_path.cc
+libclient_idxfs_la_SOURCES += tcp_socket.cc
+libclient_idxfs_la_SOURCES += deployment_cache.cc
 
 noinst_LTLIBRARIES += libbatchclient_idxfs.la
 

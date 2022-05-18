@@ -26,6 +26,7 @@ class BatchClient: virtual public Client {
   Status Noop();
   Status Dispose();
   Status FlushWriteBuffer();
+  Status FlushWriteBufferTCP();
 
   void PrintMeasurements(FILE* output) { }
 
@@ -37,7 +38,8 @@ class BatchClient: virtual public Client {
   Status Chmod(const std::string& path, i16 perm, bool* is_dir);
   Status Chown(const std::string& path, i16 uid, i16 gid, bool* is_dir);
 
-  Status Getattr(const std::string& path, StatInfo* info);
+  // Status Getattr(const std::string& path, StatInfo* info);
+  Status Getattr(const std::string& path, std::string& info);
   Status AccessDir(const std::string& path);
   Status ListDir(const std::string& path,
      NameList* names, StatList stats);
