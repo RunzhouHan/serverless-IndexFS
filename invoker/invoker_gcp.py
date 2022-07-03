@@ -10,7 +10,7 @@ def current_milli_time():
     return round(time.time()*1000)
 
 def first_request():
-        url = 'https://34.68.164.191:444/api/v1/web/guest/default/serverless_indexfs'
+        url = 'https://34.122.163.82:444/api/v1/web/guest/default/serverless_indexfs'
         i = 1
         file_id = i
         file_name = 'file_' + str(i)
@@ -20,7 +20,7 @@ def first_request():
 
         OID = {'dir_id': dir_id,'path_depth':path_depth, 'obj_name': file_name};
 
-        PARAMS = {'zeroth_server':'35.223.120.109', 'zeroth_port':10086, 'instance_id':0, 'deployment_id':0, 'op_type': 'Mknod', 'path':file_path, 'OID': OID, 'client_ip': '35.223.120.109', 'client_port':2004};
+        PARAMS = {'zeroth_server':'35.232.208.226', 'zeroth_port':10086, 'instance_id':0, 'deployment_id':0, 'op_type': 'Mknod', 'path':file_path, 'OID': OID, 'client_ip': '35.223.120.109', 'client_port':2004};
         response = requests.post(url, json=PARAMS, verify=False)
 
 
@@ -72,7 +72,6 @@ def tcp_server(num):
         except KeyboardInterrupt:
             if connection:
                 connection.close()
-                break
 
         finally:
             # Clean up the connection

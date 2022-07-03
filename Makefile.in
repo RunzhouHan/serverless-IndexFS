@@ -166,7 +166,7 @@ am__define_uniq_tagged_files = \
 ETAGS = etags
 CTAGS = ctags
 CSCOPE = cscope
-DIST_SUBDIRS = lib/leveldb thrift common metadb ipc server client \
+DIST_SUBDIRS = lib/leveldb thrift common util metadb ipc server client \
 	io_test md_test c bin
 am__DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/config.h.in ar-lib \
 	compile config.guess config.sub depcomp install-sh ltmain.sh \
@@ -350,12 +350,11 @@ ACLOCAL_AMFLAGS = -I m4 ${ACLOCAL_FLAGS}
 # --------------------------------
 # Main Modules
 # --------------------------------
-#SUBDIRS += util
 
 # --------------------------------
 # Client Toolkit
 # --------------------------------
-SUBDIRS = lib/leveldb thrift common metadb ipc server client \
+SUBDIRS = lib/leveldb thrift common util metadb ipc server client \
 	$(am__append_1) $(am__append_2) c bin
 
 #if BUILD_FUSE
