@@ -323,8 +323,8 @@ COMM_FLAGS = -DNBULK_INSERT $(BACKEND_FLAGS) $(SNAPPY_FLAGS) \
 	$(PLATFORM) -DLEVELDB_PLATFORM_POSIX
 AM_CFLAGS = $(EXTRA_INCLUDES) $(COMM_FLAGS) $(EXTRA_CFLAGS)
 AM_CXXFLAGS = $(EXTRA_INCLUDES) $(COMM_FLAGS) $(EXTRA_CFLAGS)
-noinst_HEADERS = rpc_exec.h client.h client_impl.h batch_client.h \
-	tcp_socket.h deployment_cache.h
+noinst_HEADERS = rpc_exec.h client.h client_impl.h tcp_socket.h \
+	deployment_cache.h
 noinst_LTLIBRARIES = libclient_idxfs.la libbatchclient_idxfs.la
 libclient_idxfs_la_SOURCES = client.cc client_impl.cc file_io.cc \
 	mkdir_split.cc mknod_buf.cc read_dir.cc resolve_path.cc \

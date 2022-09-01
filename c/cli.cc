@@ -6,7 +6,6 @@
 
 #include <time.h>
 #include <stdio.h>
-#include <stdio.h>
 #include <fcntl.h>
 
 #include "client/client.h"

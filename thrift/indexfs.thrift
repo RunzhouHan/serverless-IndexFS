@@ -158,6 +158,116 @@ exception ParentPathNotDirectoryException {
   1: required string parent_path
 }
 
+
+// ---------------------------------------------------------------
+// IndexFS RPC interface
+// ---------------------------------------------------------------
+
+service MetadataIndexService {
+
+void Ping()
+  throws (1: ServerInternalError srv_error)
+
+void FlushDB()
+  throws (1: IOError io_error,
+          2: ServerInternalError srv_error)
+
+LookupInfo Access(1: OID obj_id)
+  throws (1: UnrecognizedDirectoryError unknown_dir,
+          2: ServerRedirectionException srv_redirect,
+          3: FileNotFoundException not_found,
+          4: DirectoryExpectedError not_a_dir,
+          5: IOError io_error,
+          6: ServerInternalError srv_error)
+
+LookupInfo Renew(1: OID obj_id)
+  throws (1: UnrecognizedDirectoryError unknown_dir,
+          2: ServerRedirectionException srv_redirect,
+          3: FileNotFoundException not_found,
+          4: DirectoryExpectedError not_a_dir,
+          5: IOError io_error,
+          6: ServerInternalError srv_error)
+
+StatInfo Getattr(1: OID obj_id)
+  throws (1: UnrecognizedDirectoryError unknown_dir,
+          2: ServerRedirectionException srv_redirect,
+          3: FileNotFoundException not_found,
+          4: IOError io_error,
+          5: ServerInternalError srv_error)
+
+void Mknod(1: OID obj_id, 2: i16 perm)
+  throws (1: UnrecognizedDirectoryError unknown_dir,
+          2: ServerRedirectionException srv_redirect,
+          3: FileAlreadyExistsException file_exists,
+          4: IOError io_error,
+          5: ServerInternalError srv_error)
+
+void Mknod_Bulk(1: OIDS obj_ids, 2: i16 perm)
+  throws (1: UnrecognizedDirectoryError unknown_dir,
+          2: ServerRedirectionException srv_redirect,
+          3: FileAlreadyExistsException file_exists,
+          4: IOError io_error,
+          5: ServerInternalError srv_error)
+
+void Mkdir(1: OID obj_id, 2: i16 perm, 3: i16 hint_server1, 4: i16 hint_server2)
+  throws (1: UnrecognizedDirectoryError unknown_dir,
+          2: ServerRedirectionException srv_redirect,
+          3: FileAlreadyExistsException file_exists,
+          4: IOError io_error,
+          5: ServerInternalError srv_error)
+
+void Mkdir_Presplit(1: OID obj_id, 2: i16 perm, 3: i16 hint_server1, 4: i16 hint_server2)
+  throws (1: UnrecognizedDirectoryError unknown_dir,
+          2: ServerRedirectionException srv_redirect,
+          3: FileAlreadyExistsException file_exists,
+          4: IOError io_error,
+          5: ServerInternalError srv_error)
+
+bool Chmod(1: OID obj_id, 2: i16 perm)
+  throws (1: UnrecognizedDirectoryError unknown_dir,
+          2: ServerRedirectionException srv_redirect,
+          3: FileNotFoundException not_found,
+          4: IOError io_error,
+          5: ServerInternalError srv_error)
+
+bool Chown(1: OID obj_id, 2: i16 uid, 3: i16 gid)
+  throws (1: UnrecognizedDirectoryError unknown_dir,
+          2: ServerRedirectionException srv_redirect,
+          3: FileNotFoundException not_found,
+          4: IOError io_error,
+          5: ServerInternalError srv_error)
+
+void CreateZeroth(1: i64 dir_id, 2: i16 zeroth_server)
+  throws (1: WrongServerError wrong_srv,
+          2: FileAlreadyExistsException file_exists,
+          3: IOError io_error,
+          4: ServerInternalError srv_error)
+
+EntryList Readdir(1: i64 dir_id, 2: i16 index)
+  throws (1: UnrecognizedDirectoryError unknown_dir,
+          2: IOError io_error,
+          3: ServerInternalError srv_error)
+
+string ReadBitmap(1: i64 dir_id)
+  throws (1: UnrecognizedDirectoryError unknown_dir,
+          2: IOError io_error,
+          3: ServerInternalError srv_error)
+
+void UpdateBitmap(1: i64 dir_id, 2: string dmap_data)
+  throws (1: UnrecognizedDirectoryError unknown_dir,
+          2: IOError io_error,
+          3: ServerInternalError srv_error)
+
+void InsertSplit(1: i64 dir_id, 2: i16 parent_index, 3: i16 child_index,
+                 4: string path_split_files, 5: string dmap_data,
+                 6: i64 min_seq, 7: i64 max_seq, 8: i64 num_entries)
+  throws (1: WrongServerError wrong_srv,
+          2: FileAlreadyExistsException file_exists,
+          3: IOError io_error,
+          4: ServerInternalError srv_error)
+
+}
+
 // ---------------------------------------------------------------
 // IndexFS metadb RPC interface
 // ---------------------------------------------------------------

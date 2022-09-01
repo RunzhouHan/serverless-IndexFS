@@ -3086,13 +3086,13 @@ m4trace:configure.ac:564: -1- m4_pattern_allow([^__PVFS__$])
 m4trace:configure.ac:570: -1- m4_pattern_allow([^__RADOS__$])
 m4trace:configure.ac:576: -1- m4_pattern_allow([^__NFS__$])
 m4trace:configure.ac:579: -1- m4_pattern_allow([^BACKEND_FLAGS$])
-m4trace:configure.ac:598: -1- m4_pattern_allow([^LIB@&t@OBJS$])
-m4trace:configure.ac:598: -1- m4_pattern_allow([^LTLIBOBJS$])
-m4trace:configure.ac:598: -1- AM_CONDITIONAL([am__EXEEXT], [test -n "$EXEEXT"])
-m4trace:configure.ac:598: -1- m4_pattern_allow([^am__EXEEXT_TRUE$])
-m4trace:configure.ac:598: -1- m4_pattern_allow([^am__EXEEXT_FALSE$])
-m4trace:configure.ac:598: -1- _AM_SUBST_NOTMAKE([am__EXEEXT_TRUE])
-m4trace:configure.ac:598: -1- _AM_SUBST_NOTMAKE([am__EXEEXT_FALSE])
-m4trace:configure.ac:598: -1- _AC_AM_CONFIG_HEADER_HOOK(["$ac_file"])
-m4trace:configure.ac:598: -1- _AM_OUTPUT_DEPENDENCY_COMMANDS
-m4trace:configure.ac:598: -1- _LT_PROG_LTMAIN
+m4trace:configure.ac:597: -1- m4_pattern_allow([^LIB@&t@OBJS$])
+m4trace:configure.ac:597: -1- m4_pattern_allow([^LTLIBOBJS$])
+m4trace:configure.ac:597: -1- AM_CONDITIONAL([am__EXEEXT], [test -n "$EXEEXT"])
+m4trace:configure.ac:597: -1- m4_pattern_allow([^am__EXEEXT_TRUE$])
+m4trace:configure.ac:597: -1- m4_pattern_allow([^am__EXEEXT_FALSE$])
+m4trace:configure.ac:597: -1- _AM_SUBST_NOTMAKE([am__EXEEXT_TRUE])
+m4trace:configure.ac:597: -1- _AM_SUBST_NOTMAKE([am__EXEEXT_FALSE])
+m4trace:configure.ac:597: -1- _AC_AM_CONFIG_HEADER_HOOK(["$ac_file"])
+m4trace:configure.ac:597: -1- _AM_OUTPUT_DEPENDENCY_COMMANDS
+m4trace:configure.ac:597: -1- _LT_PROG_LTMAIN

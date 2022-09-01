@@ -393,7 +393,7 @@ on `(hostname || uname -n) 2>/dev/null | sed 1q`
 "
 
 # Files that config.status was made for.
-config_files=" Makefile lib/leveldb/Makefile thrift/Makefile common/Makefile util/Makefile metadb/Makefile ipc/Makefile server/Makefile client/Makefile c/Makefile bin/Makefile io_test/Makefile md_test/Makefile"
+config_files=" Makefile lib/leveldb/Makefile thrift/Makefile common/Makefile util/Makefile metadb/Makefile ipc/Makefile client/Makefile c/Makefile bin/Makefile io_test/Makefile md_test/Makefile"
 config_headers=" config.h"
 config_commands=" depfiles libtool"
 
@@ -437,7 +437,7 @@ Copyright (C) 2012 Free Software Foundation, Inc.
 This config.status script is free software; the Free Software Foundation
 gives unlimited permission to copy, distribute and modify it."
 
-ac_pwd='/home/runzhou/indexfs-0.4/serverless-IndexFS'
+ac_pwd='/home/runzhou/indexfs-0.4/serverless-IndexFS-metadb-mdtest-08-29-2022'
 srcdir='.'
 INSTALL='/usr/bin/install -c'
 MKDIR_P='/bin/mkdir -p'
@@ -735,12 +735,12 @@ prelink_cmds_CXX=''
 postlink_cmds_CXX=''
 file_list_spec_CXX=''
 hardcode_action_CXX='immediate'
-compiler_lib_search_dirs_CXX='/usr/lib/gcc/x86_64-linux-gnu/5 /usr/lib/gcc/x86_64-linux-gnu/5/../../../x86_64-linux-gnu /usr/lib/gcc/x86_64-linux-gnu/5/../../../../lib /lib/x86_64-linux-gnu /lib/../lib /usr/lib/x86_64-linux-gnu /usr/lib/../lib /usr/lib/gcc/x86_64-linux-gnu/5/../../..'
-predep_objects_CXX='/usr/lib/gcc/x86_64-linux-gnu/5/../../../x86_64-linux-gnu/crti.o /usr/lib/gcc/x86_64-linux-gnu/5/crtbeginS.o'
-postdep_objects_CXX='/usr/lib/gcc/x86_64-linux-gnu/5/crtendS.o /usr/lib/gcc/x86_64-linux-gnu/5/../../../x86_64-linux-gnu/crtn.o'
+compiler_lib_search_dirs_CXX='/usr/lib/gcc/x86_64-linux-gnu/9 /usr/lib/gcc/x86_64-linux-gnu/9/../../../x86_64-linux-gnu /usr/lib/gcc/x86_64-linux-gnu/9/../../../../lib /lib/x86_64-linux-gnu /lib/../lib /usr/lib/x86_64-linux-gnu /usr/lib/../lib /usr/lib/gcc/x86_64-linux-gnu/9/../../..'
+predep_objects_CXX='/usr/lib/gcc/x86_64-linux-gnu/9/../../../x86_64-linux-gnu/crti.o /usr/lib/gcc/x86_64-linux-gnu/9/crtbeginS.o'
+postdep_objects_CXX='/usr/lib/gcc/x86_64-linux-gnu/9/crtendS.o /usr/lib/gcc/x86_64-linux-gnu/9/../../../x86_64-linux-gnu/crtn.o'
 predeps_CXX=''
 postdeps_CXX='-lstdc++ -lm -lgcc_s -lc -lgcc_s'
-compiler_lib_search_path_CXX='-L/usr/lib/gcc/x86_64-linux-gnu/5 -L/usr/lib/gcc/x86_64-linux-gnu/5/../../../x86_64-linux-gnu -L/usr/lib/gcc/x86_64-linux-gnu/5/../../../../lib -L/lib/x86_64-linux-gnu -L/lib/../lib -L/usr/lib/x86_64-linux-gnu -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-linux-gnu/5/../../..'
+compiler_lib_search_path_CXX='-L/usr/lib/gcc/x86_64-linux-gnu/9 -L/usr/lib/gcc/x86_64-linux-gnu/9/../../../x86_64-linux-gnu -L/usr/lib/gcc/x86_64-linux-gnu/9/../../../../lib -L/lib/x86_64-linux-gnu -L/lib/../lib -L/usr/lib/x86_64-linux-gnu -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-linux-gnu/9/../../..'
 
 LTCC='gcc'
 LTCFLAGS='-g -O2'
@@ -812,7 +812,6 @@ do
     "util/Makefile") CONFIG_FILES="$CONFIG_FILES util/Makefile" ;;
     "metadb/Makefile") CONFIG_FILES="$CONFIG_FILES metadb/Makefile" ;;
     "ipc/Makefile") CONFIG_FILES="$CONFIG_FILES ipc/Makefile" ;;
-    "server/Makefile") CONFIG_FILES="$CONFIG_FILES server/Makefile" ;;
     "client/Makefile") CONFIG_FILES="$CONFIG_FILES client/Makefile" ;;
     "c/Makefile") CONFIG_FILES="$CONFIG_FILES c/Makefile" ;;
     "bin/Makefile") CONFIG_FILES="$CONFIG_FILES bin/Makefile" ;;
@@ -973,12 +972,12 @@ S["mkdir_p"]="$(MKDIR_P)"
 S["MKDIR_P"]="/bin/mkdir -p"
 S["INSTALL_STRIP_PROGRAM"]="$(install_sh) -c -s"
 S["STRIP"]="strip"
-S["install_sh"]="${SHELL} /home/runzhou/indexfs-0.4/serverless-IndexFS/install-sh"
-S["MAKEINFO"]="${SHELL} /home/runzhou/indexfs-0.4/serverless-IndexFS/missing makeinfo"
-S["AUTOHEADER"]="${SHELL} /home/runzhou/indexfs-0.4/serverless-IndexFS/missing autoheader"
-S["AUTOMAKE"]="${SHELL} /home/runzhou/indexfs-0.4/serverless-IndexFS/missing automake-1.15"
-S["AUTOCONF"]="${SHELL} /home/runzhou/indexfs-0.4/serverless-IndexFS/missing autoconf"
-S["ACLOCAL"]="${SHELL} /home/runzhou/indexfs-0.4/serverless-IndexFS/missing aclocal-1.15"
+S["install_sh"]="${SHELL} /home/runzhou/indexfs-0.4/serverless-IndexFS-metadb-mdtest-08-29-2022/install-sh"
+S["MAKEINFO"]="${SHELL} /home/runzhou/indexfs-0.4/serverless-IndexFS-metadb-mdtest-08-29-2022/missing makeinfo"
+S["AUTOHEADER"]="${SHELL} /home/runzhou/indexfs-0.4/serverless-IndexFS-metadb-mdtest-08-29-2022/missing autoheader"
+S["AUTOMAKE"]="${SHELL} /home/runzhou/indexfs-0.4/serverless-IndexFS-metadb-mdtest-08-29-2022/missing automake-1.15"
+S["AUTOCONF"]="${SHELL} /home/runzhou/indexfs-0.4/serverless-IndexFS-metadb-mdtest-08-29-2022/missing autoconf"
+S["ACLOCAL"]="${SHELL} /home/runzhou/indexfs-0.4/serverless-IndexFS-metadb-mdtest-08-29-2022/missing aclocal-1.15"
 S["VERSION"]="0.4.1"
 S["PACKAGE"]="indexfs"
 S["CYGPATH_W"]="echo"

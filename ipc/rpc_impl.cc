@@ -15,7 +15,7 @@ DEFINE_int32(rpc_conn_attempts, 1, "Set the max number of TCP connection attempt
 
 namespace indexfs {
 
-FTCliRepWrapper::~FTCliRepWrapper() {
+FTCliRepWrapper_MetaDB::~FTCliRepWrapper_MetaDB() {
   if (client_ != NULL) {
     if (client_->IsReady()) {
       client_->Close();
@@ -24,7 +24,7 @@ FTCliRepWrapper::~FTCliRepWrapper() {
   }
 }
 
-FTCliRepWrapper::FTCliRepWrapper(
+FTCliRepWrapper_MetaDB::FTCliRepWrapper_MetaDB(
     int metadb_id, Config* conf, MemberSet* member_set)
   : client_(NULL)
   , metadb_id_(metadb_id)
@@ -46,19 +46,19 @@ int GetBackoffDuration(int attempt) {
 
 // Dispose the existing client and create a new one.
 //
-void FTCliRepWrapper::PrepareClient() {
+void FTCliRepWrapper_MetaDB::PrepareClient() {
   if (client_ != NULL) {
     if (client_->IsReady()) {
       client_->Close();
     }
     delete client_;
   }
-  client_ = new CliRep(ip_, port_);
+  client_ = new CliRep_MetaDB(ip_, port_);
 }
 
 // Retrieve the latest address of the target server.
 //
-void FTCliRepWrapper::RetrieveServerAddress() {
+void FTCliRepWrapper_MetaDB::RetrieveServerAddress() {
   DLOG_ASSERT(member_set_ != NULL);
   Status s = member_set_->FindServer(metadb_id_, &ip_, &port_);
   CHECK(s.ok())
@@ -71,7 +71,7 @@ void FTCliRepWrapper::RetrieveServerAddress() {
 // Reconnect the target server by
 // disposing the existing RPC client and creating a new one.
 //
-Status FTCliRepWrapper::Reconnect(int max_attempts) {
+Status FTCliRepWrapper_MetaDB::Reconnect(int max_attempts) {
   Status s;
   int attempt = 0;
   s = Status::IOError(Slice());
@@ -93,7 +93,7 @@ Status FTCliRepWrapper::Reconnect(int max_attempts) {
 // Attempt to rebuild connection to a logic server by loading the latest
 // physical server address and try connecting to it.
 //
-Status FTCliRepWrapper::ReestabilishConnectionToServer() {
+Status FTCliRepWrapper_MetaDB::ReestabilishConnectionToServer() {
   Status s;
   LOG_IF(WARNING, client_ != NULL)
       << "RPC connection not found or lost"
@@ -110,7 +110,7 @@ Status FTCliRepWrapper::ReestabilishConnectionToServer() {
   return s;
 }
 
-Status FTCliRepWrapper::Open() {
+Status FTCliRepWrapper_MetaDB::Open() {
   DLOG_ASSERT(client_ == NULL);
   RetrieveServerAddress();
   Status s = Reconnect(1);
@@ -120,7 +120,7 @@ Status FTCliRepWrapper::Open() {
   return s;
 }
 
-Status FTCliRepWrapper::Shutdown() {
+Status FTCliRepWrapper_MetaDB::Shutdown() {
   if (client_ != NULL && client_->IsReady()) {
     client_->Close();
   }
@@ -129,7 +129,7 @@ Status FTCliRepWrapper::Shutdown() {
 
 // This must work, otherwise we are screwed.
 //
-void FTCliRepWrapper::RecoverConnectionToServer() {
+void FTCliRepWrapper_MetaDB::RecoverConnectionToServer() {
   Status s = ReestabilishConnectionToServer();
   if (!s.ok()) throw TTransportException(s.ToString());
 }
@@ -172,7 +172,7 @@ void FTCliRepWrapper::RecoverConnectionToServer() {
 
 // -------------------------------------------------------------
 
-void FTCliRepWrapper::Flush() {
+void FTCliRepWrapper_MetaDB::Flush() {
   RPC_TRACE(__func__);
   EXEC_WITH_RETRY_TRY() {
     GetInternalStub()->Flush();
@@ -181,7 +181,7 @@ void FTCliRepWrapper::Flush() {
   EXEC_WITH_RETRY_CATCH();
 }
 
-void FTCliRepWrapper::NewFile(const KeyInfo_THRIFT& key) {
+void FTCliRepWrapper_MetaDB::NewFile(const KeyInfo_THRIFT& key) {
   RPC_TRACE(__func__);
   EXEC_WITH_RETRY_TRY() {
     GetInternalStub()->NewFile(key);
@@ -190,7 +190,7 @@ void FTCliRepWrapper::NewFile(const KeyInfo_THRIFT& key) {
   EXEC_WITH_RETRY_CATCH();
 }
 
-void FTCliRepWrapper::NewDirectory(const KeyInfo_THRIFT& key, const int32_t zeroth_server, const int64_t inode_no) {
+void FTCliRepWrapper_MetaDB::NewDirectory(const KeyInfo_THRIFT& key, const int32_t zeroth_server, const int64_t inode_no) {
   RPC_TRACE(__func__);
   EXEC_WITH_RETRY_TRY() {
     GetInternalStub()->NewDirectory(key, zeroth_server, inode_no);
@@ -199,7 +199,7 @@ void FTCliRepWrapper::NewDirectory(const KeyInfo_THRIFT& key, const int32_t zero
   EXEC_WITH_RETRY_CATCH();
 }
 
-void FTCliRepWrapper::GetEntry(StatInfo& _return, const KeyInfo_THRIFT& key) {
+void FTCliRepWrapper_MetaDB::GetEntry(StatInfo& _return, const KeyInfo_THRIFT& key) {
   RPC_TRACE(__func__);
   EXEC_WITH_RETRY_TRY() {
     GetInternalStub()->GetEntry(_return, key);
@@ -208,7 +208,7 @@ void FTCliRepWrapper::GetEntry(StatInfo& _return, const KeyInfo_THRIFT& key) {
   EXEC_WITH_RETRY_CATCH();
 }
 
-void FTCliRepWrapper::PutEntry(const KeyInfo_THRIFT& key, const StatInfo& info) {
+void FTCliRepWrapper_MetaDB::PutEntry(const KeyInfo_THRIFT& key, const StatInfo& info) {
   RPC_TRACE(__func__);
   EXEC_WITH_RETRY_TRY() {
     GetInternalStub()->PutEntry(key, info);
@@ -217,7 +217,7 @@ void FTCliRepWrapper::PutEntry(const KeyInfo_THRIFT& key, const StatInfo& info) 
   EXEC_WITH_RETRY_CATCH();
 }
 
-int64_t FTCliRepWrapper::ReserveNextInodeNo() {
+int64_t FTCliRepWrapper_MetaDB::ReserveNextInodeNo() {
   int64_t ino;
   RPC_TRACE(__func__);
   EXEC_WITH_RETRY_TRY() {
@@ -228,7 +228,7 @@ int64_t FTCliRepWrapper::ReserveNextInodeNo() {
   EXEC_ABORT(); // Unreachable code
 }
 
-void FTCliRepWrapper::GetServerList(std::vector<std::string> & _return) {
+void FTCliRepWrapper_MetaDB::GetServerList(std::vector<std::string> & _return) {
   RPC_TRACE(__func__);
   EXEC_WITH_RETRY_TRY() {
     GetInternalStub()->GetServerList(_return);
@@ -237,7 +237,7 @@ void FTCliRepWrapper::GetServerList(std::vector<std::string> & _return) {
   EXEC_WITH_RETRY_CATCH();  
 }
 
-void FTCliRepWrapper::GetPortList(std::vector<int32_t> & _return) {
+void FTCliRepWrapper_MetaDB::GetPortList(std::vector<int32_t> & _return) {
   RPC_TRACE(__func__);
   EXEC_WITH_RETRY_TRY() {
     GetInternalStub()->GetPortList(_return);
@@ -246,16 +246,116 @@ void FTCliRepWrapper::GetPortList(std::vector<int32_t> & _return) {
   EXEC_WITH_RETRY_CATCH();  
 }
 
-// void FTCliRepWrapper::GetPortList(std::vector<int16_t> & _return) {
-//   RPC_TRACE(__func__);
-//   EXEC_WITH_RETRY_TRY() {
-//     GetInternalStub()->GetPortList(_return);
-//     EXEC_EXIT();
-//   }
-//   EXEC_WITH_RETRY_CATCH();  
-// }
 
-/*
+FTCliRepWrapper::~FTCliRepWrapper() {
+  if (client_ != NULL) {
+    if (client_->IsReady()) {
+      client_->Close();
+    }
+    delete client_;
+  }
+}
+
+FTCliRepWrapper::FTCliRepWrapper(
+    int srv_id, Config* conf, MemberSet* member_set)
+  : client_(NULL)
+  , srv_id_(srv_id)
+  , conf_(conf)
+  , env_(Env::Default())
+  , member_set_(member_set) {
+}
+
+// Dispose the existing client and create a new one.
+//
+void FTCliRepWrapper::PrepareClient() {
+  if (client_ != NULL) {
+    if (client_->IsReady()) {
+      client_->Close();
+    }
+    delete client_;
+  }
+  client_ = new CliRep(ip_, port_);
+}
+
+// Retrieve the latest address of the target server.
+//
+void FTCliRepWrapper::RetrieveServerAddress() {
+  DLOG_ASSERT(member_set_ != NULL);
+  Status s = member_set_->FindServer(srv_id_, &ip_, &port_);
+  CHECK(s.ok())
+      << "Fail to retrieve the address of "
+      << "server " << srv_id_ << ": " << s.ToString();
+  DLOG(INFO) << "RPC setting address [server=" << srv_id_ << "]"
+      << ": ip=" << ip_ << ", port=" << port_;
+}
+
+// Reconnect the target server by
+// disposing the existing RPC client and creating a new one.
+//
+Status FTCliRepWrapper::Reconnect(int max_attempts) {
+  Status s;
+  int attempt = 0;
+  s = Status::IOError(Slice());
+  while (!s.ok() && ++attempt <= max_attempts) {
+    int msecs = GetBackoffDuration(attempt);
+    if (msecs > 0) {
+      env_->SleepForMicroseconds(msecs);
+    }
+    PrepareClient();
+    s = client_->Open();
+  }
+  DLOG(INFO) << "RPC connecting to server"
+      << " [server=" << srv_id_ << "]"
+      << ": total_attempts=" << std::min(attempt, max_attempts)
+      << ", result=" << s.ToCodeString();
+  return s;
+}
+
+// Attempt to rebuild connection to a logic server by loading the latest
+// physical server address and try connecting to it.
+//
+Status FTCliRepWrapper::ReestabilishConnectionToServer() {
+  Status s;
+  LOG_IF(WARNING, client_ != NULL)
+      << "RPC connection not found or lost"
+      << " [server=" << srv_id_ << "]: ip=" << ip_ << ", port=" << port_;
+  int attempt = 0;
+  s = Status::IOError(Slice());
+  while (!s.ok() && ++attempt <= FLAGS_rpc_conn_attempts) {
+    RetrieveServerAddress();
+    s = Reconnect(attempt);
+  }
+  LOG_IF(INFO, s.ok())
+      << "RPC connection reestablished"
+      << " [server=" << srv_id_ << "]: ip=" << ip_ << ", port=" << port_;
+  return s;
+}
+
+Status FTCliRepWrapper::Open() {
+  DLOG_ASSERT(client_ == NULL);
+  RetrieveServerAddress();
+  Status s = Reconnect(1);
+  LOG_IF(INFO, s.ok())
+      << "RPC connection established"
+      << " [server=" << srv_id_ << "]: ip=" << ip_ << ", port=" << port_;
+  return s;
+}
+
+Status FTCliRepWrapper::Shutdown() {
+  if (client_ != NULL && client_->IsReady()) {
+    client_->Close();
+  }
+  return Status::OK();
+}
+
+// This must work, otherwise we are screwed.
+//
+void FTCliRepWrapper::RecoverConnectionToServer() {
+  Status s = ReestabilishConnectionToServer();
+  if (!s.ok()) throw TTransportException(s.ToString());
+}
+
+
 void FTCliRepWrapper::Ping() {
   RPC_TRACE(__func__);
   EXEC_WITH_RETRY_TRY() {
@@ -265,7 +365,14 @@ void FTCliRepWrapper::Ping() {
   EXEC_WITH_RETRY_CATCH();
 }
 
-
+void FTCliRepWrapper::FlushDB() {
+  RPC_TRACE(__func__);
+  EXEC_WITH_RETRY_TRY() {
+    GetInternalStub()->FlushDB();
+    EXEC_EXIT();
+  }
+  EXEC_WITH_RETRY_CATCH();
+}
 
 void FTCliRepWrapper::Mknod(const OID& obj_id, const int16_t perm) {
   RPC_TRACE(__func__);
@@ -410,6 +517,5 @@ void FTCliRepWrapper::InsertSplit(const int64_t dir_id,
   }
   EXEC_WITH_RETRY_CATCH();
 }
-*/
 
 } /* namespace indexfs */

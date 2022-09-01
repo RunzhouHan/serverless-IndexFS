@@ -183,7 +183,7 @@ Status IndexFSClient::MakeDirectories(Path &path) {
   size_t parent = 0;
   while ((parent = NextEntry(path, parent + 1)) <= entry ) {
     buffer = path.substr(0, parent);
-    s = cli_->Getattr(buffer, &info);
+    s = cli_->Getattr(buffer, info);
     if (s.IsNotFound()) {
 #     ifndef NDEBUG
       if (FLAGS_print_ops) {
@@ -281,7 +281,7 @@ Status IndexFSClient::GetAttr(Path &path) {
 # endif
   // StatInfo info;
   std::string info;
-  s = cli_->Getattr(path, &info);
+  s = cli_->Getattr(path, info);
 # ifndef NDEBUG
   if (FLAGS_print_ops) {
     printf("%s\n", s.ToString().c_str());

@@ -72,7 +72,7 @@ class IndexMetaDBDriver: virtual public MetaDBDriver {
 
   void OpenMetaDB() {
     DLOG_ASSERT(rpc_ == NULL);
-    rpc_ = RPC::CreateRPC(config_);
+    rpc_ = RPC_MDB::CreateRPC(config_);
     // DLOG_ASSERT(mdb_ == NULL); // by runzhou
     DLOG_ASSERT(rpc_mdb_ == NULL);
     rpc_mdb_ = new RPC_MetaDB(config_, mdb_); // need to redesign a RPC_Server dedicated to metadb. by runzhou
@@ -81,7 +81,7 @@ class IndexMetaDBDriver: virtual public MetaDBDriver {
   }
 
  private:
-  RPC* rpc_;
+  RPC_MDB* rpc_;
   RPC_MetaDB* rpc_mdb_;
   MetaDB* mdb_;
   // No copying allowed

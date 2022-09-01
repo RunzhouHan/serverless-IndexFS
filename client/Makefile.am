@@ -22,7 +22,6 @@ noinst_HEADERS =
 noinst_HEADERS += rpc_exec.h
 noinst_HEADERS += client.h
 noinst_HEADERS += client_impl.h
-noinst_HEADERS += batch_client.h
 noinst_HEADERS += tcp_socket.h
 noinst_HEADERS += deployment_cache.h
 

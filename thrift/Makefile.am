@@ -16,7 +16,7 @@ AM_CXXFLAGS = $(EXTRA_CFLAGS)
 nodist_noinst_HEADERS =
 nodist_noinst_HEADERS += indexfs_types.h
 nodist_noinst_HEADERS += indexfs_constants.h
-#nodist_noinst_HEADERS += MetadataIndexService.h
+nodist_noinst_HEADERS += MetadataIndexService.h
 nodist_noinst_HEADERS += MetaDBService.h
 
 ## -------------------------------------------------------------------------
@@ -28,7 +28,7 @@ noinst_LTLIBRARIES = libthrift_idxfs.la
 nodist_libthrift_idxfs_la_SOURCES =
 nodist_libthrift_idxfs_la_SOURCES += indexfs_types.cpp
 nodist_libthrift_idxfs_la_SOURCES += indexfs_constants.cpp
-#nodist_libthrift_idxfs_la_SOURCES += MetadataIndexService.cpp
+nodist_libthrift_idxfs_la_SOURCES += MetadataIndexService.cpp
 nodist_libthrift_idxfs_la_SOURCES += MetaDBService.cpp
 
 ## -------------------------------------------------------------------------
@@ -46,14 +46,14 @@ CLEANFILES =
 
 CLEANFILES += indexfs_types.h
 CLEANFILES += indexfs_constants.h
-#CLEANFILES += MetadataIndexService.h
+CLEANFILES += MetadataIndexService.h
 CLEANFILES += MetaDBService.h
 
 CLEANFILES += indexfs_types.cpp
 CLEANFILES += indexfs_constants.cpp
-#CLEANFILES += MetadataIndexService.cpp
+CLEANFILES += MetadataIndexService.cpp
 CLEANFILES += MetaDBService.cpp
-#CLEANFILES += MetadataIndexService_server.skeleton.cpp
+CLEANFILES += MetadataIndexService_server.skeleton.cpp
 CLEANFILES += MetaDBService_server.skeleton.cpp
 
 ## -------------------------------------------------------------------------

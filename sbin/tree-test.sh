@@ -20,8 +20,8 @@
 
 me=$0
 INDEXFS_HOME=$(cd -P -- `dirname $me`/.. && pwd -P)
-INDEXFS_CONF_FILE="/home/osboxes/Desktop/idxfs_conf"
-INDEXFS_SERVER_LIST="/home/osboxes/Desktop/giga_conf"
+INDEXFS_CONF_FILE="/mnt/beegfs/idxfs_conf"
+INDEXFS_SERVER_LIST="/mnt/beegfs/giga_conf"
 INDEXFS_RUN_TYPE=${2-"$INDEXFS_RUN_TYPE"}
 if test -z "$INDEXFS_RUN_TYPE"; then INDEXFS_RUN_TYPE="regular"; fi
 INDEXFS_RUN_PREFIX=${INDEXFS_RUN_PREFIX="`date +%s`"}

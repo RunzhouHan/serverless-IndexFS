@@ -33,7 +33,7 @@ IOTask* FetchTask(int my_rank, int comm_sz) {
     task = "TreeTest";
     result = IOTaskFactory::GetTreeTestTask(my_rank, comm_sz);
   }
-  // if (FLAGS_task == "replay") {
+  // else if (FLAGS_task == "replay") {
   //   task = "TraceReplayTest";
   //   result = IOTaskFactory::GetReplayTestTask(my_rank, comm_sz);
   // }
@@ -49,11 +49,6 @@ IOTask* FetchTask(int my_rank, int comm_sz) {
     task = "RPCTest";
     result = IOTaskFactory::GetRPCTestTask(my_rank, comm_sz);
   }
-  /*else if (FLAGS_task == "new") {
-    task = "newTest";
-    result = IOTaskFactory::GetnewTestTask(my_rank, comm_sz);  
-  }*/
-
   if (my_rank == 0) {
     if (result != NULL) {
       fprintf(stderr, "== Run %s ==\n", task);

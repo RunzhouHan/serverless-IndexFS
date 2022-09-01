@@ -18,10 +18,11 @@ SUBDIRS += lib/leveldb
 SUBDIRS += thrift
 SUBDIRS += common
 SUBDIRS += util
-SUBDIRS += metadb
 SUBDIRS += ipc
-SUBDIRS += server
+SUBDIRS += metadb
+
 SUBDIRS += client
+SUBDIRS += c
 
 # --------------------------------
 # Performance Testing
@@ -39,7 +40,7 @@ endif
 # Client Toolkit
 # --------------------------------
 
-SUBDIRS += c
+
 SUBDIRS += bin
 
 #if BUILD_FUSE

@@ -15,7 +15,7 @@ m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
 LT_PREREQ([2.4])
 LT_INIT
 
-AC_CONFIG_SRCDIR([server/index_server.cc])
+
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_MACRO_DIR([m4])
 
@@ -589,7 +589,6 @@ AC_CONFIG_FILES([Makefile
                  util/Makefile
                  metadb/Makefile
                  ipc/Makefile
-                 server/Makefile
                  client/Makefile
                  c/Makefile
                  bin/Makefile

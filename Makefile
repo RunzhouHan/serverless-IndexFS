@@ -166,11 +166,10 @@ am__define_uniq_tagged_files = \
 ETAGS = etags
 CTAGS = ctags
 CSCOPE = cscope
-DIST_SUBDIRS = lib/leveldb thrift common util metadb ipc server client \
-	io_test md_test c bin
+DIST_SUBDIRS = lib/leveldb thrift common util ipc metadb client c \
+	io_test md_test bin
 am__DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/config.h.in ar-lib \
-	compile config.guess config.sub depcomp install-sh ltmain.sh \
-	missing
+	compile config.guess config.sub install-sh ltmain.sh missing
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 distdir = $(PACKAGE)-$(VERSION)
 top_distdir = $(distdir)
@@ -213,13 +212,13 @@ distuninstallcheck_listfiles = find . -type f -print
 am__distuninstallcheck_listfiles = $(distuninstallcheck_listfiles) \
   | sed 's|^\./|$(prefix)/|' | grep -v '$(infodir)/dir$$'
 distcleancheck_listfiles = find . -type f -print
-ACLOCAL = ${SHELL} /home/runzhou/indexfs-0.4/serverless-IndexFS/missing aclocal-1.15
+ACLOCAL = ${SHELL} /home/runzhou/indexfs-0.4/serverless-IndexFS-metadb-mdtest-08-29-2022/missing aclocal-1.15
 AMTAR = $${TAR-tar}
 AM_DEFAULT_VERBOSITY = 0
 AR = ar
-AUTOCONF = ${SHELL} /home/runzhou/indexfs-0.4/serverless-IndexFS/missing autoconf
-AUTOHEADER = ${SHELL} /home/runzhou/indexfs-0.4/serverless-IndexFS/missing autoheader
-AUTOMAKE = ${SHELL} /home/runzhou/indexfs-0.4/serverless-IndexFS/missing automake-1.15
+AUTOCONF = ${SHELL} /home/runzhou/indexfs-0.4/serverless-IndexFS-metadb-mdtest-08-29-2022/missing autoconf
+AUTOHEADER = ${SHELL} /home/runzhou/indexfs-0.4/serverless-IndexFS-metadb-mdtest-08-29-2022/missing autoheader
+AUTOMAKE = ${SHELL} /home/runzhou/indexfs-0.4/serverless-IndexFS-metadb-mdtest-08-29-2022/missing automake-1.15
 AWK = mawk
 BACKEND_FLAGS = -DNFS
 CC = gcc
@@ -261,7 +260,7 @@ LIPO =
 LN_S = ln -s
 LTLIBOBJS = 
 LT_SYS_LIBRARY_PATH = 
-MAKEINFO = ${SHELL} /home/runzhou/indexfs-0.4/serverless-IndexFS/missing makeinfo
+MAKEINFO = ${SHELL} /home/runzhou/indexfs-0.4/serverless-IndexFS-metadb-mdtest-08-29-2022/missing makeinfo
 MANIFEST_TOOL = :
 MKDIR_P = /bin/mkdir -p
 MPICC = mpicc
@@ -291,10 +290,10 @@ SNAPPY_FLAGS = -DSNAPPY
 STRIP = strip
 THRIFT = /usr/local/bin/thrift
 VERSION = 0.4.1
-abs_builddir = /home/runzhou/indexfs-0.4/serverless-IndexFS
-abs_srcdir = /home/runzhou/indexfs-0.4/serverless-IndexFS
-abs_top_builddir = /home/runzhou/indexfs-0.4/serverless-IndexFS
-abs_top_srcdir = /home/runzhou/indexfs-0.4/serverless-IndexFS
+abs_builddir = /home/runzhou/indexfs-0.4/serverless-IndexFS-metadb-mdtest-08-29-2022
+abs_srcdir = /home/runzhou/indexfs-0.4/serverless-IndexFS-metadb-mdtest-08-29-2022
+abs_top_builddir = /home/runzhou/indexfs-0.4/serverless-IndexFS-metadb-mdtest-08-29-2022
+abs_top_srcdir = /home/runzhou/indexfs-0.4/serverless-IndexFS-metadb-mdtest-08-29-2022
 ac_ct_AR = ar
 ac_ct_CC = gcc
 ac_ct_CXX = g++
@@ -324,7 +323,7 @@ host_vendor = pc
 htmldir = ${docdir}
 includedir = ${prefix}/include
 infodir = ${datarootdir}/info
-install_sh = ${SHELL} /home/runzhou/indexfs-0.4/serverless-IndexFS/install-sh
+install_sh = ${SHELL} /home/runzhou/indexfs-0.4/serverless-IndexFS-metadb-mdtest-08-29-2022/install-sh
 libdir = ${exec_prefix}/lib
 libexecdir = ${exec_prefix}/libexec
 localedir = ${datarootdir}/locale
@@ -350,12 +349,13 @@ ACLOCAL_AMFLAGS = -I m4 ${ACLOCAL_FLAGS}
 # --------------------------------
 # Main Modules
 # --------------------------------
+#SUBDIRS += server
 
 # --------------------------------
 # Client Toolkit
 # --------------------------------
-SUBDIRS = lib/leveldb thrift common util metadb ipc server client \
-	$(am__append_1) $(am__append_2) c bin
+SUBDIRS = lib/leveldb thrift common util ipc metadb client c \
+	$(am__append_1) $(am__append_2) bin
 
 #if BUILD_FUSE
 #  SUBDIRS += fuse

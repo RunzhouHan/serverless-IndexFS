@@ -49,30 +49,30 @@ Status CreateDir(Env* env, const std::string& dir) {
 }
 
 Status BatchClient::Init() {
-  Status s;
-  if (!FLAGS_batch_client_remote_read_mode) {
-    CreateDir(env_, config_->GetDBRootDir());
-    CreateDir(env_, config_->GetDBHomeDir());
-    if (config_->HasOldData()) {
-      s = MetaDB::Repair(config_, env_);
-    }
-    if (s.ok()) {
-      s = MetaDB::Open(config_, &mdb_, env_);
-    }
-    if (!s.ok()) {
-      return s;
-    }
-  } else {
-    // No need to open MDB
-    // All data will be fetched from remote servers
-  }
-  return kRPCLazyInitialize ? s : rpc_->Init();
+  // Status s;
+  // if (!FLAGS_batch_client_remote_read_mode) {
+  //   CreateDir(env_, config_->GetDBRootDir());
+  //   CreateDir(env_, config_->GetDBHomeDir());
+  //   if (config_->HasOldData()) {
+  //     MetaDB::Repair(config_, env_);
+  //   }
+  //   if (s.ok()) {
+  //     MetaDB::Open(config_, &mdb_, env_);
+  //   }
+  //   if (!s.ok()) {
+  //     return s;
+  //   }
+  // } else {
+  //   // No need to open MDB
+  //   // All data will be fetched from remote servers
+  // }
+  // return kRPCLazyInitialize ? s : rpc_->Init();
 }
 
 Status BatchClient::FlushWriteBuffer() {
   Status s;
   if (mdb_ != NULL) {
-    s = mdb_->Flush();
+    mdb_->Flush();
   }
   return s;
 }
@@ -81,17 +81,18 @@ Status BatchClient::FlushWriteBuffer() {
 Status BatchClient::FlushWriteBufferTCP() {
   Status s;
   if (mdb_ != NULL) {
-    s = mdb_->Flush();
+    mdb_->Flush();
   }
   return s;
 }
 
 Status BatchClient::Dispose() {
+  Status s;
   if (mdb_ != NULL) {
-    Status s_ = mdb_->Flush();
-    if (!s_.ok()) {
-      LOG(ERROR) << "Fail to flush DB: " << s_.ToString();
-    }
+    mdb_->Flush();
+    // if (!s_.ok()) {
+    //  LOG(ERROR) << "Fail to flush DB: " << s_.ToString();
+    // } 
     delete mdb_;
     mdb_ = NULL;
   }
@@ -119,7 +120,8 @@ namespace {
 static
 Status Local_Mknod(MetaDB* db, const OID& oid) {
   DLOG_ASSERT(db != NULL);
-  return db->NewFile(KeyInfo(oid.dir_id, 0, oid.obj_name));
+  // Mark as Dummy by Runzhou
+  // db->NewFile(KeyInfo(oid.dir_id, 0, oid.obj_name));
 }
 }
 
@@ -131,7 +133,8 @@ Status BatchClient::Mknod(const std::string& path, i16 perm) {
   if (!s.ok()) {
     return s;
   }
-  return Local_Mknod(mdb_, oid);
+  // Mark as Dummy by Runzhou
+  // return Local_Mknod(mdb_, oid);
 }
 
 Status BatchClient::Mknod_Flush() {
@@ -146,7 +149,8 @@ namespace {
 static Status Local_Getattr(MetaDB* db, const OID& oid,
                             StatInfo* info) {
   DLOG_ASSERT(db != NULL);
-  return db->GetEntry(KeyInfo(oid.dir_id, 0, oid.obj_name), info);
+  // Mark as Dummy by Runzhou
+  // return db->GetEntry(KeyInfo(oid.dir_id, 0, oid.obj_name), info);
 }
 }
 
@@ -199,14 +203,14 @@ static Status Local_Chmod(MetaDB* db, const OID& oid,
   Status s;
   StatInfo info;
   KeyInfo key(oid.dir_id, 0, oid.obj_name);
-  s = db->GetEntry(key, &info);
+  // s = db->GetEntry(key, &info);
   if (s.ok()) {
     s = db->PutEntryWithMode(key, info, perm);
     if (s.ok()) {
       *is_dir = S_ISDIR(info.mode);
     }
   }
-  return s;
+  // return s;
 }
 }
 
