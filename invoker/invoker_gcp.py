@@ -10,7 +10,7 @@ def current_milli_time():
     return round(time.time()*1000)
 
 def first_request():
-        url = 'https://34.122.163.82:444/api/v1/web/guest/default/serverless_indexfs'
+        url = 'https://34.133.92.85:444/api/v1/web/guest/default/serverless_indexfs'
         i = 1
         file_id = i
         file_name = 'file_' + str(i)
@@ -30,7 +30,7 @@ def tcp_server(num):
         print(sys.stdout,"sock ready")
 
         # Bind the socket to the port
-        server_address = ("127.0.0.1", 2004)
+        server_address = ("146.148.61.223", 2004)
 
         sock.bind(server_address)
 
@@ -80,7 +80,7 @@ def tcp_server(num):
 
 
 def main():
-        num = 200000
+        num = 10
         m1 = current_milli_time()
         tcp_server(num)
         m2 = current_milli_time()
