@@ -349,7 +349,6 @@ ACLOCAL_AMFLAGS = -I m4 ${ACLOCAL_FLAGS}
 # --------------------------------
 # Main Modules
 # --------------------------------
-#SUBDIRS += server
 
 # --------------------------------
 # Client Toolkit

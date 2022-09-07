@@ -113,12 +113,12 @@ esac
 
 set -x
 
-$MPIEXEC --allow-run-as-root \
+$MPIEXEC \
   -np $NUM_CLIENTS $INDEXFS_BUILD/io_test/io_driver \
   --prefix=$INDEXFS_RUN_PREFIX \
-  --task=new\
+  --task=tree\
   --dirs=100 \
-  --files=5000 \
+  --files=100 \
   --share_dirs \
   --ignore_errors=true \
   --file_dir=$FILE_ROOT \
