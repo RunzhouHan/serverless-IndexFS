@@ -31,7 +31,7 @@ INDEXFS_BUILD=$INDEXFS_HOME
 
 if test -d $INDEXFS_HOME/build
 then
-  INDEXFS_BUILD=$INDEXFS_HOME/build
+  INDEXFS_BUILD=$INDEXFS_HOME
 fi
 
 # check our test binary
@@ -117,7 +117,7 @@ $MPIEXEC \
   -np $NUM_CLIENTS $INDEXFS_BUILD/io_test/io_driver \
   --prefix=$INDEXFS_RUN_PREFIX \
   --task=tree\
-  --dirs=100 \
+  --dirs=1 \
   --files=100 \
   --share_dirs \
   --ignore_errors=true \

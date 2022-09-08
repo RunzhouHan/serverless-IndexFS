@@ -19,8 +19,8 @@ def first_request():
         path_depth = 0
 
         OID = {'dir_id': dir_id,'path_depth':path_depth, 'obj_name': file_name};
-
-        PARAMS = {'zeroth_server':'35.232.208.226', 'zeroth_port':10086, 'instance_id':0, 'deployment_id':0, 'op_type': 'Mknod', 'path':file_path, 'OID': OID, 'client_ip': '35.223.120.109', 'client_port':2004};
+        # send serverless function the metadb address (zeroth_server) and IndexFS client address (client_ip)
+        PARAMS = {'zeroth_server':'146.148.61.223', 'zeroth_port':10086, 'instance_id':0, 'deployment_id':0, 'op_type': 'Mknod', 'path':file_path, 'OID': OID, 'client_ip': '146.148.61.223', 'client_port':2004};
         response = requests.post(url, json=PARAMS, verify=False)
 
 
@@ -30,7 +30,7 @@ def tcp_server(num):
         print(sys.stdout,"sock ready")
 
         # Bind the socket to the port
-        server_address = ("146.148.61.223", 2004)
+        server_address = ("10.128.0.10", 2004)
 
         sock.bind(server_address)
 
@@ -80,7 +80,7 @@ def tcp_server(num):
 
 
 def main():
-        num = 10
+        num = 1000
         m1 = current_milli_time()
         tcp_server(num)
         m2 = current_milli_time()

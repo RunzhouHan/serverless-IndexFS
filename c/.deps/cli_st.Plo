@@ -1,16 +1,12 @@
 cli_st.lo: cli_st.cc /usr/include/stdc-predef.h ../c/libclient.h \
- ../c/cli_types.h /usr/include/c++/9/stdlib.h /usr/include/c++/9/cstdlib \
- /usr/include/x86_64-linux-gnu/c++/9/bits/c++config.h \
- /usr/include/x86_64-linux-gnu/c++/9/bits/os_defines.h \
+ ../c/cli_types.h /usr/include/stdlib.h \
+ /usr/include/x86_64-linux-gnu/bits/libc-header-start.h \
  /usr/include/features.h /usr/include/x86_64-linux-gnu/sys/cdefs.h \
  /usr/include/x86_64-linux-gnu/bits/wordsize.h \
  /usr/include/x86_64-linux-gnu/bits/long-double.h \
  /usr/include/x86_64-linux-gnu/gnu/stubs.h \
  /usr/include/x86_64-linux-gnu/gnu/stubs-64.h \
- /usr/include/x86_64-linux-gnu/c++/9/bits/cpu_defines.h \
- /usr/include/stdlib.h \
- /usr/include/x86_64-linux-gnu/bits/libc-header-start.h \
- /usr/lib/gcc/x86_64-linux-gnu/9/include/stddef.h \
+ /usr/lib/gcc/x86_64-linux-gnu/5/include/stddef.h \
  /usr/include/x86_64-linux-gnu/bits/waitflags.h \
  /usr/include/x86_64-linux-gnu/bits/waitstatus.h \
  /usr/include/x86_64-linux-gnu/bits/floatn.h \
@@ -44,8 +40,7 @@ cli_st.lo: cli_st.cc /usr/include/stdc-predef.h ../c/libclient.h \
  /usr/include/alloca.h \
  /usr/include/x86_64-linux-gnu/bits/stdlib-bsearch.h \
  /usr/include/x86_64-linux-gnu/bits/stdlib-float.h \
- /usr/include/x86_64-linux-gnu/bits/stdlib.h \
- /usr/include/c++/9/bits/std_abs.h /usr/include/unistd.h \
+ /usr/include/x86_64-linux-gnu/bits/stdlib.h /usr/include/unistd.h \
  /usr/include/x86_64-linux-gnu/bits/posix_opt.h \
  /usr/include/x86_64-linux-gnu/bits/environments.h \
  /usr/include/x86_64-linux-gnu/bits/confname.h \
@@ -61,13 +56,9 @@ cli_st.lo: cli_st.cc /usr/include/stdc-predef.h ../c/libclient.h \
 
 ../c/cli_types.h:
 
-/usr/include/c++/9/stdlib.h:
+/usr/include/stdlib.h:
 
-/usr/include/c++/9/cstdlib:
-
-/usr/include/x86_64-linux-gnu/c++/9/bits/c++config.h:
-
-/usr/include/x86_64-linux-gnu/c++/9/bits/os_defines.h:
+/usr/include/x86_64-linux-gnu/bits/libc-header-start.h:
 
 /usr/include/features.h:
 
@@ -81,13 +72,7 @@ cli_st.lo: cli_st.cc /usr/include/stdc-predef.h ../c/libclient.h \
 
 /usr/include/x86_64-linux-gnu/gnu/stubs-64.h:
 
-/usr/include/x86_64-linux-gnu/c++/9/bits/cpu_defines.h:
-
-/usr/include/stdlib.h:
-
-/usr/include/x86_64-linux-gnu/bits/libc-header-start.h:
-
-/usr/lib/gcc/x86_64-linux-gnu/9/include/stddef.h:
+/usr/lib/gcc/x86_64-linux-gnu/5/include/stddef.h:
 
 /usr/include/x86_64-linux-gnu/bits/waitflags.h:
 
@@ -158,8 +143,6 @@ cli_st.lo: cli_st.cc /usr/include/stdc-predef.h ../c/libclient.h \
 /usr/include/x86_64-linux-gnu/bits/stdlib-float.h:
 
 /usr/include/x86_64-linux-gnu/bits/stdlib.h:
-
-/usr/include/c++/9/bits/std_abs.h:
 
 /usr/include/unistd.h:
 
