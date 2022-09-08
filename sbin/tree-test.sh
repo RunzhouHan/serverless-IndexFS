@@ -90,7 +90,7 @@ else
 fi
 
 # advanced tree test settings
-NUM_CLIENTS=${1-"2"}
+NUM_CLIENTS=${1-"1"}
 FILE_ROOT="$INDEXFS_ROOT/_DATA_"
 DB_ROOT="$INDEXFS_ROOT/_META_"
 case $INDEXFS_RUN_TYPE in
