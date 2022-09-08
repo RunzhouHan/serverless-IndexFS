@@ -11,6 +11,7 @@
 // #include "client/deployment_cache.h"
 
 
+
 namespace indexfs {
 
 Status ClientImpl::Init() {
@@ -79,7 +80,8 @@ Status ClientImpl::Dispose() {
     DLOG(WARNING) << "Client closed with un-flushed mknod_buffer";
   }
 # endif
-  return rpc_->Shutdown();
+  // return rpc_->Shutdown();
+  return socket_->disconnect();
 }
 
 // -------------------------------------------------------------

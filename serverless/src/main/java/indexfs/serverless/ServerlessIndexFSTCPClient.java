@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.OutputStreamWriter;
+import java.net.ConnectException;
 import java.net.Socket;
 import java.util.ArrayList;
 
@@ -81,7 +82,21 @@ public class ServerlessIndexFSTCPClient extends Thread {
      */
     public void connect(String client_ip, int client_port) throws IOException {
     	System.out.println("ServerlessIndexFSTCPClient.connect");
-    	clientSocket = new Socket(client_ip, client_port);
+//    	clientSocket = new Socket(client_ip, client_port);
+    	// Wait for the server to start
+    	while(true) {
+    		try {
+    			clientSocket = new Socket(client_ip, client_port);
+    			break;
+    		} catch (ConnectException e) {
+    			System.out.println("Connect failed, waiting and trying again");
+    			try {
+    				Thread.sleep(1000);//1 seconds
+		        } catch(InterruptedException ie){
+    		        ie.printStackTrace();
+    		    }
+    		}
+    	}
         String ready = "Serverless IndexFS TCP client has been connected to IndexFS client";
         System.out.println(ready);
         try {
@@ -123,6 +138,7 @@ public class ServerlessIndexFSTCPClient extends Thread {
 
             while ((inputLine = b_reader.readLine()) != null) {
             	if (inputLine.length() == 1) {
+            		System.out.println("KILL SIGNAL: " + inputLine);
             		break;
             	}
             	tmp1 = System.nanoTime();
