@@ -90,12 +90,13 @@ public class ServerlessIndexFSTCPClient extends Thread {
     			clientSocket = new Socket(client_ip, client_port);
     			break;
     		} catch (ConnectException e) {
-    			System.out.println("Connect failed, waiting and trying again");
-//    			try {
-//    				Thread.sleep(100);//1 seconds
-//		        } catch(InterruptedException ie){
-//    		        ie.printStackTrace();
-//    		    }
+//    			System.out.println("Connect failed, waiting and trying again");
+    			e.printStackTrace(System.out);
+    			try {
+    				Thread.sleep(100);//1 seconds
+		        } catch(InterruptedException ie){
+    		        ie.printStackTrace();
+    		    }
     		}
     	}
 		long endTime = System.nanoTime();
