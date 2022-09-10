@@ -84,6 +84,7 @@ public class ServerlessIndexFSTCPClient extends Thread {
     	System.out.println("ServerlessIndexFSTCPClient.connect");
 //    	clientSocket = new Socket(client_ip, client_port);
     	// Wait for the server to start
+		long startTime = System.nanoTime();
     	while(true) {
     		try {
     			clientSocket = new Socket(client_ip, client_port);
@@ -97,7 +98,9 @@ public class ServerlessIndexFSTCPClient extends Thread {
     		    }
     		}
     	}
-        String ready = "Serverless IndexFS TCP client has been connected to IndexFS client";
+		long endTime = System.nanoTime();
+		long duration = (endTime - startTime)/1000000;
+        String ready = "Serverless IndexFS TCP client has been connected to IndexFS client in: "  + duration;
         System.out.println(ready);
         try {
 			PrintWriter outToClient = new PrintWriter(new OutputStreamWriter(clientSocket.getOutputStream()));
