@@ -93,7 +93,7 @@ public class ServerlessIndexFSMain {
 			long t1 = System.nanoTime();
 			duration1 = (t1 - startTime)/1000000;
 
-			tcpClient.receivePayload();
+//			tcpClient.receivePayload();
 			long t2 = System.nanoTime();
 			duration2 = (t2 - t1)/1000000;
 			
