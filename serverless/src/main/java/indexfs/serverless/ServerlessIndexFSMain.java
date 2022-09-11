@@ -120,7 +120,8 @@ public class ServerlessIndexFSMain {
 	}
 
 	LOG.info("Everything disposed, server will now shutdown");
-
+	System.out.println("Everything disposed, server will now shutdown");
+	
 		return args;
 	}
 
