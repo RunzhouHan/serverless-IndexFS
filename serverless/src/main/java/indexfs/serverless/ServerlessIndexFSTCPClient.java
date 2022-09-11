@@ -88,6 +88,7 @@ public class ServerlessIndexFSTCPClient extends Thread {
     	while(true) {
     		try {
     			clientSocket = new Socket(client_ip, client_port);
+    			System.out.println("Connected to" + client_ip + ": " + client_port);
     			break;
     		} catch (ConnectException e) {
 //    			System.out.println("Connect failed, waiting and trying again");
@@ -96,6 +97,7 @@ public class ServerlessIndexFSTCPClient extends Thread {
     				Thread.sleep(100);//1 seconds
 		        } catch(InterruptedException ie){
     		        ie.printStackTrace();
+    		        System.out.println("\n\n");
     		    }
     		}
     	}
