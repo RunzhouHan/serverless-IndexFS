@@ -60,61 +60,61 @@ public class ServerlessIndexFSMain {
 		ServerlessIndexFSInputParser parser = new ServerlessIndexFSInputParser();
 		ServerlessIndexFSParsedArgs parsed_args = parser.inputJsonParse(args);
 	
-	if (TCP_CLIENT_START == false) {
-
-		System.out.println("============================================================");
-		System.out.println("set indexfs server rank " + parsed_args.deployment_id);
-
-		config = new ServerlessIndexFSConfig(parsed_args);
-		config.PrintMetaDBList();
-		
-		driver = new ServerlessIndexFSDriver(config, parsed_args); // serverless run uncomment this
-		
-		if (driver != null) {
-			try {
-				driver.StartServer();
-				// After the first success request, switch to TCP communication
-				tcpClient = new ServerlessIndexFSTCPClient(config, driver);
-				}
-			catch (IOException e) {
-				//TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		
-		if (tcpClient != null) {
-			TCP_CLIENT_START = true;
-			System.out.println("indexfs TCP client " + parsed_args.deployment_id + " initialized");
-			
-			// TCP reserves port 0
-			long duration1,duration2,duration3 = 0;
-			long startTime = System.nanoTime();
-			tcpClient.connect(parsed_args.client_ip, parsed_args.client_port);
-			long t1 = System.nanoTime();
-			duration1 = (t1 - startTime)/1000000;
-
-			tcpClient.receivePayload();
-			long t2 = System.nanoTime();
-			duration2 = (t2 - t1)/1000000;
-			
-			tcpClient.disconnect();
-			long endTime = System.nanoTime();
-			duration3 = (endTime - startTime)/1000000;
-			System.out.println("tcpClient.connect() duration(ms): " + duration1);
-			System.out.println("tcpClient.receivePayload() duration(ms): " + duration2);
-			System.out.println("tcp communication duration(ms): " + duration3);
-		}
-		else 
-			System.out.println("indexfs TCP client " + parsed_args.deployment_id + "initialization failed");
-	}
+		if (TCP_CLIENT_START == false) {
 	
-	else {
-		if (tcpClient != null) {
-			System.out.println("TCP communication has already been established with " + parsed_args.client_ip +
-								":"+ parsed_args.client_ip);
-			tcpClient.receivePayload();
-			tcpClient.disconnect();
+			System.out.println("============================================================");
+			System.out.println("set indexfs server rank " + parsed_args.deployment_id);
+	
+			config = new ServerlessIndexFSConfig(parsed_args);
+			config.PrintMetaDBList();
+			
+			driver = new ServerlessIndexFSDriver(config, parsed_args); // serverless run uncomment this
+			
+			if (driver != null) {
+				try {
+					driver.StartServer();
+					// After the first success request, switch to TCP communication
+					tcpClient = new ServerlessIndexFSTCPClient(config, driver);
+					}
+				catch (IOException e) {
+					//TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			
+			if (tcpClient != null) {
+				TCP_CLIENT_START = true;
+				System.out.println("indexfs TCP client " + parsed_args.deployment_id + " initialized");
+				
+				// TCP reserves port 0
+				long duration1,duration2,duration3 = 0;
+				long startTime = System.nanoTime();
+				tcpClient.connect(parsed_args.client_ip, parsed_args.client_port);
+				long t1 = System.nanoTime();
+				duration1 = (t1 - startTime)/1000000;
+	
+				tcpClient.receivePayload();
+				long t2 = System.nanoTime();
+				duration2 = (t2 - t1)/1000000;
+				
+				tcpClient.disconnect();
+				long endTime = System.nanoTime();
+				duration3 = (endTime - startTime)/1000000;
+				System.out.println("tcpClient.connect() duration(ms): " + duration1);
+				System.out.println("tcpClient.receivePayload() duration(ms): " + duration2);
+				System.out.println("tcp communication duration(ms): " + duration3);
+			}
+			else 
+				System.out.println("indexfs TCP client " + parsed_args.deployment_id + "initialization failed");
 		}
+		
+		else {
+			if (tcpClient != null) {
+				System.out.println("TCP communication has already been established with " + parsed_args.client_ip +
+									":"+ parsed_args.client_port);
+				tcpClient.receivePayload();
+				tcpClient.disconnect();
+			}
 		else 
 			System.out.println("Error: TCP flag (true) conflicts with TCP client status (null)");
 	}
