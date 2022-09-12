@@ -177,7 +177,7 @@ public class ServerlessIndexFSRPCWritebackQueue {
 			op_map.get(server_id).add(op_param);
 			short server_id_ = server_id > Short.MAX_VALUE ? Short.MAX_VALUE : server_id < Short.MIN_VALUE ? Short.MIN_VALUE : (short)server_id;
 			ret = commit(server_id_, port);
-			System.out.println("ServerlessIndexFSRPCWritebackQueue: write_counter(): " + "commit to " + String.valueOf(server_id_));
+//			System.out.println("ServerlessIndexFSRPCWritebackQueue: write_counter(): " + "commit to " + String.valueOf(server_id_));
 			empty_map(server_id);
 		}
 		
