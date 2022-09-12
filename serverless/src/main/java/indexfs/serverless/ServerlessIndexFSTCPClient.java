@@ -157,7 +157,7 @@ public class ServerlessIndexFSTCPClient extends Thread {
             	}
     			if(op_type == 1) {
     				// Read operation. Send result back to IndexFS client
-    				System.out.println("Send out read result: " + String.valueOf(driver.stat.id));
+    				// System.out.println("Send out read result: " + String.valueOf(driver.stat.id));
     				strwriter.write(String.valueOf(driver.stat.id));
     				strwriter.flush();
     			}

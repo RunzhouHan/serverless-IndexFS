@@ -116,7 +116,7 @@ public class ServerlessIndexFSRPCWritebackQueue {
 		int ret = 0;
 //		System.out.println("Server ID: " + server_id + ": " + server_map.get((int)server_id) + ": " + port);
 		try {
-			System.out.println("ServerlessIndexFSRPCWritebackQueue: commit(): " + "commit to " + server_map.get((int)server_id) + ":" + port_map.get((int)server_id));
+//			System.out.println("ServerlessIndexFSRPCWritebackQueue: commit(): " + "commit to " + server_map.get((int)server_id) + ":" + port_map.get((int)server_id));
 			TTransport socket = new TSocket(server_map.get((int)server_id),port_map.get((int)server_id));
 			TProtocol protocol = new TBinaryProtocol(socket);
 	    	MetaDBService.Client mdb_client = new MetaDBService.Client(protocol);
