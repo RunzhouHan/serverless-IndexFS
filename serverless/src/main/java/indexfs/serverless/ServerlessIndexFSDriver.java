@@ -76,8 +76,7 @@ public class ServerlessIndexFSDriver {
 	 * @param OID OID of the target object.
 	 */
 	public int proceedClientRequest(ServerlessIndexFSParsedArgs parsed_args) {
-		System.out.println("ServerlessIndexFSDriver:proceedClientRequest(): " 
-				+ parsed_args.op_type + ": "+parsed_args.obj_id);
+//		System.out.println("ServerlessIndexFSDriver:proceedClientRequest(): " + parsed_args.op_type + ": "+parsed_args.obj_id);
 
 		OID obj_id = parsed_args.obj_id;
 		
