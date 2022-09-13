@@ -83,32 +83,32 @@ public class ServerlessIndexFSDriver {
 		if (obj_id != null) {
 			// TODO Remove prints after testing.
 			if (parsed_args.op_type.equals("Mknod")) {
-				index_srv_.Mknod(parsed_args.path, obj_id, 0, zeroth_port);
+				this.index_srv_.Mknod(parsed_args.path, obj_id, 0, zeroth_port);
 				this.op_type = 0;
 			}
 			else if (parsed_args.op_type.equals("Mkdir")) {
 				int server_id = ThreadLocalRandom.current().nextInt(0, config.GetMetaDBNum());
-				index_srv_.Mkdir(parsed_args.path, obj_id, 0, server_id, 0, zeroth_port);
+				this.index_srv_.Mkdir(parsed_args.path, obj_id, 0, server_id, 0, zeroth_port);
 				this.op_type = 0;
 			}
 			
 			else if (parsed_args.op_type.equals("Getattr")) {
-				stat = index_srv_.Getattr(parsed_args.path, obj_id, zeroth_port);
+				stat = this.index_srv_.Getattr(parsed_args.path, obj_id, zeroth_port);
 				this.op_type = 1;
 			}
 			
 			else if (parsed_args.op_type.equals("Chown")) {
-				index_srv_.Chown(parsed_args.path, obj_id, (short)0, (short)0, zeroth_port);
+				this.index_srv_.Chown(parsed_args.path, obj_id, (short)0, (short)0, zeroth_port);
 				this.op_type = 0;
 			}
 
 			else if (parsed_args.op_type.equals("Chmod")) {
-				index_srv_.Chmod(parsed_args.path, obj_id, 0, zeroth_port);
+				this.index_srv_.Chmod(parsed_args.path, obj_id, 0, zeroth_port);
 				this.op_type = 0;
 			}
 			
 			else if (parsed_args.op_type.equals("FlushDB")) {
-				index_srv_.FlushDB(zeroth_port);
+				this.index_srv_.FlushDB(zeroth_port);
 				this.op_type = 0;
 			}
 		}
@@ -117,9 +117,12 @@ public class ServerlessIndexFSDriver {
 
 	/**
 	 * Shut down the server thread (If applicable).
-	 * Currently leave it blank.
+	 * Currently use it to print cache hit rate.
 	 */
 	public void Shutdown() {
-		// TODO Auto-generated method stub
+		long cache_miss = this.index_srv_.cache_miss;
+		long cache_hit = this.index_srv_.cache_miss;
+		double cache_hit_rate = cache_hit/(cache_miss+cache_hit);
+	    System.out.println("Cache hit rate = " + cache_hit_rate);
 	}
 }

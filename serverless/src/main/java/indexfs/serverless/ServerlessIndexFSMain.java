@@ -102,7 +102,7 @@ public class ServerlessIndexFSMain {
 				duration3 = (endTime - startTime)/1000000;
 				System.out.println("tcpClient.connect() duration(ms): " + duration1);
 				System.out.println("tcpClient.receivePayload() duration(ms): " + duration2);
-				System.out.println("tcp communication duration(ms): " + duration3);
+				System.out.println("tcp communication duration(ms): " + duration3);				
 			}
 			else 
 				System.out.println("indexfs TCP client " + parsed_args.deployment_id + "initialization failed");
@@ -115,12 +115,12 @@ public class ServerlessIndexFSMain {
 				tcpClient.receivePayload();
 				tcpClient.disconnect();
 			}
-		else 
-			System.out.println("Error: TCP flag (true) conflicts with TCP client status (null)");
-	}
-
-	LOG.info("Everything disposed, server will now shutdown");
-	System.out.println("Everything disposed, server will now shutdown");
+			else 
+				System.out.println("Error: TCP flag (true) conflicts with TCP client status (null)");
+		}
+	
+		LOG.info("Everything disposed, server will now shutdown");
+		System.out.println("Everything disposed, server will now shutdown");
 	
 		return args;
 	}

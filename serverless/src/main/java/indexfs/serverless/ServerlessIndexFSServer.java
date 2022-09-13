@@ -55,6 +55,11 @@ public class ServerlessIndexFSServer {
 	 * Cache hit count 
 	 */
 	public long cache_hit = 0;
+	
+	/**
+	 * Cache miss count 
+	 */
+	public long cache_miss = 0;
 
 	/** 
 	 * Constructor
@@ -78,7 +83,7 @@ public class ServerlessIndexFSServer {
 	    System.out.println("Cache capacity: " + this.cache.size());
 		this.server_map = config.GetMetaDBMap();
 		this.op = new ServerlessIndexFSOperationParameters();
-		this.cache_hit = 0;
+//		this.cache_hit = 0;
 		
 	}
 	
@@ -332,6 +337,8 @@ public class ServerlessIndexFSServer {
 
 		if (stat == null) {
 		    // Object not in cache. Send RPC request and put metadata in LRU cache.
+			this.cache_miss += 1;
+			
 			int obj_idx = 0;
 			op.op_type = 5;
 			op.key.parent_id_ = obj_id.dir_id;
@@ -342,6 +349,8 @@ public class ServerlessIndexFSServer {
 			TTransport socket = new TSocket(server_map.get((int)server_id),port);
 			TProtocol protocol = new TBinaryProtocol(socket);
 	    	MetaDBService.Client mdb_client = new MetaDBService.Client(protocol);
+	    	
+	    	
 	    	try {
 				socket.open();
 				stat = ctx.GetEntry(mdb_client, op.key);
