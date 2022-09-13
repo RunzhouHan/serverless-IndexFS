@@ -365,8 +365,8 @@ public class ServerlessIndexFSServer {
 		else {
 			this.cache_hit += 1;
 		}
-		System.out.println("ServerlessIndexFSServer:Getattr: " + path + ": " 
-				+ stat.id + " Cache hit: " + this.cache_hit);
+//		System.out.println("ServerlessIndexFSServer:Getattr: " + path + ": " 
+//				+ stat.id + " Cache hit: " + this.cache_hit);
 
 		return stat;
 	}
