@@ -140,7 +140,7 @@ public class ServerlessIndexFSTCPClient extends Thread {
     public void receivePayload() throws IOException {
     	System.out.println("ServerlessIndexFSTCPClient.receivePayload");
     	DataInputStream in = new DataInputStream(clientSocket.getInputStream());
-    	PrintWriter strwriter = new PrintWriter(clientSocket.getOutputStream());
+//    	PrintWriter strwriter = new PrintWriter(clientSocket.getOutputStream());
     	InputStreamReader reader = new InputStreamReader(in);
     	BufferedReader b_reader = new BufferedReader(reader);
     	ServerlessIndexFSParsedArgs parsed_args = new ServerlessIndexFSParsedArgs();
@@ -173,8 +173,8 @@ public class ServerlessIndexFSTCPClient extends Thread {
     			if(op_type == 1) {
     				// Read operation. Send result back to IndexFS client
     				// System.out.println("Send out read result: " + String.valueOf(driver.stat.id));
-    				strwriter.write(String.valueOf(driver.stat.id));
-    				strwriter.flush();
+//    				strwriter.write(String.valueOf(driver.stat.id));
+//    				strwriter.flush();
     			}
     			duration_one = System.nanoTime() - tmp2;
     			duration_proceed += duration_one;
@@ -190,7 +190,7 @@ public class ServerlessIndexFSTCPClient extends Thread {
 			System.out.println("readline proceed duration(ms): " + duration_proceed/1000000);
 			System.out.println("readline duration(ms): " + duration);
 			
-			strwriter.close();
+//			strwriter.close();
 			
         } catch (IOException e) {
             // TODO Auto-generated catch block
