@@ -120,9 +120,9 @@ public class ServerlessIndexFSDriver {
 	 * Currently use it to print cache hit rate.
 	 */
 	public void Shutdown() {
-		long cache_miss = this.index_srv_.cache_miss;
-		long cache_hit = this.index_srv_.cache_miss;
-		double cache_hit_rate = cache_hit/(cache_miss+cache_hit);
-	    System.out.println("Cache hit rate = " + cache_hit_rate);
+//		long cache_miss = this.index_srv_.cache_miss;
+//		long cache_hit = this.index_srv_.cache_miss;
+//		double cache_hit_rate = cache_hit/(cache_miss+cache_hit);
+//	    System.out.println("Cache hit rate = " + cache_hit_rate);
 	}
 }
