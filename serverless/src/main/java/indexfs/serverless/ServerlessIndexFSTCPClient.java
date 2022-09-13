@@ -163,9 +163,9 @@ public class ServerlessIndexFSTCPClient extends Thread {
     			}
     			duration_one = System.nanoTime() - tmp2;
     			duration_proceed += duration_one;
-    			if ((duration_one/1000000) > 10) {
+//    			if ((duration_one/1000000) > 10) {
     				System.out.println("file_" + i + " duration " + duration_one/1000000);
-    			}
+//    			}
     			i++;
 			}
 			long endTime = System.nanoTime();
