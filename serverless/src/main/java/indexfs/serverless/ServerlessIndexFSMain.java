@@ -97,7 +97,7 @@ public class ServerlessIndexFSMain {
 				long t2 = System.nanoTime();
 				duration2 = (t2 - t1)/1000000;
 				
-//				tcpClient.disconnect();
+				tcpClient.disconnect();
 				long endTime = System.nanoTime();
 				duration3 = (endTime - startTime)/1000000;
 				System.out.println("tcpClient.connect() duration(ms): " + duration1);
@@ -109,11 +109,11 @@ public class ServerlessIndexFSMain {
 		}
 		
 		else {
-			if (tcpClient != null) {
+			if (tcpClient != null && tcpClient.checkConnection()) {
 				System.out.println("TCP communication has already been established with " + parsed_args.client_ip +
 									":"+ parsed_args.client_port);
 				tcpClient.receivePayload();
-//				tcpClient.disconnect();
+				tcpClient.disconnect();
 			}
 		else 
 			System.out.println("Error: TCP flag (true) conflicts with TCP client status (null)");

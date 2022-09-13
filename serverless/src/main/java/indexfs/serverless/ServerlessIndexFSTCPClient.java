@@ -119,13 +119,21 @@ public class ServerlessIndexFSTCPClient extends Thread {
     }
 
     /**
+     * Check if connection is established
+     * @return 
+     */
+    public boolean checkConnection() {
+    	return clientSocket.isConnected();
+    }
+    
+    
+    /**
      * 
      * @throws IOException
      */
     public void receivePayload() throws IOException {
     	System.out.println("ServerlessIndexFSTCPClient.receivePayload");
     	DataInputStream in = new DataInputStream(clientSocket.getInputStream());
-    	DataOutputStream out = new DataOutputStream(clientSocket.getOutputStream());
     	PrintWriter strwriter = new PrintWriter(clientSocket.getOutputStream());
     	InputStreamReader reader = new InputStreamReader(in);
     	BufferedReader b_reader = new BufferedReader(reader);
