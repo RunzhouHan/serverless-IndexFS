@@ -20,7 +20,7 @@ def first_request(serverless_function_url):
 
         OID = {'dir_id': dir_id,'path_depth':path_depth, 'obj_name': file_name};
         # send serverless function the metadb address (zeroth_server) and IndexFS client address (client_ip)
-        PARAMS = {'zeroth_server':'146.148.61.223', 'zeroth_port':10086, 'instance_id':0, 'deployment_id':0, 'op_type': 'Mknod', 'path':file_path, 'OID': OID, 'client_ip': '146.148.61.223', 'client_port':2004};
+        PARAMS = {'zeroth_server':'146.148.61.223', 'zeroth_port':10086, 'instance_id':0, 'deployment_id':0, 'op_type': 'Mknod', 'path':file_path, 'OID': OID, 'client_ip': '10.128.0.10', 'client_port':2004};
         response = requests.post(url, json=PARAMS, verify=False)
 
 

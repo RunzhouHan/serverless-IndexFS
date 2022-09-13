@@ -1,8 +1,9 @@
-md_test.o: md_test.c /usr/include/stdc-predef.h /usr/local/include/mpi.h \
- /usr/lib/gcc/x86_64-linux-gnu/9/include/stddef.h \
- /usr/local/include/mpi_portable_platform.h \
- /usr/lib/gcc/x86_64-linux-gnu/9/include/limits.h \
- /usr/lib/gcc/x86_64-linux-gnu/9/include/syslimits.h \
+md_test.o: md_test.c /usr/include/stdc-predef.h \
+ /usr/lib/x86_64-linux-gnu/openmpi/include/mpi.h \
+ /usr/lib/gcc/x86_64-linux-gnu/7/include/stddef.h \
+ /usr/lib/x86_64-linux-gnu/openmpi/include/mpi_portable_platform.h \
+ /usr/lib/gcc/x86_64-linux-gnu/7/include-fixed/limits.h \
+ /usr/lib/gcc/x86_64-linux-gnu/7/include-fixed/syslimits.h \
  /usr/include/limits.h \
  /usr/include/x86_64-linux-gnu/bits/libc-header-start.h \
  /usr/include/features.h /usr/include/x86_64-linux-gnu/sys/cdefs.h \
@@ -31,7 +32,7 @@ md_test.o: md_test.c /usr/include/stdc-predef.h /usr/local/include/mpi.h \
  /usr/include/x86_64-linux-gnu/bits/libio.h \
  /usr/include/x86_64-linux-gnu/bits/_G_config.h \
  /usr/include/x86_64-linux-gnu/bits/types/__mbstate_t.h \
- /usr/lib/gcc/x86_64-linux-gnu/9/include/stdarg.h \
+ /usr/lib/gcc/x86_64-linux-gnu/7/include/stdarg.h \
  /usr/include/x86_64-linux-gnu/bits/stdio_lim.h \
  /usr/include/x86_64-linux-gnu/bits/sys_errlist.h \
  /usr/include/x86_64-linux-gnu/bits/stdio.h \
@@ -94,15 +95,15 @@ md_test.o: md_test.c /usr/include/stdc-predef.h /usr/local/include/mpi.h \
 
 /usr/include/stdc-predef.h:
 
-/usr/local/include/mpi.h:
+/usr/lib/x86_64-linux-gnu/openmpi/include/mpi.h:
 
-/usr/lib/gcc/x86_64-linux-gnu/9/include/stddef.h:
+/usr/lib/gcc/x86_64-linux-gnu/7/include/stddef.h:
 
-/usr/local/include/mpi_portable_platform.h:
+/usr/lib/x86_64-linux-gnu/openmpi/include/mpi_portable_platform.h:
 
-/usr/lib/gcc/x86_64-linux-gnu/9/include/limits.h:
+/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed/limits.h:
 
-/usr/lib/gcc/x86_64-linux-gnu/9/include/syslimits.h:
+/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed/syslimits.h:
 
 /usr/include/limits.h:
 
@@ -166,7 +167,7 @@ md_test.o: md_test.c /usr/include/stdc-predef.h /usr/local/include/mpi.h \
 
 /usr/include/x86_64-linux-gnu/bits/types/__mbstate_t.h:
 
-/usr/lib/gcc/x86_64-linux-gnu/9/include/stdarg.h:
+/usr/lib/gcc/x86_64-linux-gnu/7/include/stdarg.h:
 
 /usr/include/x86_64-linux-gnu/bits/stdio_lim.h:
 

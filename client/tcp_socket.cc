@@ -29,8 +29,8 @@ namespace indexfs {
 tcp_socket::tcp_socket(int num_of_deployments, int port):
     num_of_deployments_(num_of_deployments)  {
     server_addr.sin_family=AF_INET;     // TCP/IP
-    server_addr.sin_addr.s_addr=INADDR_ANY;     // server addr--permit all connection
-    // server_addr.sin_addr.s_addr=inet_addr("10.128.0.10"); 
+    // server_addr.sin_addr.s_addr=INADDR_ANY;     // server addr--permit all connection
+    server_addr.sin_addr.s_addr=inet_addr("10.128.0.10"); 
     server_addr.sin_port=htons(2004);       // server port
     length = sizeof(client_addr);
 }
@@ -92,7 +92,7 @@ Status tcp_socket::connect(const char* msg) {
     }
 
     /* bind socket with server addr */
-    if(bind(server_sockfd,(struct sockaddr *)&server_addr,sizeof(struct sockaddr))<0) {
+    if(bind(server_sockfd,(struct sockaddr *)&server_addr,sizeof(server_addr))<0) {
                     perror("bind error");
                     return Status::IOError("bind error");
     }

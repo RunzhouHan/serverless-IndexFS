@@ -437,11 +437,11 @@ Copyright (C) 2012 Free Software Foundation, Inc.
 This config.status script is free software; the Free Software Foundation
 gives unlimited permission to copy, distribute and modify it."
 
-ac_pwd='/home/runzhou/indexfs-0.4/serverless-IndexFS-metadb-mdtest-08-29-2022'
+ac_pwd='/home/hrzhou1996/serverless-IndexFS'
 srcdir='.'
 INSTALL='/usr/bin/install -c'
 MKDIR_P='/bin/mkdir -p'
-AWK='mawk'
+AWK='gawk'
 test -n "$AWK" || AWK=awk
 # The default lists apply if the user does not specify any file.
 ac_need_defaults=:
@@ -654,7 +654,7 @@ hardcode_minus_L='no'
 hardcode_shlibpath_var='unsupported'
 hardcode_automatic='no'
 inherit_rpath='no'
-link_all_deplibs='unknown'
+link_all_deplibs='no'
 always_export_symbols='no'
 export_symbols_cmds='$NM $libobjs $convenience | $global_symbol_pipe | $SED '\''s/.* //'\'' | sort | uniq > $export_symbols'
 exclude_expsyms='_GLOBAL_OFFSET_TABLE_|_GLOBAL__F[ID]_.*'
@@ -678,8 +678,8 @@ postuninstall_cmds=''
 finish_cmds='PATH="\$PATH:/sbin" ldconfig -n $libdir'
 finish_eval=''
 hardcode_into_libs='yes'
-sys_lib_search_path_spec='/usr/lib/gcc/x86_64-linux-gnu/9 /usr/lib/x86_64-linux-gnu /usr/lib /lib/x86_64-linux-gnu /lib '
-configure_time_dlsearch_path='/lib /usr/lib /opt/ceph/lib/x86_64-linux-gnu /usr/lib/x86_64-linux-gnu/libfakeroot /usr/local/lib /usr/local/lib/x86_64-linux-gnu /lib/x86_64-linux-gnu /usr/lib/x86_64-linux-gnu /lib32 /usr/lib32 /libx32 /usr/libx32 '
+sys_lib_search_path_spec='/usr/lib/gcc/x86_64-linux-gnu/7 /usr/lib/x86_64-linux-gnu /usr/lib /lib/x86_64-linux-gnu /lib '
+configure_time_dlsearch_path='/lib /usr/lib /usr/lib/x86_64-linux-gnu/libfakeroot /usr/local/lib /usr/local/lib/x86_64-linux-gnu /lib/x86_64-linux-gnu /usr/lib/x86_64-linux-gnu '
 configure_time_lt_sys_library_path=''
 hardcode_action='immediate'
 enable_dlopen='unknown'
@@ -726,7 +726,7 @@ hardcode_minus_L_CXX='no'
 hardcode_shlibpath_var_CXX='unsupported'
 hardcode_automatic_CXX='no'
 inherit_rpath_CXX='no'
-link_all_deplibs_CXX='unknown'
+link_all_deplibs_CXX='no'
 always_export_symbols_CXX='no'
 export_symbols_cmds_CXX='$NM $libobjs $convenience | $global_symbol_pipe | $SED '\''s/.* //'\'' | sort | uniq > $export_symbols'
 exclude_expsyms_CXX='_GLOBAL_OFFSET_TABLE_|_GLOBAL__F[ID]_.*'
@@ -735,12 +735,12 @@ prelink_cmds_CXX=''
 postlink_cmds_CXX=''
 file_list_spec_CXX=''
 hardcode_action_CXX='immediate'
-compiler_lib_search_dirs_CXX='/usr/lib/gcc/x86_64-linux-gnu/9 /usr/lib/gcc/x86_64-linux-gnu/9/../../../x86_64-linux-gnu /usr/lib/gcc/x86_64-linux-gnu/9/../../../../lib /lib/x86_64-linux-gnu /lib/../lib /usr/lib/x86_64-linux-gnu /usr/lib/../lib /usr/lib/gcc/x86_64-linux-gnu/9/../../..'
-predep_objects_CXX='/usr/lib/gcc/x86_64-linux-gnu/9/../../../x86_64-linux-gnu/crti.o /usr/lib/gcc/x86_64-linux-gnu/9/crtbeginS.o'
-postdep_objects_CXX='/usr/lib/gcc/x86_64-linux-gnu/9/crtendS.o /usr/lib/gcc/x86_64-linux-gnu/9/../../../x86_64-linux-gnu/crtn.o'
+compiler_lib_search_dirs_CXX='/usr/lib/gcc/x86_64-linux-gnu/5 /usr/lib/gcc/x86_64-linux-gnu/5/../../../x86_64-linux-gnu /usr/lib/gcc/x86_64-linux-gnu/5/../../../../lib /lib/x86_64-linux-gnu /lib/../lib /usr/lib/x86_64-linux-gnu /usr/lib/../lib /usr/lib/gcc/x86_64-linux-gnu/5/../../..'
+predep_objects_CXX='/usr/lib/gcc/x86_64-linux-gnu/5/../../../x86_64-linux-gnu/crti.o /usr/lib/gcc/x86_64-linux-gnu/5/crtbeginS.o'
+postdep_objects_CXX='/usr/lib/gcc/x86_64-linux-gnu/5/crtendS.o /usr/lib/gcc/x86_64-linux-gnu/5/../../../x86_64-linux-gnu/crtn.o'
 predeps_CXX=''
 postdeps_CXX='-lstdc++ -lm -lgcc_s -lc -lgcc_s'
-compiler_lib_search_path_CXX='-L/usr/lib/gcc/x86_64-linux-gnu/9 -L/usr/lib/gcc/x86_64-linux-gnu/9/../../../x86_64-linux-gnu -L/usr/lib/gcc/x86_64-linux-gnu/9/../../../../lib -L/lib/x86_64-linux-gnu -L/lib/../lib -L/usr/lib/x86_64-linux-gnu -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-linux-gnu/9/../../..'
+compiler_lib_search_path_CXX='-L/usr/lib/gcc/x86_64-linux-gnu/5 -L/usr/lib/gcc/x86_64-linux-gnu/5/../../../x86_64-linux-gnu -L/usr/lib/gcc/x86_64-linux-gnu/5/../../../../lib -L/lib/x86_64-linux-gnu -L/lib/../lib -L/usr/lib/x86_64-linux-gnu -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-linux-gnu/5/../../..'
 
 LTCC='gcc'
 LTCFLAGS='-g -O2'
@@ -967,17 +967,17 @@ S["am__tar"]="$${TAR-tar} chof - \"$$tardir\""
 S["AMTAR"]="$${TAR-tar}"
 S["am__leading_dot"]="."
 S["SET_MAKE"]=""
-S["AWK"]="mawk"
+S["AWK"]="gawk"
 S["mkdir_p"]="$(MKDIR_P)"
 S["MKDIR_P"]="/bin/mkdir -p"
 S["INSTALL_STRIP_PROGRAM"]="$(install_sh) -c -s"
 S["STRIP"]="strip"
-S["install_sh"]="${SHELL} /home/runzhou/indexfs-0.4/serverless-IndexFS-metadb-mdtest-08-29-2022/install-sh"
-S["MAKEINFO"]="${SHELL} /home/runzhou/indexfs-0.4/serverless-IndexFS-metadb-mdtest-08-29-2022/missing makeinfo"
-S["AUTOHEADER"]="${SHELL} /home/runzhou/indexfs-0.4/serverless-IndexFS-metadb-mdtest-08-29-2022/missing autoheader"
-S["AUTOMAKE"]="${SHELL} /home/runzhou/indexfs-0.4/serverless-IndexFS-metadb-mdtest-08-29-2022/missing automake-1.15"
-S["AUTOCONF"]="${SHELL} /home/runzhou/indexfs-0.4/serverless-IndexFS-metadb-mdtest-08-29-2022/missing autoconf"
-S["ACLOCAL"]="${SHELL} /home/runzhou/indexfs-0.4/serverless-IndexFS-metadb-mdtest-08-29-2022/missing aclocal-1.15"
+S["install_sh"]="${SHELL} /home/hrzhou1996/serverless-IndexFS/install-sh"
+S["MAKEINFO"]="${SHELL} /home/hrzhou1996/serverless-IndexFS/missing makeinfo"
+S["AUTOHEADER"]="${SHELL} /home/hrzhou1996/serverless-IndexFS/missing autoheader"
+S["AUTOMAKE"]="${SHELL} /home/hrzhou1996/serverless-IndexFS/missing automake-1.15"
+S["AUTOCONF"]="${SHELL} /home/hrzhou1996/serverless-IndexFS/missing autoconf"
+S["ACLOCAL"]="${SHELL} /home/hrzhou1996/serverless-IndexFS/missing aclocal-1.15"
 S["VERSION"]="0.4.1"
 S["PACKAGE"]="indexfs"
 S["CYGPATH_W"]="echo"
@@ -1562,7 +1562,6 @@ $as_echo X"$file" |
     cat <<_LT_EOF >> "$cfgfile"
 #! $SHELL
 # Generated automatically by $as_me ($PACKAGE) $VERSION
-# Libtool was configured on host `(hostname || uname -n) 2>/dev/null | sed 1q`:
 # NOTE: Changes made to this file will be lost: look at ltmain.sh.
 
 # Provide generalized library-building support services.

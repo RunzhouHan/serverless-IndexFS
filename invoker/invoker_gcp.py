@@ -65,6 +65,7 @@ def tcp_server(num):
                 path_depth = 0
                 PARAMS = "35.223.120.109 10086 0 0 Mknod %s %d %d %s, \n"% (file_path, dir_id, path_depth, file_name);
                 connection.sendall(bytes(PARAMS).encode("utf-8"))
+            connection.sendall(bytes("k").encode("utf-8"))
             m2 = current_milli_time()
             time_elapsed = m2-m1
             print(sys.stdout, "Finished %d I/O requests in %d miliseconds" % (num,time_elapsed))
@@ -72,15 +73,15 @@ def tcp_server(num):
         except KeyboardInterrupt:
             if connection:
                 connection.close()
-
+        '''
         finally:
             # Clean up the connection
             connection.close()
-
+        '''
 
 
 def main():
-        num = 1000
+        num = 10
         m1 = current_milli_time()
         tcp_server(num)
         m2 = current_milli_time()
