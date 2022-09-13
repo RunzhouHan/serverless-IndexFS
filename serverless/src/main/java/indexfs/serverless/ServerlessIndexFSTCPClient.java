@@ -9,6 +9,7 @@ import java.io.PrintWriter;
 import java.io.OutputStreamWriter;
 import java.net.ConnectException;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.ArrayList;
 
 import org.apache.commons.logging.LogFactory;
@@ -123,7 +124,12 @@ public class ServerlessIndexFSTCPClient extends Thread {
      * @return 
      */
     public boolean checkConnection() {
-    	return clientSocket.isConnected();
+    	try {
+        	DataInputStream in = new DataInputStream(clientSocket.getInputStream());
+        	return true;
+    	} catch (Exception e){
+    		return false;
+    	}
     }
     
     
@@ -138,6 +144,7 @@ public class ServerlessIndexFSTCPClient extends Thread {
     	InputStreamReader reader = new InputStreamReader(in);
     	BufferedReader b_reader = new BufferedReader(reader);
     	ServerlessIndexFSParsedArgs parsed_args = new ServerlessIndexFSParsedArgs();
+    	
     	
         try {
         	String inputLine;
@@ -187,7 +194,8 @@ public class ServerlessIndexFSTCPClient extends Thread {
 			
         } catch (IOException e) {
             // TODO Auto-generated catch block
-            e.printStackTrace(); disconnect();;
+            e.printStackTrace(); 
+            disconnect();
         }
     }
     
