@@ -230,7 +230,7 @@ Status tcp_socket::Getattr(int deployment, const std::string& path,
   if (!CheckConnection()) {
     send_payload(PARAMS_);
     // Temporarily make it dummy
-    // receive(); 
+    receive(); 
     // cout << __func__ << ": " << file_path << " ino: " << info_ << endl;
     return Status::IOError("IOError");
   }
