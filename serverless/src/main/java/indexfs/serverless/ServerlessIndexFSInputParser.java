@@ -14,6 +14,15 @@ public class ServerlessIndexFSInputParser {
 	
 	private final int NUM_OF_PARAMS = 9;
 	
+	private ServerlessIndexFSParsedArgs parsed_args;
+	
+	/**
+	 * Constructor
+	 */
+	ServerlessIndexFSInputParser() {
+		this.parsed_args = new ServerlessIndexFSParsedArgs();
+	}
+	
 	/**
 	 * Helper function to deserialize JSONed OID.
 	 * @param oid
@@ -33,7 +42,6 @@ public class ServerlessIndexFSInputParser {
 	 * @return
 	 */
 	public ServerlessIndexFSParsedArgs inputStringParse(String args) {
-		ServerlessIndexFSParsedArgs parsed_args = new ServerlessIndexFSParsedArgs();
 		splited_args_string = args.split("\\s+");
 		if (splited_args_string.length != NUM_OF_PARAMS) {
 			System.out.println("ServerlessIndexFSInputParser:ServerlessIndexFSParsedArgs(): missing parameter(s) in tcp payload\n"
@@ -54,7 +62,6 @@ public class ServerlessIndexFSInputParser {
 	}
 	
 	public ServerlessIndexFSParsedArgs inputJsonParse(JsonObject args) {
-		ServerlessIndexFSParsedArgs parsed_args = new ServerlessIndexFSParsedArgs();
 		if (args.has(ServerlessIndexFSKeys.zeroth_server)) {
 		// Management server IP address.
 			parsed_args.zeroth_server = args.getAsJsonPrimitive(ServerlessIndexFSKeys.zeroth_server).getAsString();  //serverless run uncomment this

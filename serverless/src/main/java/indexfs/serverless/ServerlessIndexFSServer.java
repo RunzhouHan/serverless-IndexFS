@@ -60,6 +60,12 @@ public class ServerlessIndexFSServer {
 	 * Cache miss count 
 	 */
 	public long cache_miss = 0;
+	
+	private ServerlessIndexFSRPCClient[] rpc_connections;
+
+	private int server_id = 0;
+	private int obj_idx = 0;
+	private StatInfo stat;
 
 	/** 
 	 * Constructor
@@ -70,49 +76,55 @@ public class ServerlessIndexFSServer {
 		this.ctx = new ServerlessIndexFSCtx();
 		this.didx = new ServerlessIndexFSDirIndex(config.GetMetaDBNum());
 		this.didx.config_ = config;
-		this.queue = new ServerlessIndexFSRPCWritebackQueue(config);
-		
-//		this.cache = new LinkedHashMap<String, StatInfo>(config.cache_capacity+1, .75F, false) {
-//	        // This method is called just after a new entry has been added
-//	        public boolean removeEldestEntry(Map.Entry<String, StatInfo> eldest) {
-//	            return size() > config.cache_capacity;
-//	        }
-//	    };
 		this.cache = new InMemoryStatInfoCache(config, config.cache_capacity, 0.75F);
 	    System.out.println("config.cache_capacity: " + config.cache_capacity);
 	    System.out.println("Cache capacity: " + this.cache.size());
 		this.server_map = config.GetMetaDBMap();
 		this.op = new ServerlessIndexFSOperationParameters();
-//		this.cache_hit = 0;
-		
+		this.stat = new StatInfo();
+		this.rpc_connections = new ServerlessIndexFSRPCClient[config.GetMetaDBNum()];
+		for (int i = 0; i < config.GetMetaDBNum(); i++) {
+			this.rpc_connections[i] = new ServerlessIndexFSRPCClient(this.config, i);
+			try {
+				StartRPC(this.rpc_connections[i]);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			    System.out.println("Failed to connected to MetaDB server at: " + 
+			    		this.rpc_connections[i].getServerAddr() + ":" + this.rpc_connections[i].getPort());
+			}
+		}		
+		this.queue = new ServerlessIndexFSRPCWritebackQueue(config, this.rpc_connections);
 	}
 	
-    /**
-     * Start the TCP server. TCP is much faster than HTTP.
-     * OpenWhisk currently doesn't support inbounds TCP request so we don't use it for now.
-     * @throws IOException
-     */
-	public void StartTCPServer(int tcp_port) throws IOException {
-//		tcp_srv_.start(tcp_port);
-	}
-	
-    /**
-     * Start the HTTP server.
-     * @throws IOException
-     */
-	public void StartHTTPServer(int http_port) throws IOException {
-//		http_srv_.start(http_port);
-	}
     
+	/**
+	 * Start serverless IndexFS RPC connections.
+	 * @throws IOException 
+	 */
+	public void StartRPC(ServerlessIndexFSRPCClient rpc_connection) throws IOException {
+			rpc_connection.open();
+	}
+	
+	/**
+	 * Stop serverless IndexFS RPC connections.
+	 * @throws IOException 
+	 */
+	public void StopRPC() throws IOException {
+		for (int i = 0; i < config.GetMetaDBNum(); i++) {
+			this.rpc_connections[i].close();
+			System.out.println("Disconnected RPC connection with MetadDB server at: " + 
+		    		this.rpc_connections[i].getServerAddr() + ":" + this.rpc_connections[i].getPort());
+		}
+	}
+	
+	
 	/**
 	 * Reset operation parameters.
 	 */
 	private void reset_op() {
 		op.op_type = 0;
 		op.ino = 0;
-//		op.key.file_name_ = null;
-//		op.key.parent_id_ = 0;
-//		op.key.partition_id_ = 0;
 	}
 	
 	/**
@@ -132,32 +144,7 @@ public class ServerlessIndexFSServer {
 	
 	
 	private void OBJ_LOCK(OID obj_id) {
-//		_DIR_GUARD(obj_id.dir_id, obj_id.obj_name);
-	}
-	
-	/**
-	 *  Send RPC to MetaDB to greb the next available inode number.
-	 * @return inode number.
-	 */
-	private long NextInode(int server_id, int port) {
-		long ino = 0;
-		/**
-		 * Don't send RPC to leveldb to get inode number as it will inccur too much latency.
-		 * Allocate here directly.
-		 */
-		TTransport socket = new TSocket(queue.server_map.get((int)server_id),port);
-		TProtocol protocol = new TBinaryProtocol(socket);
-    	MetaDBService.Client mdb_client = new MetaDBService.Client(protocol);
-    	try {
-			socket.open();
-			ino = ctx.NextInode(mdb_client);
-	    	socket.close(); 
-		} catch (TTransportException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} 
-//		System.out.println("ServerlessIndexFSServer:NextInode: " + ino);
-    	return ino;
+		// _DIR_GUARD(obj_id.dir_id, obj_id.obj_name);
 	}
 	
 	/**
@@ -165,23 +152,8 @@ public class ServerlessIndexFSServer {
 	 */
 	/*
 	private void SetDirAttr(OID obj_id, short obj_idx,
-//	        DirGuard& dir_guard, 
-	        							StatInfo info) {
-//	  dir_guard.Lock_AssertHeld();
-	  assert(info.mode);
-//	  LeaseEntry* lease = NULL;
-//	  lease = lease_table_->Get(obj_id);
-//	  if (lease == NULL) {
-//	    lease = lease_table_->New(obj_id, info);
-//	  }
-//	  LeaseGuard lease_guard(lease);
-//	  WriteLock lock(lease, &dir_guard, ctx_->GetEnv());
-	  MaybeThrowException(ctx_->Setattr_Unlocked(obj_id, obj_idx, info));
-	  DLOG_ASSERT(lease->inode_no == info.id);
-	  lease->uid = info.uid;
-	  lease->gid = info.gid;
-	  lease->perm = info.mode;
-	  DLOG_ASSERT(lease->zeroth_server == info.zeroth_server);
+	        DirGuard& dir_guard, StatInfo info) {
+
 	}
 	*/
 	
@@ -207,8 +179,16 @@ public class ServerlessIndexFSServer {
 	 */
 	public void FlushDB(int port) {
 		op.op_type = 5;
-		queue.write_counter(-1, port, op);
+		queue.write_counter(-1, op);
 		reset_op();
+	}
+	
+	/**
+	 *  Send RPC to grab the next available inode number.
+	 * @return inode number.
+	 */
+	private long NextInode(int server_id) {
+    	return ctx.NextInode(rpc_connections[server_id].mdb_client);
 	}
 	
 	/**
@@ -222,15 +202,12 @@ public class ServerlessIndexFSServer {
 	public void Mknod(String path, OID obj_id, int perm, int port) {
 		// Put file metadata into LRU_cache.	
 		// Compute the server id based on file path.
-		int server_id = didx.GetServer(path);
-		int obj_idx = 0;
+		server_id = didx.GetServer(path);
+		
 		OBJ_LOCK(obj_id);
+				
+		fillInStat(stat, true, NextInode(server_id), 0);
 		
-		StatInfo stat = new StatInfo();
-		
-		fillInStat(stat, true, NextInode(server_id, port), 0);
-		
-//		cache.put(path, stat);
 		cache.put(path, stat.id, stat);
 					
 		// file in operation parameters and put in writeback cache
@@ -239,7 +216,7 @@ public class ServerlessIndexFSServer {
 		op.key.partition_id_ = (short) obj_idx;
 		op.key.file_name_ = obj_id.obj_name;
 		// TASK-I: link the new file
-		queue.write_counter(server_id, port, op);
+		queue.write_counter(server_id, op);
 
 		reset_op();
 
@@ -271,17 +248,16 @@ public class ServerlessIndexFSServer {
 		int perm, int hint_server1, int hint_server2, int port) {
 		
 		// Get Next available inode number.
-		long ino = NextInode(hint_server1, 10086);
-		StatInfo stat = new StatInfo();
-		// Put directory metadata into LRU_cache.	
+		long ino = NextInode(hint_server1);
+		
+		// Fill in directory metadata
 		fillInStat(stat, false, ino, 0);
 		
-//		cache.put(path, stat);
+		// Put directory metadata into LRU_cache.	
 		cache.put(path, stat.id, stat);
 		
 		reset_op();
 		
-		int obj_idx = 0;
 		OBJ_LOCK(obj_id);
   
 		// TASK-II: link the new directory
@@ -290,7 +266,8 @@ public class ServerlessIndexFSServer {
 
 		op.key.partition_id_ = (short) obj_idx;
 		op.key.file_name_ = obj_id.obj_name;
-		queue.write_counter(hint_server1, port, op);
+		queue.write_counter(hint_server1, op);
+		
 		reset_op();
 
 		/**
@@ -304,7 +281,7 @@ public class ServerlessIndexFSServer {
 		} else {
 			RPC_CreateZeroth(rpc_, home_srv, new_inode, hint_server1);
 		}
-		 */
+		*/
 		
 		/**
 		 *  TASK-IV: increase the directory size. 
@@ -313,7 +290,6 @@ public class ServerlessIndexFSServer {
 		/*
 		DLOG_ASSERT(dir_guard.HasPartitionData(obj_idx));
 		dir_guard.InceaseAndGetPartitionSize(obj_idx, 1);
-
 		TriggerDirSplitting(obj_id.dir_id, obj_idx, dir_guard);
 		*/
 	}
@@ -328,42 +304,24 @@ public class ServerlessIndexFSServer {
 	 */
 	public StatInfo Getattr(String path, OID obj_id, int port) {
 		// Look into LRU cache first. 
-//		StatInfo stat = cache.get(path);
 		StatInfo stat = cache.getByPath(path);	
 		
-//		for (String key : cache.fullPathMetadataCache.keySet()) {
-//		    System.out.println(key + " " + cache.fullPathMetadataCache.get(key));
-//		}
-
 		if (stat == null) {
 		    // Object not in cache. Send RPC request and put metadata in LRU cache.
 			this.cache_miss += 1;
 			
-			int obj_idx = 0;
-			op.op_type = 5;
 			op.key.parent_id_ = obj_id.dir_id;
 			op.key.partition_id_ = (short) obj_idx;
 			op.key.file_name_ = obj_id.obj_name;
 			
 			int server_id = didx.GetServer(path);
-			TTransport socket = new TSocket(server_map.get((int)server_id),port);
-			TProtocol protocol = new TBinaryProtocol(socket);
-	    	MetaDBService.Client mdb_client = new MetaDBService.Client(protocol);
-	    	
-	    	
-	    	try {
-				socket.open();
-				stat = ctx.GetEntry(mdb_client, op.key);
-		    	socket.close(); 
-			} catch (TTransportException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} 			
+	    		    	
+			stat = ctx.GetEntry(rpc_connections[server_id].mdb_client, op.key);
+
 			reset_op();
 			
 			// Object is found, put it in LRU cache.
 			if (stat != null) {
-//				cache.put(path, stat);
 				cache.put(path, stat.id, stat);
 			}
 			// Object is not found in MetaDB.
@@ -374,13 +332,13 @@ public class ServerlessIndexFSServer {
 		else {
 			this.cache_hit += 1;
 		}
-//		System.out.println("ServerlessIndexFSServer:Getattr: " + path + ": " 
-//				+ stat.id + " Cache hit: " + this.cache_hit);
-//		System.out.println("ServerlessIndexFSServer:Getattr: " + path + ": " 
-//				+ stat.id + " Cache miss: " + this.cache_miss);
-		if ((this.cache_hit+this.cache_miss)%1000 == 0)
-			System.out.println("Cache hit rate = " + this.cache_hit + "/" + (this.cache_hit+this.cache_miss) 
-					+ "=" + this.cache_hit/(this.cache_miss+this.cache_hit));
+		//	System.out.println("ServerlessIndexFSServer:Getattr: " + path + ": " 
+		//				+ stat.id + " Cache hit: " + this.cache_hit);
+		//	System.out.println("ServerlessIndexFSServer:Getattr: " + path + ": " 
+		//				+ stat.id + " Cache miss: " + this.cache_miss);
+		//	if ((this.cache_hit+this.cache_miss)%1000 == 0)
+		//		System.out.println("Cache hit rate = " + this.cache_hit + "/" + (this.cache_hit+this.cache_miss) 
+		//				+ "=" + this.cache_hit/(this.cache_miss+this.cache_hit));
 
 		return stat;
 	}

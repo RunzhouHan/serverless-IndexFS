@@ -26,12 +26,6 @@ public class ServerlessIndexFSTCPClient extends Thread {
      */
     private static final int CONNECTION_TIMEOUT = 5000;
     
-    /**
-     * Mapping from instances of ServerlessHopsFSClient to their associated TCP client object. Recall that each
-     * ServerlessHopsFSClient represents a particular client of HopsFS that the NameNode is talking to. We map
-     * each of these "HopsFS client" representations to the TCP Client associated with them.
-     */
-//    private final ConcurrentHashMap<ServerlessHopsFSClient, Client> tcpClients;
     
     /**
      * The deployment number of the local serverless name node instance.
@@ -173,15 +167,15 @@ public class ServerlessIndexFSTCPClient extends Thread {
     			if(op_type == 1) {
     				// Read operation. Send result back to IndexFS client
     				// System.out.println("Send out read result: " + String.valueOf(driver.stat.id));
-//    				strwriter.write(String.valueOf(driver.stat.id));
-//    				strwriter.flush();
-    				;
+    				// strwriter.write(String.valueOf(driver.stat.id));
+    				// strwriter.flush();
     			}
     			duration_one = System.nanoTime() - tmp2;
     			duration_proceed += duration_one;
     			if ((duration_one/1000000) > 5) {
-    				System.out.println("file_" + i + " duration " + duration_one/1000000);
-    			}
+    				System.out.println(parsed_args.op_type + " " + parsed_args.path
+    						+ " - time consumption: " + duration_one/1000000);
+    			} 
     			i++;
 			}
 			long endTime = System.nanoTime();

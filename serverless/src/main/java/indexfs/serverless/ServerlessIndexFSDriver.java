@@ -10,10 +10,8 @@ public class ServerlessIndexFSDriver {
 	
 	private ServerlessIndexFSConfig config;
 	
-	private String zeroth_server;
 	private int zeroth_port; 
-	
-	private int tcp_port;
+
 		
 	/**
 	 * Serverless IndexFS server instance.
@@ -29,22 +27,24 @@ public class ServerlessIndexFSDriver {
 	 * 0: write
 	 * 1: read 
 	 */
-	int op_type;
+	private int op_type;
 	
 	/**
 	 * A stat buffer for read result
 	 */
-	StatInfo stat;
+	private StatInfo stat;
+	
+	private OID obj_id;
+		
 	
 	/**
 	 * Constructor.
 	 */
 	public ServerlessIndexFSDriver(ServerlessIndexFSConfig config, ServerlessIndexFSParsedArgs parsed_args) {
 		this.config = config;
-		this.zeroth_server = parsed_args.zeroth_server;
 		this.zeroth_port = parsed_args.zeroth_port;
 		this.serverless_server_id = parsed_args.deployment_id;
-		this.tcp_port = Integer.parseInt("0");
+	    this.obj_id = new OID();
 	    this.index_srv_ = new ServerlessIndexFSServer(config);
 	}
 
@@ -57,16 +57,14 @@ public class ServerlessIndexFSDriver {
 		;
 	}
 	
+
 	/**
-	 * Start a serverless IndexFS server instance.
+	 * Shut down the server thread (If applicable).
+	 * Currently use it close rpc connections.
 	 * @throws IOException 
 	 */
-	public void StartServer() throws IOException {
-//		System.out.println("Following " + config.GetMetaDBNum() + " MetaDB server(s) detected: ");
-//		System.out.println(Arrays.toString(config.GetMetaDBList().toArray()));
-//		System.out.println(Arrays.toString(config.GetPortList().toArray()));
-//	    System.out.println("\nIndexFS is ready for service, listening to incoming clients ... \n");
-//	    index_srv_.StartHTTPServer(this.http_port);
+	public void Shutdown() throws IOException {
+		this.index_srv_.StopRPC();
 	}
 	
 	/**
@@ -76,9 +74,8 @@ public class ServerlessIndexFSDriver {
 	 * @param OID OID of the target object.
 	 */
 	public int proceedClientRequest(ServerlessIndexFSParsedArgs parsed_args) {
-//		System.out.println("ServerlessIndexFSDriver:proceedClientRequest(): " + parsed_args.op_type + ": "+parsed_args.obj_id);
-
-		OID obj_id = parsed_args.obj_id;
+		
+		obj_id = parsed_args.obj_id;
 		
 		if (obj_id != null) {
 			// TODO Remove prints after testing.
@@ -115,14 +112,5 @@ public class ServerlessIndexFSDriver {
 		return this.op_type;
 	}
 
-	/**
-	 * Shut down the server thread (If applicable).
-	 * Currently use it to print cache hit rate.
-	 */
-	public void Shutdown() {
-//		long cache_miss = this.index_srv_.cache_miss;
-//		long cache_hit = this.index_srv_.cache_miss;
-//		double cache_hit_rate = cache_hit/(cache_miss+cache_hit);
-//	    System.out.println("Cache hit rate = " + cache_hit_rate);
-	}
+
 }

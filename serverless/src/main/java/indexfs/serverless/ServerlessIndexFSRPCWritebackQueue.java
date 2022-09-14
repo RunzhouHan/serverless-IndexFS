@@ -35,25 +35,17 @@ public class ServerlessIndexFSRPCWritebackQueue {
 	 * MetaDB RPC interface for serverless IndexFS.
 	 */
 	private ServerlessIndexFSCtx mdb_svrless_ctx;
-	
-	/**
-	 * Server id to ip map. This is set to be public because it will be used in 
-	 * srvless_IndexFS_server.NextInode().
-	 */
-	public Map<Integer, String> server_map;
-	
-	/**
-	 * Server id to ip map. This is set to be public because it will be used in 
-	 * srvless_IndexFS_server.NextInode().
-	 */
-	public Map<Integer, Integer> port_map;
-	
+		
 	/**
 	 * Server id to operation map
 	 */
 	private HashMap<Integer, ArrayList<ServerlessIndexFSOperationParameters>> op_map;
 	
 	private Timer timer;
+	
+	private ServerlessIndexFSOperationParameters op_param;
+	
+	private ServerlessIndexFSRPCClient[] rpc_connections;
 	
 	// operation types
 	public enum ops_indexfs {
@@ -63,41 +55,42 @@ public class ServerlessIndexFSRPCWritebackQueue {
 		Chown,
 		Flush
 	}
-	
+
 	/**
 	 *  Constructor.
 	 *  
 	 *  @param config Configuration passed to the serverless IndexFS server.
 	 */
-	public ServerlessIndexFSRPCWritebackQueue(ServerlessIndexFSConfig config) {
+	public ServerlessIndexFSRPCWritebackQueue(ServerlessIndexFSConfig config, ServerlessIndexFSRPCClient[] rpc_connections) {
 		this.config = config;
 		this.mdb_svrless_ctx = new ServerlessIndexFSCtx();
-		this.server_map = config.GetMetaDBMap();
-		this.port_map = config.GetPortMap();
 		this.op_map = new HashMap<Integer, ArrayList<ServerlessIndexFSOperationParameters>>();
 		initialize_map(config.GetMetaDBNum());
 		this.NumtoCommit = config.NumtoCommit;
 		this.TimetoCommit = config.TimetoCommit;
-		
+		this.op_param = new ServerlessIndexFSOperationParameters();
+		this.rpc_connections = rpc_connections;
 		// Timer for periodical commit.
-//		timer = new Timer();
-//		timer.schedule(new TimerTask() {
-////		timer.scheduleAtFixedRate(new TimerTask() {
-//		  @Override
-//		  public void run() {
-//			  for (short i = 0; i < config.GetMetaDBNum(); i++) {
-//				try {
-//				  commit(i, 10086);
-//				} catch (IndexOutOfBoundsException e) {
-//					e.printStackTrace();					
-//				}
-//				System.out.println("Reached write-back time limit. Commit to MetaDB server " + i);
-//				empty_map(i);			  
-//			  }
-//		  }
-//		}, TimetoCommit);
-////		}, TimetoCommit, TimetoCommit);
-	}
+		/*
+		timer = new Timer();
+		timer.schedule(new TimerTask() {
+		  @Override
+		  public void run() {
+			  for (short i = 0; i < config.GetMetaDBNum(); i++) {
+				try {
+				  commit(i, 10086);
+				} catch (IndexOutOfBoundsException e) {
+					e.printStackTrace();					
+				}
+				System.out.println("Reached write-back time limit. Commit to MetaDB server " + i);
+				empty_map(i);			  
+			  }
+		  }
+		}, TimetoCommit); 
+		*/
+	}	
+
+	
 	
 	private void initialize_map(int srv_num) {
 		for (int i = 0; i < srv_num; i++) {
@@ -112,51 +105,34 @@ public class ServerlessIndexFSRPCWritebackQueue {
 	/**
 	 *  Start a session with a server to commit all operations to that server 
 	 */
-	private int commit(short server_id, int port) {
+	private int commit(MetaDBService.Client mdb_client, short server_id) {
 		int ret = 0;
-//		System.out.println("Server ID: " + server_id + ": " + server_map.get((int)server_id) + ": " + port);
-		try {
-//			System.out.println("ServerlessIndexFSRPCWritebackQueue: commit(): " + "commit to " + server_map.get((int)server_id) + ":" + port_map.get((int)server_id));
-			TTransport socket = new TSocket(server_map.get((int)server_id),port_map.get((int)server_id));
-			TProtocol protocol = new TBinaryProtocol(socket);
-	    	MetaDBService.Client mdb_client = new MetaDBService.Client(protocol);
-	    	socket.open(); 
-	    	for (int i = 0; i < NumtoCommit; i++) {
-//				System.out.println("start committing changes!");
-	    		ServerlessIndexFSOperationParameters op_param = op_map.get((int)server_id).get(i);
-	    		int op_type = op_param.op_type;
-//				System.out.println("operation type: " + op_type);
-	    		switch (op_type) {
-	    			// mknod
-	    			case 0:
-	                	mdb_svrless_ctx.newFile(mdb_client, op_param.key);
-//	                	System.out.println("Mknod commited");
-	    				break;
-	    			// mkdir
-	    			case 1:
-	    		        mdb_svrless_ctx.newDirectory(mdb_client, op_param.key, server_id, op_param.ino);
-//	    				System.out.println("newDirectory committed!");
-	    				break;
-	    			// chmod
-	    			case 3:
-	    				break;
-	    			// chown
-	    			case 4:
-	    				break;
-	    			// flush
-	    			case 5:
-	    	            mdb_svrless_ctx.Flush(mdb_client);
-	    				break; 			
-	    		}
-	    	}
-	        socket.close(); 
-		}
-		catch (TTransportException e) {
-			e.printStackTrace();
-		} 
-		catch (TException e) {  
-		      e.printStackTrace();  
-		}
+		// System.out.println("Server ID: " + server_id + ": " + server_map.get((int)server_id) + ": " + port);
+		// System.out.println("ServerlessIndexFSRPCWritebackQueue: commit(): " + "commit to " + server_map.get((int)server_id) + ":" + port_map.get((int)server_id));
+    	for (int i = 0; i < NumtoCommit; i++) {
+    		op_param = op_map.get((int)server_id).get(i);
+    		int op_type = op_param.op_type;
+    		switch (op_type) {
+    			// mknod
+    			case 0:
+                	mdb_svrless_ctx.newFile(mdb_client, op_param.key);
+    				break;
+    			// mkdir
+    			case 1:
+    		        mdb_svrless_ctx.newDirectory(mdb_client, op_param.key, server_id, op_param.ino);
+    				break;
+    			// chmod. Dummy
+    			case 3:
+    				break;
+    			// chown. Dummy
+    			case 4:
+    				break;
+    			// flush
+    			case 5:
+    	            mdb_svrless_ctx.Flush(mdb_client);
+    				break; 		
+    		}
+    	}
 		return ret;
 	}
 	
@@ -164,7 +140,7 @@ public class ServerlessIndexFSRPCWritebackQueue {
 	 *  Insert write operations to the counter buffer and commit when reach the batch job size or reach time limitation. 
 	 * Clear buffer after commit. cache.get(path)
 	 */
-	public long write_counter(int server_id, int port, ServerlessIndexFSOperationParameters op_param) {
+	public long write_counter(int server_id, ServerlessIndexFSOperationParameters op_param) {
 		int ret = 0;
 		if (server_id < 0) 
 			server_id = ThreadLocalRandom.current().nextInt(0, config.GetMetaDBNum());
@@ -176,23 +152,25 @@ public class ServerlessIndexFSRPCWritebackQueue {
 		else {
 			op_map.get(server_id).add(op_param);
 			short server_id_ = server_id > Short.MAX_VALUE ? Short.MAX_VALUE : server_id < Short.MIN_VALUE ? Short.MIN_VALUE : (short)server_id;
-			ret = commit(server_id_, port);
-//			System.out.println("ServerlessIndexFSRPCWritebackQueue: write_counter(): " + "commit to " + String.valueOf(server_id_));
+			ret = commit(rpc_connections[server_id_].mdb_client, server_id_);
+			// System.out.println("ServerlessIndexFSRPCWritebackQueue: write_counter(): " + "commit to " + String.valueOf(server_id_));
 			empty_map(server_id);
 		}
 		
 		// Periodically commit to MetaDB, regardless of there's enough number of operations or not.
 		// For cases with limited number of writes.
-//		timer.scheduleAtFixedRate(new TimerTask() {
-//			  @Override
-//			  public void run() {
-//				  for (short i = 0; i < config.GetMetaDBNum(); i++) {
-//					commit(i, port);
-//					System.out.println("Reached write-back time limit. Commit to MetaDB server " + i);
-//					empty_map(i);			  
-//				  }
-//			  }
-//			}, TimetoCommit, TimetoCommit);
+		/*
+		timer.scheduleAtFixedRate(new TimerTask() {
+			  @Override
+			  public void run() {
+				  for (short i = 0; i < config.GetMetaDBNum(); i++) {
+					commit(i, port);
+					System.out.println("Reached write-back time limit. Commit to MetaDB server " + i);
+					empty_map(i);			  
+				  }
+			  }
+			}, TimetoCommit, TimetoCommit);
+		*/
 		return ret;
 	}
 }
