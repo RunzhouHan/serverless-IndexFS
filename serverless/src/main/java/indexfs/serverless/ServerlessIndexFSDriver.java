@@ -32,7 +32,7 @@ public class ServerlessIndexFSDriver {
 	/**
 	 * A stat buffer for read result
 	 */
-	StatInfo stat;
+	public StatInfo stat;
 	
 	private OID obj_id;
 		
