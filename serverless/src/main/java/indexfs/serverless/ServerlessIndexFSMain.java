@@ -74,7 +74,8 @@ public class ServerlessIndexFSMain {
 		long t2 = System.nanoTime();
 		duration2 = (t2 - t1)/1000000;
 		
-//		tcpClient.disconnect();
+		// commenting this for warm start. 
+		// tcpClient.disconnect();
 		long endTime = System.nanoTime();
 		duration3 = (endTime - startTime)/1000000;
 		System.out.println("tcpClient.connect() duration(ms): " + duration1);
