@@ -188,8 +188,8 @@ public class ServerlessIndexFSServer {
 	 * @return inode number.
 	 */
 	private long NextInode(int server_id) {
-		return 0;
-//    	return ctx.NextInode(rpc_connections[server_id].mdb_client);
+//		return 0;
+    	return ctx.NextInode(rpc_connections[server_id].mdb_client);
 	}
 	
 	/**
