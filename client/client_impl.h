@@ -102,7 +102,7 @@ class TCPEngine {
 class ClientImpl: virtual public Client {
  public:
 
-  ClientImpl(Config* config, Env* env);
+  ClientImpl(Config* config, Env* env, int my_rank);
 
   virtual ~ClientImpl();
 
@@ -142,6 +142,8 @@ class ClientImpl: virtual public Client {
   LookupCache* lookup_cache_;
 
   tcp_socket* socket_;
+
+  int my_rank_;
 
   static int RandomServer(const std::string& path) {
     return GetStrHash(path.data(), path.size(), 0)

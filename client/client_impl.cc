@@ -17,7 +17,7 @@ namespace indexfs {
 Status ClientImpl::Init() {
   // return rpc_->Init();
   Status s;
-  socket_ = new tcp_socket(0, 2004);
+  socket_ = new tcp_socket(0, 2004+my_rank_);
   socket_->connect(" ");
   return s;
 }

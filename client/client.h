@@ -20,7 +20,7 @@ class ClientFactory {
  public:
   // The default client implementation will send each
   // file system operation to the server for synchronous execution.
-  static Client* GetClient(Config* config);
+  static Client* GetClient(Config* config, int my_rank);
 
   // Different from traditional file system clients,
   // a batch client is able to execute file system operations locally

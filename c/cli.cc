@@ -179,7 +179,7 @@ int idxfs_create_client(conf_t* conf, cli_t** _return) {
   Status s;
   *_return = NULL;
   Config* config = CreateConfig(conf);
-  Client* client = ClientFactory::GetClient(config);
+  Client* client = ClientFactory::GetClient(config, 0); // set to 0 for mdtest
   s = client->Init();
   if (s.ok()) {
     cli_t* cli = new cli_t;

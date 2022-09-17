@@ -7,10 +7,10 @@
 
 namespace indexfs {
 
-Client* ClientFactory::GetClient(Config* config) {
+Client* ClientFactory::GetClient(Config* config, int my_rank) {
   DLOG_ASSERT(config->IsClient());
   Env* env = GetSystemEnv(config);
-  return new ClientImpl(config, env);
+  return new ClientImpl(config, env, my_rank);
 }
 
 ClientImpl::~ClientImpl() {
@@ -19,9 +19,10 @@ ClientImpl::~ClientImpl() {
   delete index_cache_;
 }
 
-ClientImpl::ClientImpl(Config* config, Env* env) :
+ClientImpl::ClientImpl(Config* config, Env* env, int my_rank):
     env_(env),
-    config_(config) {
+    config_(config),
+    my_rank_(my_rank) {
   rpc_ = RPC::CreateRPC(config_);
   index_policy_ = DirIndexPolicy::Default(config_);
   index_cache_ = new DirIndexCache(config_->GetDirMappingCacheSize());

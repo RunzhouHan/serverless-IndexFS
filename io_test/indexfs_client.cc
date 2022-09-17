@@ -49,7 +49,7 @@ class IndexFSClient: virtual public IOClient {
         LoadBatchClientConfig(my_rank_, comm_sz_) :
         LoadClientConfig(my_rank_, comm_sz_);
     cli_ = FLAGS_bulk_insert ?
-        ClientFactory::GetBatchClient(config) : ClientFactory::GetClient(config);
+        ClientFactory::GetBatchClient(config) : ClientFactory::GetClient(config, my_rank);
   }
 
   Status Init() {

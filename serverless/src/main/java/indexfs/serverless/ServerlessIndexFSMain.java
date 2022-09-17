@@ -178,7 +178,7 @@ public class ServerlessIndexFSMain {
 		config = new ServerlessIndexFSConfig(parsed_args);
 		config.PrintMetaDBList();
 		
-		driver = new ServerlessIndexFSDriver(config, parsed_args); // serverless run uncomment this
+		driver = new ServerlessIndexFSDriver(config, parsed_args);
 
 		if (TCP_CLIENT_START == false) {
 

@@ -31,7 +31,7 @@ tcp_socket::tcp_socket(int num_of_deployments, int port):
     server_addr.sin_family=AF_INET;     // TCP/IP
     server_addr.sin_addr.s_addr=INADDR_ANY;     // server addr--permit all connection
     // server_addr.sin_addr.s_addr=inet_addr("10.128.0.10"); 
-    server_addr.sin_port=htons(2004);       // server port
+    server_addr.sin_port=htons(port);       // server port
     length = sizeof(client_addr);
 }
 
