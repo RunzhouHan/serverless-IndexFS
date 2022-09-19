@@ -37,7 +37,6 @@ public class ServerlessIndexFSServer {
 	/**
 	 * An LRU cache maintains metadata of most recently written/read objects.
 	 */
-//	LinkedHashMap<String, StatInfo> cache;
 	InMemoryStatInfoCache cache;
 
 	/**
@@ -75,10 +74,9 @@ public class ServerlessIndexFSServer {
 		this.config = config;
 		this.ctx = new ServerlessIndexFSCtx();
 		this.didx = new ServerlessIndexFSDirIndex(config.GetMetaDBNum());
-		this.didx.config_ = config;
 		this.cache = new InMemoryStatInfoCache(config, config.cache_capacity, 0.75F);
-	    System.out.println("config.cache_capacity: " + config.cache_capacity);
-	    System.out.println("Cache capacity: " + this.cache.size());
+	    // System.out.println("config.cache_capacity: " + config.cache_capacity);
+	    System.out.println("Serverless cache capacity: " + this.cache.size());
 		this.server_map = config.GetMetaDBMap();
 		this.op = new ServerlessIndexFSOperationParameters();
 		this.stat = new StatInfo();
@@ -87,11 +85,13 @@ public class ServerlessIndexFSServer {
 			this.rpc_connections[i] = new ServerlessIndexFSRPCClient(this.config, i);
 			try {
 				StartRPC(this.rpc_connections[i]);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				System.out.println("Connected to MetaDB server at: " + 
+			    		this.rpc_connections[i].getServerAddr() + ":" + this.rpc_connections[i].getPort());
+			} catch (Exception e) {
+				// e.printStackTrace();
 			    System.out.println("Failed to connected to MetaDB server at: " + 
 			    		this.rpc_connections[i].getServerAddr() + ":" + this.rpc_connections[i].getPort());
+			    System.out.println("Hint: check your MetaDB server list.");
 			}
 		}		
 		this.queue = new ServerlessIndexFSRPCWritebackQueue(config, this.rpc_connections);
@@ -102,7 +102,7 @@ public class ServerlessIndexFSServer {
 	 * Start serverless IndexFS RPC connections.
 	 * @throws IOException 
 	 */
-	public void StartRPC(ServerlessIndexFSRPCClient rpc_connection) throws IOException {
+	public void StartRPC(ServerlessIndexFSRPCClient rpc_connection) {
 			rpc_connection.open();
 	}
 	
@@ -111,7 +111,7 @@ public class ServerlessIndexFSServer {
 	 * @throws IOException 
 	 */
 	public void StopRPC() throws IOException {
-		for (int i = 0; i < config.GetMetaDBNum(); i++) {
+		for (int i = 0; i < (config.GetMetaDBNum()-1); i++) {
 			this.rpc_connections[i].close();
 			System.out.println("Disconnected RPC connection with MetadDB server at: " + 
 		    		this.rpc_connections[i].getServerAddr() + ":" + this.rpc_connections[i].getPort());
@@ -201,15 +201,16 @@ public class ServerlessIndexFSServer {
 	 * @param port
 	 */
 	public void Mknod(String path, OID obj_id, int perm, int port) {
-		// Put file metadata into LRU_cache.	
+		
+		StatInfo stat_ = new StatInfo();
+		
 		// Compute the server id based on file path.
 		server_id = didx.GetServer(path);
+						
+		// Put file metadata into LRU_cache.	
+		fillInStat(stat_, true, NextInode(server_id), 0);
 		
-		OBJ_LOCK(obj_id);
-				
-		fillInStat(stat, true, NextInode(server_id), 0);
-		
-		cache.put(path, stat.id, stat);
+		cache.put(path, stat_.id, stat_);
 					
 		// file in operation parameters and put in writeback cache
 		op.op_type = 0;
@@ -220,7 +221,10 @@ public class ServerlessIndexFSServer {
 		queue.write_counter(server_id, op);
 
 		reset_op();
-
+		
+		/* Debug */
+		System.out.println("ServerlessIndexFSServer:Mknod: " + path + ": " + stat_.id);
+		
 		/**
 		 *  TASK-II: increase directory size.
 		 *  Don't support it in serverless IndexFS for now.
@@ -228,8 +232,6 @@ public class ServerlessIndexFSServer {
 		/*
 		  DLOG_ASSERT(dir_guard.HasPartitionData(obj_idx));
 		  dir_guard.InceaseAndGetPartitionSize(obj_idx, 1);
-	
-		  TriggerDirSplitting(obj_id.dir_id, obj_idx, dir_guard);
 		*/	
 	}
 
@@ -248,18 +250,15 @@ public class ServerlessIndexFSServer {
 	public void Mkdir(String path, OID obj_id,
 		int perm, int hint_server1, int hint_server2, int port) {
 		
-		// Get Next available inode number.
-		long ino = NextInode(hint_server1);
+		StatInfo stat_ = new StatInfo();
 		
-		// Fill in directory metadata
-		fillInStat(stat, false, ino, 0);
+		// Get Next available inode number and fill in directory metadata
+		fillInStat(stat_, false, NextInode(hint_server1), 0);
 		
 		// Put directory metadata into LRU_cache.	
-		cache.put(path, stat.id, stat);
+		cache.put(path, stat_.id, stat_);
 		
 		reset_op();
-		
-		OBJ_LOCK(obj_id);
   
 		// TASK-II: link the new directory
 		op.op_type = 1;
@@ -270,6 +269,9 @@ public class ServerlessIndexFSServer {
 		queue.write_counter(hint_server1, op);
 		
 		reset_op();
+		
+		/* Debug */
+		System.out.println("ServerlessIndexFSServer:Mkdir: " + path + ": " + stat_.id);
 
 		/**
 		 *  TASK-III: install the zeroth partition.
@@ -305,11 +307,14 @@ public class ServerlessIndexFSServer {
 	 */
 	public StatInfo Getattr(String path, OID obj_id, int port) {
 		// Look into LRU cache first. 
-		StatInfo stat = cache.getByPath(path);	
+		stat = cache.getByPath(path);	
+		
 		
 		if (stat == null) {
 		    // Object not in cache. Send RPC request and put metadata in LRU cache.
 			this.cache_miss += 1;
+			System.out.println("ServerlessIndexFSServer:Getattr: " + path + ": " 
+							 + " Cache miss: " + this.cache_miss);
 			
 			op.key.parent_id_ = obj_id.dir_id;
 			op.key.partition_id_ = (short) obj_idx;
@@ -332,6 +337,7 @@ public class ServerlessIndexFSServer {
 		}
 		else {
 			this.cache_hit += 1;
+			System.out.println("ServerlessIndexFSServer:Getattr: " + path + ": " + stat.id + " Cache hit: " + this.cache_hit);
 		}
 		//	System.out.println("ServerlessIndexFSServer:Getattr: " + path + ": " 
 		//				+ stat.id + " Cache hit: " + this.cache_hit);

@@ -27,68 +27,72 @@ public class ServerlessIndexFSMain {
 	
 	public static ServerlessIndexFSDriver driver;
 	
-	public static ServerlessIndexFSTCPClient tcpClient;
+	/**
+	 * Serverless IndexFS server instance.
+	 */
+	private ServerlessIndexFSServer index_srv_;
+	
+	
+	public static  ServerlessIndexFSTCPClient[] tcpClients;
+	
+	/**
+	 * An LRU cache maintains metadata of most recently written/read objects.
+	 */
+	public static InMemoryStatInfoCache cache;
+
+	
 
 	/*
 	 *  Terminate the serverless IndexFS server.
 	 */
-//	public static void SignalHandler(int sig) {
-//	  if (driver != null) {
-//	    driver.Shutdown();
-//	  }
-//	  LOG.info("Receive external signal to stop server " + deployment_id + " ...");
-//	}
-	
-	/*
-	 *  Terminate the serverless IndexFS server when receive SIGTERM sent from Kubernetes.
-	 */
-//    Runtime.getRuntime().addShutdownHook(new Thread() {
-//    @Override
-//        public void run() {
-//            System.out.println("Shutdown Hook Registered.");
-//        }   
-//    }); 
-	
-	public static void proceedWithTCP(ServerlessIndexFSParsedArgs parsed_args) {
-		TCP_CLIENT_START = true;
-		System.out.println("indexfs TCP client " + parsed_args.deployment_id + " initialized");
-		
-		// TCP reserves port 0
-		long duration1,duration2,duration3 = 0;
-		long startTime = System.nanoTime();
-		try {
-			tcpClient.connect(parsed_args.client_ip, parsed_args.client_port);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		long t1 = System.nanoTime();
-		duration1 = (t1 - startTime)/1000000;
-
-		try {
-			tcpClient.receivePayload();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		long t2 = System.nanoTime();
-		duration2 = (t2 - t1)/1000000;
-		
-		// commenting this for warm start. 
-		// tcpClient.disconnect();
-		long endTime = System.nanoTime();
-		duration3 = (endTime - startTime)/1000000;
-		System.out.println("tcpClient.connect() duration(ms): " + duration1);
-		System.out.println("tcpClient.receivePayload() duration(ms): " + duration2);
-		System.out.println("tcp communication duration(ms): " + duration3);				
-		try {
+	public static void SignalHandler(int sig, ServerlessIndexFSParsedArgs parsed_args) throws IOException {
+		if (driver != null) {
 			driver.Shutdown();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
+		System.out.println("Receive external signal to stop deployment " + parsed_args.deployment_id + " ...");
 	}
 	
+	
+	public static boolean initializeTCPClients() {
+		long startTime = System.nanoTime();
+		for(int i=0; i<config.GetClientNum(); i++) {
+			try {
+				tcpClients[i] = new ServerlessIndexFSTCPClient(config, driver, i);
+				tcpClients[i].connect(config.GetClientIP(), i+2004);
+				System.out.println("IndexFS TCP client " + i + " in deployment " + config.GetSvrID()
+						+ " connected to: " + config.GetClientIP() + ":" + (i+2004));
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		System.out.println("tcpClient.connect() duration(ms): " + (System.nanoTime() - startTime)/1000000);
+		return true;
+	}
+	
+	// TODO
+//	public boolean proceedWithTCP() {
+//		try {
+//			tcpClient[].receivePayload();
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//		long t2 = System.nanoTime();
+//		duration2 = (t2 - t1)/1000000;
+//		
+//		tcpClient.disconnect();
+//		long endTime = System.nanoTime();
+//		duration3 = (endTime - startTime)/1000000;
+//		System.out.println("tcpClient.receivePayload() duration(ms): " + duration2);
+//		System.out.println("tcp communication duration(ms): " + duration3);				
+//		try {
+//			driver.Shutdown();
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//	}
+    
 	
 	/**
 	 * serverless version of main method.
@@ -101,8 +105,10 @@ public class ServerlessIndexFSMain {
 //		ServerlessIndexFSInputParser parser = new ServerlessIndexFSInputParser();
 //		ServerlessIndexFSParsedArgs parsed_args = parser.inputJsonParse(args);
 //	
-//		config = new ServerlessIndexFSConfig(parsed_args);
-//		config.PrintMetaDBList();
+//		if (config == null) {
+//			config = new ServerlessIndexFSConfig(parsed_args);
+//			// config.PrintMetaDBList();
+//		}
 //	
 //		driver = new ServerlessIndexFSDriver(config, parsed_args);
 //	
@@ -169,61 +175,58 @@ public class ServerlessIndexFSMain {
     	args1.addProperty("path", file_path);
     	args1.addProperty("client_ip",  "127.0.0.1");
     	args1.addProperty("client_port", 2004);
+    	args1.addProperty("client_num", 2);
     	args1.add("OID", OID);
 
 		ServerlessIndexFSInputParser parser = new ServerlessIndexFSInputParser();
 		ServerlessIndexFSParsedArgs parsed_args = parser.inputJsonParse(args1);
 		
 		
-		config = new ServerlessIndexFSConfig(parsed_args);
-		config.PrintMetaDBList();
+		if (config == null) {
+			config = new ServerlessIndexFSConfig(parsed_args);
+		}
 		
 		driver = new ServerlessIndexFSDriver(config, parsed_args);
 
+		tcpClients = new ServerlessIndexFSTCPClient[config.GetClientNum()];
+		
 		if (TCP_CLIENT_START == false) {
 
 			System.out.println("============================================================");
-			System.out.println("set indexfs server rank " + parsed_args.deployment_id);
+			System.out.println("Set serverless IndexFS deployement " + parsed_args.deployment_id);
 
 
 			if (driver != null) {
 				// After the first success request, switch to TCP communication
-				tcpClient = new ServerlessIndexFSTCPClient(config, driver);
+				TCP_CLIENT_START = initializeTCPClients();
+				System.out.println("Serverless IndexFS deployement " + parsed_args.deployment_id
+						+ " has connected to " + config.GetClientNum() + " client threads");
 			}
 			
-			if (tcpClient != null) {
-				TCP_CLIENT_START = true;
-				System.out.println("indexfs TCP client " + parsed_args.deployment_id + " initialized");
-				// TCP reserves port 0
-				long duration1,duration2,duration3 = 0;
-				long startTime = System.nanoTime();
-				tcpClient.connect(parsed_args.client_ip, parsed_args.client_port);
-				long t1 = System.nanoTime();
-				duration1 = (t1 - startTime)/1000000;
-	
-				tcpClient.receivePayload();
-				long t2 = System.nanoTime();
-				duration2 = (t2 - t1)/1000000;
-				
-				tcpClient.disconnect();
-				System.out.println("TCP communication disconnected"); 
-				long endTime = System.nanoTime();
-				duration3 = (endTime - startTime)/1000000;
-				System.out.println("tcpClient.connect() duration(ms): " + duration1);
-				System.out.println("tcpClient.receivePayload() duration(ms): " + duration2);
-				System.out.println("tcp communication duration(ms): " + duration3);
+			if (TCP_CLIENT_START) {
+				for (int i=0; i<config.GetClientNum(); i++) {
+					tcpClients[i].start();
+					try {
+						tcpClients[i].join();
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}		
+				}
 			}
 			else 
-				System.out.println("indexfs TCP client " + parsed_args.deployment_id + "initialization failed");
+				System.out.println("Serverless IndexFS " + parsed_args.deployment_id
+						+ "failed to establish TCP connections to all client threads");
 		}
 		
 		else {
-			if (tcpClient != null) {
-				System.out.println("TCP communication has already been established with " + parsed_args.client_ip +
-									":"+ parsed_args.client_ip);
-				tcpClient.receivePayload();
-				tcpClient.disconnect();
-				System.out.println("TCP communication disconnected"); 
+			if (tcpClients != null) {
+				for (int i=0; i<config.GetClientNum(); i++) {
+					if(tcpClients[i].checkConnection())
+						tcpClients[i].disconnect();
+						System.out.println("TCP communication disconnected with client thread " + i); 
+				}
+				
 			}
 			else 
 				System.out.println("Error: TCP flag (true) conflicts with TCP client status (null)");

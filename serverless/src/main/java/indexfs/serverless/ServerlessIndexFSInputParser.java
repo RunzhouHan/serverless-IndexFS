@@ -2,8 +2,6 @@ package main.java.indexfs.serverless;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
 
@@ -64,58 +62,65 @@ public class ServerlessIndexFSInputParser {
 	public ServerlessIndexFSParsedArgs inputJsonParse(JsonObject args) {
 		if (args.has(ServerlessIndexFSKeys.zeroth_server)) {
 		// Management server IP address.
-			parsed_args.zeroth_server = args.getAsJsonPrimitive(ServerlessIndexFSKeys.zeroth_server).getAsString();  //serverless run uncomment this
+			parsed_args.zeroth_server = args.getAsJsonPrimitive(ServerlessIndexFSKeys.zeroth_server).getAsString(); 
         } else {
         	LOG.info("Please provide IP address of the management server.");
         }
         
 		if (args.has(ServerlessIndexFSKeys.zeroth_port))  {
 		// Management server port.
-			parsed_args.zeroth_port = args.getAsJsonPrimitive(ServerlessIndexFSKeys.zeroth_port).getAsInt();  //serverless run uncomment this
+			parsed_args.zeroth_port = args.getAsJsonPrimitive(ServerlessIndexFSKeys.zeroth_port).getAsInt();  
         } else {
         	LOG.info("Please provide port number of the management server.");
         }
         
         if (args.has(ServerlessIndexFSKeys.instance_id))  {        
 		// Pod ID.
-        	parsed_args.instance_id = args.getAsJsonPrimitive(ServerlessIndexFSKeys.instance_id).getAsInt();  //serverless run uncomment this	
+        	parsed_args.instance_id = args.getAsJsonPrimitive(ServerlessIndexFSKeys.instance_id).getAsInt();
 	    } else {
 	    	LOG.info("Please provide instance id.");
 	    }
         
 	    if (args.has(ServerlessIndexFSKeys.deployment_id))  {
 		// Serverless function ID (IndexFS server ID). 
-	    	parsed_args.deployment_id = args.getAsJsonPrimitive(ServerlessIndexFSKeys.deployment_id).getAsInt();  //serverless run uncomment this
+	    	parsed_args.deployment_id = args.getAsJsonPrimitive(ServerlessIndexFSKeys.deployment_id).getAsInt(); 
 		} else {
 			LOG.info("Please provide deployment id for the serverless function.");
 		}
         
 		if (args.has(ServerlessIndexFSKeys.op_type))  {
 		// Operation type (a metadata operation parameter).
-			parsed_args.op_type = args.getAsJsonPrimitive(ServerlessIndexFSKeys.op_type).getAsString();  //serverless run uncomment this
+			parsed_args.op_type = args.getAsJsonPrimitive(ServerlessIndexFSKeys.op_type).getAsString(); 
 	    } else {
 	    	System.out.println("Please provide the metadata operation type.");
 	    }
         
 	    if (args.has(ServerlessIndexFSKeys.path))  {
 		// Object path (a metadata operation parameter).
-	    	parsed_args.path = args.getAsJsonPrimitive(ServerlessIndexFSKeys.path).getAsString();  //serverless run uncomment this
+	    	parsed_args.path = args.getAsJsonPrimitive(ServerlessIndexFSKeys.path).getAsString();  
 	    } else {
 	    	System.out.println("Please provide the object path of the metadata operation.");
 	    }
 	    
 	    if (args.has(ServerlessIndexFSKeys.client_ip))  {
 		// Object path (a metadata operation parameter).
-	    	parsed_args.client_ip = args.getAsJsonPrimitive(ServerlessIndexFSKeys.client_ip).getAsString();  //serverless run uncomment this
+	    	parsed_args.client_ip = args.getAsJsonPrimitive(ServerlessIndexFSKeys.client_ip).getAsString();
 	    } else {
 	    	System.out.println("Please provide the object path of the metadata operation.");
 	    }
 
 	    if (args.has(ServerlessIndexFSKeys.client_port))  {
 		// Object path (a metadata operation parameter).
-	    	parsed_args.client_port = args.getAsJsonPrimitive(ServerlessIndexFSKeys.client_port).getAsInt();  //serverless run uncomment this
+	    	parsed_args.client_port = args.getAsJsonPrimitive(ServerlessIndexFSKeys.client_port).getAsInt(); 
 	    } else {
 	    	System.out.println("Please provide the object path of the metadata operation.");
+	    }
+	    
+	    if (args.has(ServerlessIndexFSKeys.client_num))  {
+		// OID (a metadata operation parameter). 
+	    	parsed_args.client_num = args.getAsJsonPrimitive(ServerlessIndexFSKeys.client_num).getAsInt();
+	    } else {
+	    	System.out.println("Please provide number of client threads." );
 	    }
 	    
 	    if (args.has(ServerlessIndexFSKeys.OID))  {
@@ -124,6 +129,7 @@ public class ServerlessIndexFSInputParser {
 	    } else {
 	    	System.out.println("Please provide OID of the metadata operation." );
 	    }
+	    
 		return parsed_args;
 	}
 }

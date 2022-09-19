@@ -15,7 +15,7 @@ import org.apache.thrift.transport.TTransportException;
 public class ServerlessIndexFSConfig {
 	
 	/**
-	 * Serverless IndexFS server ID. Hardcoded to be 0 for now.
+	 * Serverless IndexFS deployment ID. 
 	 */
 	private int serverless_server_id;  
 	
@@ -43,7 +43,18 @@ public class ServerlessIndexFSConfig {
 	 * Total number of MetaDB servers.
 	 */
 	private short NumofMetaDBs;
+	
+	/**
+	 * Total number of IndexFS client threads.
+	 */
+	private int NumofClients;
 
+	
+	/**
+	 * IP of client node. A client node may have multiple client threads
+	 */
+	private String client_ip;
+	
 	/**
 	 * List of MetaDB server IPs.
 	 */
@@ -67,7 +78,7 @@ public class ServerlessIndexFSConfig {
 	/**
 	 * Serverless IndexFS cache capacity.
 	 */
-	public final int cache_capacity = 5; // need to check IndexFS setting
+	public final int cache_capacity = 50000; // need to check IndexFS setting
 	
 	/**
 	 * Serverless IndexFS write-back cache capacity before commit.
@@ -79,6 +90,11 @@ public class ServerlessIndexFSConfig {
 	 * Serverless IndexFS write-back cache commit time limit.
 	 */
 	public final int TimetoCommit = 1000; // need to check IndexFS setting
+	
+	/**
+	 * Serverless IndexFS write-back cache commit time limit.
+	 */
+	public final int DefaultClientNum = 1; // need to check IndexFS setting
 
 	
 	/**
@@ -99,6 +115,15 @@ public class ServerlessIndexFSConfig {
 		this.MetaDB_map = BuildMetaDBMap();
 		this.port_map = BuildPortMap();
 		this.tcp_port= parsed_args.client_port;
+		this.client_ip = parsed_args.client_ip;
+		if (parsed_args.client_num > 0) {
+			this.NumofClients = parsed_args.client_num;
+		}
+		else {
+			this.NumofClients = DefaultClientNum;
+			System.out.println("Invalid client number: " + parsed_args.client_num
+					+ ". Set to default value 1");
+		}
 	}
 	
 	/**
@@ -243,6 +268,22 @@ public class ServerlessIndexFSConfig {
 	 */
 	public Map<Integer, Integer> GetPortMap() {
 		return this.port_map;
+	}
+	
+	/**
+	 * A public API to get number of IndexFS client threads.
+	 * @return NumofClients.
+	 */
+	public int GetClientNum() {
+		return this.NumofClients;
+	}
+	
+	/**
+	 * A public API to get number of IndexFS client IP.
+	 * @return NumofClients.
+	 */
+	public String GetClientIP() {
+		return this.client_ip;
 	}
 	
 	public void PrintMetaDBList() {

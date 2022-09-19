@@ -1,10 +1,7 @@
 package main.java.indexfs.serverless;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.concurrent.ThreadLocalRandom;
-
-import com.google.gson.JsonObject;
 
 public class ServerlessIndexFSDriver {
 	
@@ -17,17 +14,12 @@ public class ServerlessIndexFSDriver {
 	 * Serverless IndexFS server instance.
 	 */
 	private ServerlessIndexFSServer index_srv_;
-	
-	/**
-	 * The ID allocated to the serverless IndexFS server instance.
-	 */
-	private int serverless_server_id;
-	
+		
 	/**
 	 * 0: write
-	 * 1: read 
+	 * n: getattr result
 	 */
-	private int op_type;
+	private long op_type;
 	
 	/**
 	 * A stat buffer for read result
@@ -35,7 +27,7 @@ public class ServerlessIndexFSDriver {
 	public StatInfo stat;
 	
 	private OID obj_id;
-		
+			
 	
 	/**
 	 * Constructor.
@@ -43,7 +35,6 @@ public class ServerlessIndexFSDriver {
 	public ServerlessIndexFSDriver(ServerlessIndexFSConfig config, ServerlessIndexFSParsedArgs parsed_args) {
 		this.config = config;
 		this.zeroth_port = parsed_args.zeroth_port;
-		this.serverless_server_id = parsed_args.deployment_id;
 	    this.obj_id = new OID();
 	    this.index_srv_ = new ServerlessIndexFSServer(config);
 	}
@@ -73,12 +64,11 @@ public class ServerlessIndexFSDriver {
 	 * @param path Path of the target object.
 	 * @param OID OID of the target object.
 	 */
-	public int proceedClientRequest(ServerlessIndexFSParsedArgs parsed_args) {
+	public long proceedClientRequest(ServerlessIndexFSParsedArgs parsed_args) {
 		
 		obj_id = parsed_args.obj_id;
 		
 		if (obj_id != null) {
-			// TODO Remove prints after testing.
 			if (parsed_args.op_type.equals("Mknod")) {
 				this.index_srv_.Mknod(parsed_args.path, obj_id, 0, zeroth_port);
 				this.op_type = 0;
@@ -91,7 +81,7 @@ public class ServerlessIndexFSDriver {
 			
 			else if (parsed_args.op_type.equals("Getattr")) {
 				stat = this.index_srv_.Getattr(parsed_args.path, obj_id, zeroth_port);
-				this.op_type = 1;
+				this.op_type = stat.id;
 			}
 			
 			else if (parsed_args.op_type.equals("Chown")) {

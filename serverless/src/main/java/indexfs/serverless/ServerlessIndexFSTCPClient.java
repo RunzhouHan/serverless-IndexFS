@@ -2,15 +2,14 @@ package main.java.indexfs.serverless;
 
 import java.io.BufferedReader;
 import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.OutputStreamWriter;
 import java.net.ConnectException;
 import java.net.Socket;
-import java.net.SocketException;
-import java.util.ArrayList;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.apache.commons.logging.LogFactory;
 
@@ -24,7 +23,7 @@ public class ServerlessIndexFSTCPClient extends Thread {
      * This is the maximum amount of time a call to connect() will block. Calls to connect() occur when
      * establishing a connection to a new client.
      */
-    private static final int CONNECTION_TIMEOUT = 5000;
+    private static final int CONNECTION_TIMEOUT = 60000;
     
     
     /**
@@ -47,14 +46,28 @@ public class ServerlessIndexFSTCPClient extends Thread {
     /**
      * Number of Serverless IndexFS clients.
      */
-    public static int clients = 0;
+    // public static int clients = 0;
     
-    /**
-     * Array of IndexFS client IP
-     */
-    public ArrayList<String> client_ips;
+    private int client_id;
+   
     
     private ServerlessIndexFSInputParser parser;
+    
+    
+	/**
+	 * The concurrency lock to protect write operations.
+	 * In our experiments we only have a single root folder, 
+	 * so we simply lock the Mknode method when a client is using it. 
+	 */
+    ReadWriteLock lock = new ReentrantReadWriteLock();    
+	
+    // private ServerlessIndexFSTCPClient[] tcpClients;
+    
+    // private String client_ip;
+    
+    // private int client_port;
+    
+    // private int deployement_id;
     
        
     /**
@@ -62,11 +75,15 @@ public class ServerlessIndexFSTCPClient extends Thread {
      * @param config
      * @param driver
      */
-    public ServerlessIndexFSTCPClient(ServerlessIndexFSConfig config, ServerlessIndexFSDriver driver_) {
+    public ServerlessIndexFSTCPClient(ServerlessIndexFSConfig config, ServerlessIndexFSDriver driver_,
+    		int client_id) {
     	this.serverless_server_id = config.GetSvrID();
-    	driver = driver_;
-    	this.client_ips = new ArrayList<String>();
+    	this.driver = driver_;
     	this.parser = new ServerlessIndexFSInputParser();
+    	this.client_id = client_id;
+    	// this.client_ip = config.GetClientIP();
+    	// this.tcpClients = new ServerlessIndexFSTCPClient[config.GetClientNum()];
+    	// this.deployement_id = config.GetSvrID();
     }
     
     /**
@@ -76,29 +93,34 @@ public class ServerlessIndexFSTCPClient extends Thread {
      * @throws IOException
      */
     public void connect(String client_ip, int client_port) throws IOException {
-    	System.out.println("ServerlessIndexFSTCPClient.connect");
-//    	clientSocket = new Socket(client_ip, client_port);
     	// Wait for the server to start
 		long startTime = System.nanoTime();
-    	while(true) {
+		
+		long timeout = CONNECTION_TIMEOUT;
+    	while(timeout > 0) {
     		try {
     			clientSocket = new Socket(client_ip, client_port);
-    			System.out.println("Connected to " + client_ip + ":" + client_port);
+    			// System.out.println("Connected to " + client_ip + ":" + client_port);
     			break;
     		} catch (ConnectException e) {
-    			System.out.println("Connect failed, waiting and trying again");
-    			e.printStackTrace(System.out);
+    			// System.out.println("Connect failed, waiting and trying again");
+    			// e.printStackTrace(System.out);
     			try {
-    				Thread.sleep(100);//0.1 second
+    				Thread.sleep(1000);// 1 second
+    				timeout = timeout - 1000;
 		        } catch(InterruptedException ie){
     		        ie.printStackTrace();
     		    }
+    			if (timeout == 0)
+    				 System.out.println("TCP connection timeout");
     		}
     	}
 		long endTime = System.nanoTime();
 		long duration = (endTime - startTime)/1000000;
-        String ready = "Serverless IndexFS TCP client has been connected to IndexFS client in: "  + duration;
-        System.out.println(ready);
+
+        String ready = "ServerlessIndexFSTCPClient.connect: IndexFS TCP client has been established on port " 
+    			+ client_ip + ":" + client_port + " in: "  + duration + "ms";
+        // System.out.println(ready);
         try {
 			PrintWriter outToClient = new PrintWriter(new OutputStreamWriter(clientSocket.getOutputStream()));
 	        outToClient.print(ready);
@@ -106,11 +128,10 @@ public class ServerlessIndexFSTCPClient extends Thread {
 		} catch (IOException e) {
 			if (clientSocket != null) {
                 clientSocket.close();
-                System.out.println(String.format("Could not connect to: %s on port: %d", client_ip, client_port));
+                System.out.println(String.format("ServerlessIndexFSTCPClient.connect: Could not connect to: %s on port: %d", 
+                		client_ip, client_port));
             }
 		}
-    	client_ips.add(client_ip);
-    	System.out.println("IndexFS TCP client has been established on port " + client_port);
     }
 
     /**
@@ -128,13 +149,35 @@ public class ServerlessIndexFSTCPClient extends Thread {
     
     
     /**
-     * 
-     * @throws IOException
+     * Receive workload requests from client as TCP payload, and process the request. 
      */
-    public void receivePayload() throws IOException {
-    	System.out.println("ServerlessIndexFSTCPClient.receivePayload");
-    	DataInputStream in = new DataInputStream(clientSocket.getInputStream());
-    	PrintWriter strwriter = new PrintWriter(clientSocket.getOutputStream());
+    public void run() {
+    	long THREAD_ID = 0;
+        try {
+        	THREAD_ID = Thread.currentThread().getId();
+            System.out.println(
+                "ServerlessIndexFSTCPClient.run(): Thread " + THREAD_ID
+                + " is receiving client payload");
+        }
+        catch (Exception e) {
+            System.out.println("ServerlessIndexFSTCPClient.run(): Failed to get thread ID");
+        }
+    	DataInputStream in = null;
+		try {
+			in = new DataInputStream(clientSocket.getInputStream());
+		} catch (IOException e1) {
+			System.out.println("ServerlessIndexFSTCPClient.run(): Thread " + THREAD_ID
+					+ " getInputStream() failed");
+			// e1.printStackTrace();
+		}
+    	PrintWriter strwriter = null;
+		try {
+			strwriter = new PrintWriter(clientSocket.getOutputStream());
+		} catch (IOException e1) {
+			System.out.println("ServerlessIndexFSTCPClient.run(): Thread " + THREAD_ID
+					+ " getOutputStream() failed");
+			// e1.printStackTrace();
+		}
     	InputStreamReader reader = new InputStreamReader(in);
     	BufferedReader b_reader = new BufferedReader(reader);
     	ServerlessIndexFSParsedArgs parsed_args = new ServerlessIndexFSParsedArgs();
@@ -142,39 +185,59 @@ public class ServerlessIndexFSTCPClient extends Thread {
     	
         try {
         	String inputLine;
-        	long duration_parse = 0; 
-        	long duration_one = 0;
-        	long duration_proceed = 0;
-        	long tmp1, tmp2;
+        	long duration_parse, duration_one, duration_proceed;
+        	duration_parse = duration_one = duration_proceed= 0; 
         	long startTime = System.nanoTime();
-        	int i = 0;
-    		tmp1 = System.nanoTime();
-
+        	long tmp1, tmp2;
+    		
+    		int i = 0;
             while ((inputLine = b_reader.readLine()) != null) {
             	if (inputLine.length() == 1) {
             		System.out.println("KILL SIGNAL: " + inputLine);
             		break;
             	}
             	tmp1 = System.nanoTime();
+            	
             	parsed_args = parser.inputStringParse(inputLine);
             	
             	duration_parse += System.nanoTime()-tmp1;
             	tmp2 = System.nanoTime();
-            	int op_type = -1;
+            	
+            	long op_type = -1;
+            	
             	if (parsed_args != null) {
-            		op_type = driver.proceedClientRequest(parsed_args);
+            		
+            		if (!parsed_args.op_type.equals("Getattr")) {
+            			// write lock upon Mknod & Mkdir. We can do this because we don't have sub-folders in the root folder.
+            			lock.writeLock().lock(); 
+        				try {
+        					op_type = driver.proceedClientRequest(parsed_args);
+        				} finally {
+        			        lock.writeLock().unlock();
+        			    }	
+            		}
+            		else {
+            			// read lock upon Getattr. 
+//        				lock.writeLock().lock(); 
+//        				try {
+        					op_type = driver.proceedClientRequest(parsed_args);
+//        				} finally {
+//        			        lock.writeLock().unlock();
+//        			    }	            			
+            		}
             	}
-    			if(op_type == 1) {
+            		
+    			if(op_type != 0) {
     				// Read operation. Send result back to IndexFS client
-    				// System.out.println("Send out read result: " + String.valueOf(driver.stat.id));
-    				 strwriter.write(String.valueOf(driver.stat.id));
+    				 strwriter.write(String.valueOf(op_type));
+    				 System.out.println("read inode: " + String.valueOf(op_type));
     				 strwriter.flush();
     			}
     			duration_one = System.nanoTime() - tmp2;
     			duration_proceed += duration_one;
     			if ((duration_one/1000000) > 5) {
-    				System.out.println(parsed_args.op_type + " " + parsed_args.path
-    						+ " - time consumption: " + duration_one/1000000);
+    				System.out.println("Outlier opertaion: " + parsed_args.op_type + " " 
+    						+ parsed_args.path + " - " + duration_one/1000000 + "ms");
     			} 
     			i++;
 			}
@@ -186,13 +249,14 @@ public class ServerlessIndexFSTCPClient extends Thread {
 			System.out.println("readline duration(ms): " + duration);
 			
 			strwriter.close();
+			disconnect();
 			
         } catch (IOException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace(); 
             disconnect();
         }
     }
+    
     
     /**
      * Disconnect from TCP server
@@ -201,7 +265,7 @@ public class ServerlessIndexFSTCPClient extends Thread {
     	System.out.println("ServerlessIndexFSTCPClient.disconnect");
         try {
 	        clientSocket.close();
-	        System.out.println("disconnected TCP communication between serverless IndexFS and client");
+	        System.out.println("disconnected client " + client_id);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
