@@ -294,7 +294,7 @@ public class InMemoryStatInfoCache {
     public int size() {
         _mutex.readLock().lock();
         try {
-            return prefixMetadataCache.size();
+            return fullPathMetadataCache.size();
         } finally {
             _mutex.readLock().unlock();
         }

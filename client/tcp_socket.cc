@@ -15,35 +15,26 @@
 
 namespace indexfs {
 
-// namespace {
-// int random_int_generator(int range) {
-//   std::random_device rd; // obtain a random number from hardware
-//   std::mt19937 gen(rd()); // seed the generator
-//   std::uniform_int_distribution<> distr(0, range); // define the range
-//   return distr(gen);
-// }
-// }
-
 
 /* tcp_socket class begin */
-tcp_socket::tcp_socket(int num_of_deployments, int port):
-    num_of_deployments_(num_of_deployments)  {
-    server_addr.sin_family=AF_INET;     // TCP/IP
+tcp_socket::tcp_socket(int num_of_deployments, int port, int my_rank):
+    num_of_deployments_(num_of_deployments),
+    my_rank_(my_rank) {
+    server_addr.sin_family=AF_INET;             // TCP/IP
     server_addr.sin_addr.s_addr=INADDR_ANY;     // server addr--permit all connection
     // server_addr.sin_addr.s_addr=inet_addr("10.128.0.10"); 
-    server_addr.sin_port=htons(port);       // server port
+    server_addr.sin_port=htons(port);           // server port
     length = sizeof(client_addr);
 }
 
 
+/* send out kill signal */
 Status tcp_socket::disconnect() {
-
     Status s = send_payload("\n");
     return s;
-
 }
 
-
+/* send out serialized payload */
 Status tcp_socket::send_payload(char* path_) {
     string path(path_);
     send(conn, path.c_str(), path.size()+1, MSG_CONFIRM); // Send the std::string data 
@@ -52,14 +43,18 @@ Status tcp_socket::send_payload(char* path_) {
 
 
 char* tcp_socket::receive() {
-    char* recv_buf;
-    memset(recv_buf, '\0', sizeof(recv_buf));
+    char recv_buf[MAX_BUF_LENGTH];
+
+    printf("Rank %d: receive(): %s -- before \n", my_rank_, recv_buf);
+
     while(recv(conn, recv_buf, sizeof(recv_buf), 0) > 0 ){
         // cout << "Read file metadata: " << recv_buf << endl; 
         break;
     }
-    // if (recv_buf)
-        // cout << "Read file metadata: " << recv_buf << endl;
+
+    /*Debug*/
+    printf("Rank %d: receive(): %s -- after \n", my_rank_, recv_buf);
+
     return recv_buf;
 }
 
@@ -102,7 +97,7 @@ Status tcp_socket::connect(const char* msg) {
                     perror("listen error");
                     return Status::IOError("listen error");
     }
-    printf("listen success.\n");
+    // printf("listen success.\n");
 
     char recv_buf[65536];
     memset(recv_buf, '\0', sizeof(recv_buf));
@@ -115,13 +110,13 @@ Status tcp_socket::connect(const char* msg) {
         return Status::IOError("connect error");
     }
 
-    printf("new client accepted.\n");
+    printf("client accepted at rank %d\n", my_rank_);
 
     char client_ip[INET_ADDRSTRLEN] = "";
     inet_ntop(AF_INET, &client_addr.sin_addr, client_ip, INET_ADDRSTRLEN);
 
     while(recv(conn, recv_buf, sizeof(recv_buf), 0) > 0 ){
-        printf("recv: %s from client(%s:%d). \n", recv_buf, client_ip, ntohs(client_addr.sin_port));
+        printf("recv: %s from serverless IndexFS (%s:%d). \n", recv_buf, client_ip, ntohs(client_addr.sin_port));
         memset(recv_buf, '\0', strlen(recv_buf));
         break;
     }
@@ -157,6 +152,10 @@ Status tcp_socket::Mknod(int deployment, const std::string& path,
 
   char PARAMS_[1024];
   strcpy(PARAMS_, PARAMS.c_str());
+
+  /* Debug */
+  // if (my_rank_ == 1)
+    // printf("Rank %d: %s", my_rank_, PARAMS_);
 
   if (!CheckConnection()) {
     send_payload(PARAMS_);
@@ -194,6 +193,10 @@ Status tcp_socket::Mkdir(int deployment, const std::string& path,
   char PARAMS_[1024];
   strcpy(PARAMS_, PARAMS.c_str());
 
+  /* Debug */ 
+  // if (my_rank_ == 1)
+    // printf("Rank %d: %s", my_rank_, PARAMS_);
+
   if (!CheckConnection()) {
     send_payload(PARAMS_);
     // cout << PARAMS << endl;
@@ -227,16 +230,20 @@ Status tcp_socket::Getattr(int deployment, const std::string& path,
 
   char PARAMS_[1024];
   strcpy(PARAMS_, PARAMS.c_str());
+
+  /* Debug */
+  // if (my_rank_ == 1)
+    // printf("Rank %d: %s", my_rank_, PARAMS_);
+
   if (!CheckConnection()) {
     send_payload(PARAMS_);
     // Temporarily make it dummy
-    receive(); 
-    // cout << __func__ << ": " << file_path << " ino: " << info_ << endl;
-    return Status::IOError("IOError");
+    // receive(); 
+    return Status::OK();
   }
 
   cout << "Failed to fetch metadata of " << "path_" << endl;
-  return Status::OK();
+  return Status::IOError("IOError");
 }
 
 
@@ -267,7 +274,6 @@ Status tcp_socket::Flush(int deployment){
 
   if (!CheckConnection()) {
     send_payload(PARAMS_);
-    cout << "\n\n\n\n\n\n" << PARAMS << "\n\n\n\n\n\n" << endl;
   }
     return Status::OK();
 }

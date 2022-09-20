@@ -16,7 +16,7 @@ namespace indexfs {
 /* tcp_socket class begin */
 class tcp_socket {
 	public:
-		tcp_socket(int num_of_deployments, int port);
+		tcp_socket(int num_of_deployments, int port, int my_rank);
 		~tcp_socket();
 
 		// Create a TCP connection
@@ -42,6 +42,8 @@ class tcp_socket {
 		socklen_t length;
 		struct sockaddr_in client_addr;
 		int conn; // TCP connection
+		int my_rank_;
+		const int MAX_BUF_LENGTH = 4096;
 };
 /* tcp_socket class end */
 }

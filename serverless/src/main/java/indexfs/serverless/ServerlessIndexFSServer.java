@@ -4,6 +4,8 @@ import java.io.IOException;
 //import org.apache.hadoop.hdfs.serverless.zookeeper.SyncZKClient;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.apache.thrift.protocol.TBinaryProtocol;
 import org.apache.thrift.protocol.TProtocol;
@@ -12,11 +14,6 @@ import org.apache.thrift.transport.TTransport;
 import org.apache.thrift.transport.TTransportException;
 
 public class ServerlessIndexFSServer {
-	/**
-	 * Serverless IndexFS configuration
-	 */
-	private ServerlessIndexFSConfig config;
-	
 	/**
 	 * MetaDB APIs interface.
 	 */
@@ -33,16 +30,6 @@ public class ServerlessIndexFSServer {
 	 * before starts a RPC socket to a specific server.
 	 */
 	private ServerlessIndexFSRPCWritebackQueue queue;
-
-	/**
-	 * An LRU cache maintains metadata of most recently written/read objects.
-	 */
-	InMemoryStatInfoCache cache;
-
-	/**
-	 * Stores every necessary for a metadata operation.
-	 */
-	private ServerlessIndexFSOperationParameters op;
 			
 	/**
 	 * Server id to ip map. This is set to be public because it will be used in 
@@ -50,39 +37,48 @@ public class ServerlessIndexFSServer {
 	 */
 	public Map<Integer, String> server_map;	
 	
-	/**
-	 * Cache hit count 
-	 */
-	public long cache_hit = 0;
+	InMemoryStatInfoCache cache;
 	
-	/**
-	 * Cache miss count 
-	 */
-	public long cache_miss = 0;
+//	/**
+//	 * Cache hit count 
+//	 */
+//	public long cache_hit = 0;
+//	
+//	/**
+//	 * Cache miss count 
+//	 */
+//	public long cache_miss = 0;
 	
 	private ServerlessIndexFSRPCClient[] rpc_connections;
 
-	private int server_id = 0;
+	public int server_id = 0;
+	
 	private int obj_idx = 0;
-	private StatInfo stat;
+	
+	private int mdb_num;
+	
+	/**
+	 * The concurrency lock to protect write operations.
+	 * In our experiments we only have a single root folder, 
+	 * so we simply lock the Mknode method when a client is using it. 
+	 */
+    ReadWriteLock lock = new ReentrantReadWriteLock();    
+	
 
 	/** 
 	 * Constructor
 	 */	
-	@SuppressWarnings("serial")
 	public ServerlessIndexFSServer(ServerlessIndexFSConfig config) {
-		this.config = config;
+		
+		this.server_id = config.GetSvrID();
 		this.ctx = new ServerlessIndexFSCtx();
-		this.didx = new ServerlessIndexFSDirIndex(config.GetMetaDBNum());
-		this.cache = new InMemoryStatInfoCache(config, config.cache_capacity, 0.75F);
-	    // System.out.println("config.cache_capacity: " + config.cache_capacity);
-	    System.out.println("Serverless cache capacity: " + this.cache.size());
 		this.server_map = config.GetMetaDBMap();
-		this.op = new ServerlessIndexFSOperationParameters();
-		this.stat = new StatInfo();
+		this.mdb_num = config.GetMetaDBNum();
+		this.didx = new ServerlessIndexFSDirIndex((short) this.mdb_num);
+		
 		this.rpc_connections = new ServerlessIndexFSRPCClient[config.GetMetaDBNum()];
 		for (int i = 0; i < config.GetMetaDBNum(); i++) {
-			this.rpc_connections[i] = new ServerlessIndexFSRPCClient(this.config, i);
+			this.rpc_connections[i] = new ServerlessIndexFSRPCClient(config, i);
 			try {
 				StartRPC(this.rpc_connections[i]);
 				System.out.println("Connected to MetaDB server at: " + 
@@ -94,7 +90,7 @@ public class ServerlessIndexFSServer {
 			    System.out.println("Hint: check your MetaDB server list.");
 			}
 		}		
-		this.queue = new ServerlessIndexFSRPCWritebackQueue(config, this.rpc_connections);
+		this.queue = new ServerlessIndexFSRPCWritebackQueue(config, this.rpc_connections); // need a lock
 	}
 	
     
@@ -111,21 +107,13 @@ public class ServerlessIndexFSServer {
 	 * @throws IOException 
 	 */
 	public void StopRPC() throws IOException {
-		for (int i = 0; i < (config.GetMetaDBNum()-1); i++) {
+		for (int i = 0; i < (this.mdb_num-1); i++) {
 			this.rpc_connections[i].close();
 			System.out.println("Disconnected RPC connection with MetadDB server at: " + 
 		    		this.rpc_connections[i].getServerAddr() + ":" + this.rpc_connections[i].getPort());
 		}
 	}
 	
-	
-	/**
-	 * Reset operation parameters.
-	 */
-	private void reset_op() {
-		op.op_type = 0;
-		op.ino = 0;
-	}
 	
 	/**
 	 * Fill in StatInfo (object metadata) before put into LRU cache.
@@ -143,44 +131,14 @@ public class ServerlessIndexFSServer {
 	}
 	
 	
-	private void OBJ_LOCK(OID obj_id) {
-		// _DIR_GUARD(obj_id.dir_id, obj_id.obj_name);
-	}
-	
-	/**
-	 * Helper function for Chown and Chmod.
-	 */
-	/*
-	private void SetDirAttr(OID obj_id, short obj_idx,
-	        DirGuard& dir_guard, StatInfo info) {
-
-	}
-	*/
-	
-	/**
-	 * Fetch server id from local options
-	 * @return
-	 */
-	public int GetMyRank() {
-		return config.GetSvrID();
-	}
-
-	/**
-	 * Fetch the total number of servers from local options
-	 * @return
-	 */
-	public int GetNumServers() {
-		return config.GetMetaDBNum();
-	}	
-	
 	/**
 	 * Flush changes to MetaDB.
 	 * @param port
 	 */
 	public void FlushDB(int port) {
+		ServerlessIndexFSOperationParameters op = new ServerlessIndexFSOperationParameters();
 		op.op_type = 5;
 		queue.write_counter(-1, op);
-		reset_op();
 	}
 	
 	/**
@@ -200,7 +158,9 @@ public class ServerlessIndexFSServer {
 	 * @param perm
 	 * @param port
 	 */
-	public void Mknod(String path, OID obj_id, int perm, int port) {
+	public void Mknod(InMemoryStatInfoCache cache, String path, OID obj_id, int perm, int port) {
+				
+		ServerlessIndexFSOperationParameters op = new ServerlessIndexFSOperationParameters();
 		
 		StatInfo stat_ = new StatInfo();
 		
@@ -217,16 +177,11 @@ public class ServerlessIndexFSServer {
 		op.key.parent_id_ = obj_id.dir_id;
 		op.key.partition_id_ = (short) obj_idx;
 		op.key.file_name_ = obj_id.obj_name;
-		// TASK-I: link the new file
-		queue.write_counter(server_id, op);
-
-		reset_op();
 		
-		/* Debug */
-		System.out.println("ServerlessIndexFSServer:Mknod: " + path + ": " + stat_.id);
+		queue.write_counter(server_id, op);
 		
 		/**
-		 *  TASK-II: increase directory size.
+		 *  Increase directory size.
 		 *  Don't support it in serverless IndexFS for now.
 		 */
 		/*
@@ -247,8 +202,10 @@ public class ServerlessIndexFSServer {
 	 * @param hint_server2
 	 * @param port
 	 */
-	public void Mkdir(String path, OID obj_id,
+	public void Mkdir(InMemoryStatInfoCache cache, String path, OID obj_id,
 		int perm, int hint_server1, int hint_server2, int port) {
+				
+		ServerlessIndexFSOperationParameters op = new ServerlessIndexFSOperationParameters();
 		
 		StatInfo stat_ = new StatInfo();
 		
@@ -258,7 +215,6 @@ public class ServerlessIndexFSServer {
 		// Put directory metadata into LRU_cache.	
 		cache.put(path, stat_.id, stat_);
 		
-		reset_op();
   
 		// TASK-II: link the new directory
 		op.op_type = 1;
@@ -266,13 +222,9 @@ public class ServerlessIndexFSServer {
 
 		op.key.partition_id_ = (short) obj_idx;
 		op.key.file_name_ = obj_id.obj_name;
-		queue.write_counter(hint_server1, op);
 		
-		reset_op();
-		
-		/* Debug */
-		System.out.println("ServerlessIndexFSServer:Mkdir: " + path + ": " + stat_.id);
-
+		queue.write_counter(server_id, op);
+				
 		/**
 		 *  TASK-III: install the zeroth partition.
 		 *  In serverless IndexFS we temporarily don't support directory partitioning.
@@ -305,26 +257,29 @@ public class ServerlessIndexFSServer {
 	 * @param port
 	 * @return StatInfo file/directory metadata.
 	 */
-	public StatInfo Getattr(String path, OID obj_id, int port) {
+	public StatInfo Getattr(InMemoryStatInfoCache cache, String path, OID obj_id, int port) {
+		
+		
+		ServerlessIndexFSOperationParameters op = new ServerlessIndexFSOperationParameters();
+
 		// Look into LRU cache first. 
+		StatInfo stat = new StatInfo();
+	
 		stat = cache.getByPath(path);	
 		
 		
 		if (stat == null) {
 		    // Object not in cache. Send RPC request and put metadata in LRU cache.
-			this.cache_miss += 1;
 			System.out.println("ServerlessIndexFSServer:Getattr: " + path + ": " 
-							 + " Cache miss: " + this.cache_miss);
+							 + " Cache miss");
 			
 			op.key.parent_id_ = obj_id.dir_id;
 			op.key.partition_id_ = (short) obj_idx;
 			op.key.file_name_ = obj_id.obj_name;
 			
 			int server_id = didx.GetServer(path);
-	    		    	
+			
 			stat = ctx.GetEntry(rpc_connections[server_id].mdb_client, op.key);
-
-			reset_op();
 			
 			// Object is found, put it in LRU cache.
 			if (stat != null) {
@@ -336,8 +291,7 @@ public class ServerlessIndexFSServer {
 			}
 		}
 		else {
-			this.cache_hit += 1;
-			System.out.println("ServerlessIndexFSServer:Getattr: " + path + ": " + stat.id + " Cache hit: " + this.cache_hit);
+			// System.out.println("ServerlessIndexFSServer:Getattr: " + path + ": " + stat.id);
 		}
 		//	System.out.println("ServerlessIndexFSServer:Getattr: " + path + ": " 
 		//				+ stat.id + " Cache hit: " + this.cache_hit);
@@ -349,6 +303,18 @@ public class ServerlessIndexFSServer {
 
 		return stat;
 	}
+	
+	
+	/**
+	 * Helper function for Chown and Chmod.
+	 */
+	/*
+	private void SetDirAttr(OID obj_id, short obj_idx,
+	        DirGuard& dir_guard, StatInfo info) {
+
+	}
+	*/
+	
 		
 	/**
 	 * Changes the ownership of a given file system object.

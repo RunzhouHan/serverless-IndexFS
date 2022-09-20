@@ -5,6 +5,8 @@
 #include <map>
 #include <stdlib.h>
 #include <unistd.h>
+#include <mpi.h>
+
 
 #include "io_task.h"
 #include <gflags/gflags.h>
@@ -30,6 +32,7 @@ class TreeTest: public IOTask {
 
   static inline
   void MakeDirectory(IOClient* IO, IOListener* L, int dno) {
+    
     Status s = IO->MakeDirectory(dno, FLAGS_prefix);
     if (!s.ok()) {
       if (L != NULL) {
@@ -44,6 +47,7 @@ class TreeTest: public IOTask {
 
   static inline
   void CreateFile(IOClient* IO, IOListener* L, int dno, int fno) {
+
     Status s = IO->NewFile(dno, fno, FLAGS_prefix);
     if (!s.ok()) {
       if (L != NULL) {
@@ -58,6 +62,7 @@ class TreeTest: public IOTask {
 
   static inline
   void GetAttr(IOClient* IO, IOListener* L, int dno, int fno) {
+
     Status s = IO->GetAttr(dno, fno, FLAGS_prefix);
     if (!s.ok()) {
       if (L != NULL) {
@@ -136,6 +141,7 @@ class TreeTest: public IOTask {
   }
 
   virtual void Prepare() {
+
     Status s = IO_->Init();
     if (!s.ok()) {
       throw IOError("init", s.ToString());
@@ -205,6 +211,9 @@ class TreeTest: public IOTask {
   }
 
   virtual void Clean() {
+    /* Debug */
+    // printf("Rank %d Clean()\n", my_rank_);
+
     if (FLAGS_enable_clean) {
       if (num_dirs_ == 1 && FLAGS_share_dirs) {
         IOMeasurements::Reset(IO_);
@@ -231,7 +240,9 @@ class TreeTest: public IOTask {
             }
             file2nstats_[f]++;
 #           endif
+
             GetAttr(IO_, listener_, 0, f);
+
           } catch (IOError &err) {
             if (!FLAGS_ignore_errors)
               throw err;

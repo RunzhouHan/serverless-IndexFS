@@ -25,42 +25,31 @@ public class ServerlessIndexFSMain {
 	
 	public static final String FLAGS_log_dir = "/";
 	
-	public static ServerlessIndexFSDriver driver;
-	
-	/**
-	 * Serverless IndexFS server instance.
-	 */
-	private ServerlessIndexFSServer index_srv_;
-	
-	
-	public static  ServerlessIndexFSTCPClient[] tcpClients;
-	
-	/**
-	 * An LRU cache maintains metadata of most recently written/read objects.
-	 */
-	public static InMemoryStatInfoCache cache;
-
+	public static ServerlessIndexFSTCPClient[] tcpClients;
 	
 
 	/*
 	 *  Terminate the serverless IndexFS server.
 	 */
-	public static void SignalHandler(int sig, ServerlessIndexFSParsedArgs parsed_args) throws IOException {
-		if (driver != null) {
-			driver.Shutdown();
-		}
+	public static void SignalHandler(int sig, ServerlessIndexFSParsedArgs parsed_args,
+			ServerlessIndexFSServer index_srv_) throws IOException {
+		Shutdown(index_srv_);
 		System.out.println("Receive external signal to stop deployment " + parsed_args.deployment_id + " ...");
 	}
 	
 	
-	public static boolean initializeTCPClients() {
+	public static void Shutdown(ServerlessIndexFSServer index_srv_) throws IOException {
+		index_srv_.StopRPC();
+	}
+	
+	public static boolean initializeTCPClients(ServerlessIndexFSServer index_srv_, InMemoryStatInfoCache cache) {
 		long startTime = System.nanoTime();
-		for(int i=0; i<config.GetClientNum(); i++) {
+		for(int id=0; id<config.GetClientNum(); id++) {
 			try {
-				tcpClients[i] = new ServerlessIndexFSTCPClient(config, driver, i);
-				tcpClients[i].connect(config.GetClientIP(), i+2004);
-				System.out.println("IndexFS TCP client " + i + " in deployment " + config.GetSvrID()
-						+ " connected to: " + config.GetClientIP() + ":" + (i+2004));
+				tcpClients[id] = new ServerlessIndexFSTCPClient(config, id, index_srv_, cache);
+				tcpClients[id].connect(config.GetClientIP(), id+2004);
+				System.out.println("IndexFS TCP client " + id + " in deployment " + config.GetSvrID()
+						+ " connected to: " + config.GetClientIP() + ":" + (id+2004));
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -155,7 +144,9 @@ public class ServerlessIndexFSMain {
 	 * Local main method.
 	 */
     public static void main(String[] args) throws IOException { // local run uncomment this
-		
+
+
+//		TCP_CLIENT_START
 		String file_name = "file_0";
 		String file_path = '/' + file_name;
 		long dir_id = 0;
@@ -175,7 +166,7 @@ public class ServerlessIndexFSMain {
     	args1.addProperty("path", file_path);
     	args1.addProperty("client_ip",  "127.0.0.1");
     	args1.addProperty("client_port", 2004);
-    	args1.addProperty("client_num", 2);
+    	args1.addProperty("client_num", 4);
     	args1.add("OID", OID);
 
 		ServerlessIndexFSInputParser parser = new ServerlessIndexFSInputParser();
@@ -186,8 +177,18 @@ public class ServerlessIndexFSMain {
 			config = new ServerlessIndexFSConfig(parsed_args);
 		}
 		
-		driver = new ServerlessIndexFSDriver(config, parsed_args);
+		/**
+		 * Serverless IndexFS.
+		 */
+		ServerlessIndexFSServer index_srv_ = new ServerlessIndexFSServer(config);
+		
+		/**
+		 * Serverless cache.
+		 */
+		InMemoryStatInfoCache cache = new InMemoryStatInfoCache(config, config.cache_capacity, 0.75F);
+//	    System.out.println("Serverless cache capacity: " + cache.size());
 
+				
 		tcpClients = new ServerlessIndexFSTCPClient[config.GetClientNum()];
 		
 		if (TCP_CLIENT_START == false) {
@@ -195,13 +196,9 @@ public class ServerlessIndexFSMain {
 			System.out.println("============================================================");
 			System.out.println("Set serverless IndexFS deployement " + parsed_args.deployment_id);
 
-
-			if (driver != null) {
-				// After the first success request, switch to TCP communication
-				TCP_CLIENT_START = initializeTCPClients();
-				System.out.println("Serverless IndexFS deployement " + parsed_args.deployment_id
-						+ " has connected to " + config.GetClientNum() + " client threads");
-			}
+			TCP_CLIENT_START = initializeTCPClients(index_srv_, cache);
+			System.out.println("Serverless IndexFS deployement " + parsed_args.deployment_id
+					+ " has connected to " + config.GetClientNum() + " client threads");
 			
 			if (TCP_CLIENT_START) {
 				for (int i=0; i<config.GetClientNum(); i++) {
@@ -226,13 +223,12 @@ public class ServerlessIndexFSMain {
 						tcpClients[i].disconnect();
 						System.out.println("TCP communication disconnected with client thread " + i); 
 				}
-				
 			}
 			else 
 				System.out.println("Error: TCP flag (true) conflicts with TCP client status (null)");
 		}
-		
-		driver.Shutdown();
+			    
+		Shutdown(index_srv_);
 		
 		LOG.info("Everything disposed, server will now shutdown");
     } // main end.

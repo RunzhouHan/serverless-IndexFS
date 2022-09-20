@@ -130,7 +130,8 @@ tree_test.o: tree_test.cc /usr/include/stdc-predef.h \
  /usr/include/x86_64-linux-gnu/bits/confname.h \
  /usr/include/x86_64-linux-gnu/bits/getopt_posix.h \
  /usr/include/x86_64-linux-gnu/bits/getopt_core.h \
- /usr/include/x86_64-linux-gnu/bits/unistd.h io_task.h io_client.h \
+ /usr/include/x86_64-linux-gnu/bits/unistd.h /usr/local/include/mpi.h \
+ /usr/local/include/mpi_portable_platform.h io_task.h io_client.h \
  ../common/common.h ../thrift/indexfs_types.h \
  /usr/local/include/thrift/Thrift.h \
  /usr/local/include/thrift/transport/PlatformSocket.h \
@@ -748,6 +749,10 @@ tree_test.o: tree_test.cc /usr/include/stdc-predef.h \
 /usr/include/x86_64-linux-gnu/bits/getopt_core.h:
 
 /usr/include/x86_64-linux-gnu/bits/unistd.h:
+
+/usr/local/include/mpi.h:
+
+/usr/local/include/mpi_portable_platform.h:
 
 io_task.h:
 

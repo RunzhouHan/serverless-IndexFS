@@ -222,8 +222,11 @@ class IOTestDriver: public IOListener {
 
     // Clean Phase
     err_ = ops_ = 0;
+
     LogStatus("Clean Phase ...");
+
     MPI_Barrier(MPI_COMM_WORLD);
+
     start = MPI_Wtime();
     Clean();
     dura = MPI_Wtime() - start;
