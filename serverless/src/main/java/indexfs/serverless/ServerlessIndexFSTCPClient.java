@@ -18,7 +18,7 @@ public class ServerlessIndexFSTCPClient extends Thread {
      * This is the maximum amount of time a call to connect() will block. Calls to connect() occur when
      * establishing a connection to a new client.
      */
-    private static final int CONNECTION_TIMEOUT = 60000;
+    private static final int CONNECTION_TIMEOUT = 100000;
     
     
     /**
