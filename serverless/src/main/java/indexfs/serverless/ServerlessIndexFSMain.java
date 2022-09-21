@@ -48,8 +48,8 @@ public class ServerlessIndexFSMain {
 			try {
 				tcpClients[id] = new ServerlessIndexFSTCPClient(config, id, index_srv_, cache);
 				tcpClients[id].connect(config.GetClientIP(), id+2004);
-				System.out.println("IndexFS TCP client " + id + " in deployment " + config.GetSvrID()
-						+ " connected to: " + config.GetClientIP() + ":" + (id+2004));
+				System.out.println("IndexFS IndexFS deployment " + config.GetSvrID()
+						+ "has established TCP connection with: " + config.GetClientIP() + ":" + (id+2004));
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -119,7 +119,7 @@ public class ServerlessIndexFSMain {
 
 			TCP_CLIENT_START = initializeTCPClients(index_srv_, cache);
 			System.out.println("Serverless IndexFS deployement " + parsed_args.deployment_id
-					+ " has connected to " + config.GetClientNum() + " client threads");
+					+ " has connected to totally " + config.GetClientNum() + " client threads");
 			
 			if (TCP_CLIENT_START) {
 				for (int i=0; i<config.GetClientNum(); i++) {
@@ -145,7 +145,7 @@ public class ServerlessIndexFSMain {
 			    
 		Shutdown(index_srv_);
 		
-		LOG.info("Everything disposed, server will now shutdown");
+		System.out.println("============================================================");
 		System.out.println("Everything disposed, server will now shutdown");
 	
 		return args;
