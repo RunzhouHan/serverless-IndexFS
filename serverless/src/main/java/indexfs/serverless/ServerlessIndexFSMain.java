@@ -124,6 +124,12 @@ public class ServerlessIndexFSMain {
 			if (TCP_CLIENT_START) {
 				for (int i=0; i<config.GetClientNum(); i++) {
 					tcpClients[i].start();		
+					try {
+						tcpClients[i].join();
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 				}
 			}
 			else 
