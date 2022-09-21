@@ -250,8 +250,8 @@ public class ServerlessIndexFSTCPClient extends Thread {
             	if (this.parsed_args != null) {
             		op_type = proceedClientRequest();
             		/* Debug */
-        			 if ((duration_one % 1000) == 0) {
-        				 System.out.println("ServerlessIndexFSTCPClient.run(): Thread " + THREAD_ID + " op_type: " + op_type);}
+//        			 if ((duration_one % 1000) == 0) {
+//        				 System.out.println("ServerlessIndexFSTCPClient.run(): Thread " + THREAD_ID + " op_type: " + op_type);}
             	}
             		
     			if(op_type != 0) {

@@ -84,7 +84,7 @@ public class ServerlessIndexFSConfig {
 	 * Serverless IndexFS write-back cache capacity before commit.
 	 * Used when group a number of write operations to the same server.
 	 */
-	public final int NumtoCommit = 1; // need to check IndexFS setting
+	public final int NumtoCommit = 10000; // need to check IndexFS setting
 	
 	/**
 	 * Serverless IndexFS write-back cache commit time limit.
