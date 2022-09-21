@@ -78,7 +78,7 @@ public class ServerlessIndexFSConfig {
 	/**
 	 * Serverless IndexFS cache capacity.
 	 */
-	public final int cache_capacity = 50000; // need to check IndexFS setting
+	public final int cache_capacity = 80000; // need to check IndexFS setting
 	
 	/**
 	 * Serverless IndexFS write-back cache capacity before commit.

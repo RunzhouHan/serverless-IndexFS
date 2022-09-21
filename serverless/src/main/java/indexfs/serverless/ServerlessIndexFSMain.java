@@ -107,7 +107,7 @@ public class ServerlessIndexFSMain {
 		 * Serverless cache.
 		 */
 		InMemoryStatInfoCache cache = new InMemoryStatInfoCache(config, config.cache_capacity, 0.75F);
-//	    System.out.println("Serverless cache capacity: " + cache.size());
+	    // System.out.println("Serverless cache capacity: " + cache.size());
 
 				
 		tcpClients = new ServerlessIndexFSTCPClient[config.GetClientNum()];
@@ -123,13 +123,7 @@ public class ServerlessIndexFSMain {
 			
 			if (TCP_CLIENT_START) {
 				for (int i=0; i<config.GetClientNum(); i++) {
-					tcpClients[i].start();
-					try {
-						tcpClients[i].join();
-					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}		
+					tcpClients[i].start();		
 				}
 			}
 			else 
@@ -217,13 +211,7 @@ public class ServerlessIndexFSMain {
 //			
 //			if (TCP_CLIENT_START) {
 //				for (int i=0; i<config.GetClientNum(); i++) {
-//					tcpClients[i].start();
-//					try {
-//						tcpClients[i].join();
-//					} catch (InterruptedException e) {
-//						// TODO Auto-generated catch block
-//						e.printStackTrace();
-//					}		
+//					tcpClients[i].start();	
 //				}
 //			}
 //			else 

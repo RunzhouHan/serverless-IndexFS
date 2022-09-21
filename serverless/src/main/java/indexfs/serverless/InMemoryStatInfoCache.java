@@ -135,7 +135,7 @@ public class InMemoryStatInfoCache {
 
         long s = System.currentTimeMillis();
 
-        _mutex.readLock().lock();
+        _mutex.writeLock().lock();
         if (LOG.isDebugEnabled()) LOG.debug("Acquired metadata cache read lock in " +
                 (System.currentTimeMillis() - s) + " ms.");
         try {
@@ -155,7 +155,7 @@ public class InMemoryStatInfoCache {
 
             return returnValue;
         } finally {
-            _mutex.readLock().unlock();
+            _mutex.writeLock().unlock();
             if (LOG.isDebugEnabled()) LOG.debug("Checked cache for StatInfo '" + key + "' in " +
                     (System.currentTimeMillis() - s) + " ms.");
         }

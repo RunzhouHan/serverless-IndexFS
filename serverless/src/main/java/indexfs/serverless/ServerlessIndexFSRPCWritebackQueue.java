@@ -43,7 +43,7 @@ public class ServerlessIndexFSRPCWritebackQueue {
 	
 	private Timer timer;
 	
-	private ServerlessIndexFSOperationParameters op_param;
+//	private ServerlessIndexFSOperationParameters op_param;
 	
 	private ServerlessIndexFSRPCClient[] rpc_connections;
 	
@@ -68,7 +68,7 @@ public class ServerlessIndexFSRPCWritebackQueue {
 		initialize_map(config.GetMetaDBNum());
 		this.NumtoCommit = config.NumtoCommit;
 		this.TimetoCommit = config.TimetoCommit;
-		this.op_param = new ServerlessIndexFSOperationParameters();
+//		this.op_param = new ServerlessIndexFSOperationParameters();
 		this.rpc_connections = rpc_connections;
 		// Timer for periodical commit.
 		/*
@@ -110,7 +110,7 @@ public class ServerlessIndexFSRPCWritebackQueue {
 		// System.out.println("Server ID: " + server_id + ": " + server_map.get((int)server_id) + ": " + port);
 		// System.out.println("ServerlessIndexFSRPCWritebackQueue: commit(): " + "commit to " + server_map.get((int)server_id) + ":" + port_map.get((int)server_id));
     	for (int i = 0; i < NumtoCommit; i++) {
-    		op_param = op_map.get((int)server_id).get(i);
+    		ServerlessIndexFSOperationParameters op_param = op_map.get((int)server_id).get(i);
     		int op_type = op_param.op_type;
     		switch (op_type) {
     			// mknod

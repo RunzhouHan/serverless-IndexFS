@@ -44,16 +44,10 @@ Status tcp_socket::send_payload(char* path_) {
 
 char* tcp_socket::receive() {
     char recv_buf[MAX_BUF_LENGTH];
-
-    printf("Rank %d: receive(): %s -- before \n", my_rank_, recv_buf);
-
     while(recv(conn, recv_buf, sizeof(recv_buf), 0) > 0 ){
         // cout << "Read file metadata: " << recv_buf << endl; 
         break;
     }
-
-    /*Debug*/
-    printf("Rank %d: receive(): %s -- after \n", my_rank_, recv_buf);
 
     return recv_buf;
 }
@@ -238,7 +232,7 @@ Status tcp_socket::Getattr(int deployment, const std::string& path,
   if (!CheckConnection()) {
     send_payload(PARAMS_);
     // Temporarily make it dummy
-    // receive(); 
+    receive(); 
     return Status::OK();
   }
 

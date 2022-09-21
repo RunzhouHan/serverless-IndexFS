@@ -243,18 +243,21 @@ public class ServerlessIndexFSTCPClient extends Thread {
             	
             	if (this.parsed_args != null) {
             		op_type = proceedClientRequest();
+        			if ((duration_one % 1000) == 0)
+        			System.out.println("ServerlessIndexFSTCPClient.run(): Thread " + THREAD_ID + " op_type: "
+        					+ op_type);
             	}
             		
     			if(op_type != 0) {
     				/* Read operation. Send result back to IndexFS client */
-    				// strwriter.write("0");
-    				//  strwriter.flush();
+    				 strwriter.write("0");
+    				  strwriter.flush();
     			}
     			duration_one = System.nanoTime() - tmp2;
     			duration_proceed += duration_one;
     			if ((duration_one/1000000) > 5) {
-    				System.out.println("Outlier opertaion: " + parsed_args.op_type + " " 
-    						+ parsed_args.path + " - " + duration_one/1000000 + "ms");
+//    				System.out.println("Outlier opertaion: " + parsed_args.op_type + " " 
+//    						+ parsed_args.path + " - " + duration_one/1000000 + "ms");
     			} 
 			}
 			long endTime = System.nanoTime();

@@ -189,7 +189,7 @@ class IOTestDriver: public IOListener {
     // Main Phase
     err_ = ops_ = 0;
     LogStatus("Main Phase ...");
-    MPI_Barrier(MPI_COMM_WORLD);
+    // MPI_Barrier(MPI_COMM_WORLD);
     start = MPI_Wtime();
     Run();
     dura = MPI_Wtime() - start;

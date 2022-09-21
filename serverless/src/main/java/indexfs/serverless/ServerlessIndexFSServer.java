@@ -178,7 +178,8 @@ public class ServerlessIndexFSServer {
 		op.key.partition_id_ = (short) obj_idx;
 		op.key.file_name_ = obj_id.obj_name;
 		
-		queue.write_counter(server_id, op);
+//		queue.write_counter(server_id, op);
+		ctx.newFile(rpc_connections[server_id].mdb_client, op.key);
 		
 		/**
 		 *  Increase directory size.
