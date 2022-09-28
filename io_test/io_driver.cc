@@ -174,9 +174,14 @@ class IOTestDriver: public IOListener {
     err_ = ops_ = 0;
     LogStatus("Prepare Phase ...");
     MPI_Barrier(MPI_COMM_WORLD);
-    start = MPI_Wtime();
-    Prepare();
-    dura = MPI_Wtime() - start;
+    // if (FLAGS_task == "Tree") {
+    //   dura = Prepare_();
+    // }
+    // else {
+      start = MPI_Wtime();
+      Prepare();
+      dura = MPI_Wtime() - start;
+    // }
 
     if (!Operator::OK())
       return;
@@ -254,6 +259,11 @@ class IOTestDriver: public IOListener {
     Operator op(task_);
     op.Prepare();
   }
+
+  // double Prepare_() {
+  //   Operator op(task_);
+  //   return op.Prepare_();
+  // }
 
   void PreRun() {
     Operator op(task_);

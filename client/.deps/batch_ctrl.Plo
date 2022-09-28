@@ -659,9 +659,10 @@ batch_ctrl.lo: batch_ctrl.cc /usr/include/stdc-predef.h \
  ../lib/leveldb/db/version_edit.h ../client/client.h \
  /usr/include/x86_64-linux-gnu/sys/stat.h \
  /usr/include/x86_64-linux-gnu/bits/stat.h ../client/client_impl.h \
- ../util/str_hash.h ../client/tcp_socket.h ../c/cli_types.h \
- /usr/include/arpa/inet.h ../common/dirlock.h ../common/dirguard.h \
- ../common/dirctrl.h ../common/didxcache.h ../common/lookupcache.h
+ ../util/str_hash.h ../client/tcp_socket.h /usr/include/arpa/inet.h \
+ /usr/include/x86_64-linux-gnu/sys/time.h ../c/cli_types.h \
+ ../common/dirlock.h ../common/dirguard.h ../common/dirctrl.h \
+ ../common/didxcache.h ../common/lookupcache.h
 
 /usr/include/stdc-predef.h:
 
@@ -2213,9 +2214,11 @@ batch_ctrl.lo: batch_ctrl.cc /usr/include/stdc-predef.h \
 
 ../client/tcp_socket.h:
 
-../c/cli_types.h:
-
 /usr/include/arpa/inet.h:
+
+/usr/include/x86_64-linux-gnu/sys/time.h:
+
+../c/cli_types.h:
 
 ../common/dirlock.h:
 

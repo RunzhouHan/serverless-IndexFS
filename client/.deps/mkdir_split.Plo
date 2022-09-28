@@ -643,9 +643,10 @@ mkdir_split.lo: mkdir_split.cc /usr/include/stdc-predef.h \
  ../thrift/indexfs_types.h ../thrift/MetaDBService.h ../util/str_hash.h \
  ../client/client.h /usr/include/x86_64-linux-gnu/sys/stat.h \
  /usr/include/x86_64-linux-gnu/bits/stat.h ../client/tcp_socket.h \
- ../c/cli_types.h /usr/include/arpa/inet.h ../common/dirlock.h \
- ../common/dirguard.h ../common/dirctrl.h ../common/didxcache.h \
- ../common/gigaidx.h ../common/lookupcache.h
+ /usr/include/arpa/inet.h /usr/include/x86_64-linux-gnu/sys/time.h \
+ ../c/cli_types.h ../common/dirlock.h ../common/dirguard.h \
+ ../common/dirctrl.h ../common/didxcache.h ../common/gigaidx.h \
+ ../common/lookupcache.h
 
 /usr/include/stdc-predef.h:
 
@@ -2143,9 +2144,11 @@ mkdir_split.lo: mkdir_split.cc /usr/include/stdc-predef.h \
 
 ../client/tcp_socket.h:
 
-../c/cli_types.h:
-
 /usr/include/arpa/inet.h:
+
+/usr/include/x86_64-linux-gnu/sys/time.h:
+
+../c/cli_types.h:
 
 ../common/dirlock.h:
 

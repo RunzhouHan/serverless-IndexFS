@@ -20,26 +20,22 @@ def first_request(serverless_function_url):
 
         OID = {'dir_id': dir_id,'path_depth':path_depth, 'obj_name': file_name};
         # send serverless function the metadb address (zeroth_server) and IndexFS client address (client_ip)
-        PARAMS = {'zeroth_server':'146.148.61.223', 'zeroth_port':10086, 'instance_id':0, 'deployment_id':0, 'op_type': 'Mknod', 'path':file_path, 'OID': OID, 'client_ip': '146.148.61.223', 'client_port':2004};
+        PARAMS = {'zeroth_server':'146.148.61.223', 'zeroth_port':10086, 'instance_id':0, 'deployment_id':0, 'op_type': 'Mknod', 'path':file_path, 'OID': OID, 'client_ip': '146.148.61.223', 'client_port':2004, 'client_num':1};
         response = requests.post(url, json=PARAMS, verify=False)
 
 
-def tcp_server(serverless_function_url, workload_path):
+def tcp_server(serverless_function_url):
 
         first_request(serverless_function_url)
-        
+
         print(sys.stdout, "The first HTTP request has been sent out to serverless IndexFS")
         print(sys.stdout, "Listening to incoming connection requests")
-        print(sys.stdout, "Start running I/O test")
-        rc = subprocess.call(workload_path)
-
-
+        print(sys.stdout, "Waiting for starting running I/O test")
 
 def main():
-        serverless_function_url = sys.argv[1]
-        workload_path = sys.argv[2]
         m1 = current_milli_time()
-        tcp_server(serverless_function_url, workload_path)
+        for serverless_function_url in sys.argv[1:]:
+            tcp_server(serverless_function_url)
         m2 = current_milli_time()
         time_elapsed = m2-m1
         print("+ observed time elapsed (s): %d\n" % (time_elapsed))
@@ -47,4 +43,3 @@ def main():
 
 if __name__ == '__main__':
         main()
-

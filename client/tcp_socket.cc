@@ -12,19 +12,26 @@
 #include <fcntl.h>
 #include <random>
 
-
 namespace indexfs {
 
 
+#define MAX_CLIENTS 10
+
 /* tcp_socket class begin */
 tcp_socket::tcp_socket(int num_of_deployments, int port, int my_rank):
-    num_of_deployments_(num_of_deployments),
     my_rank_(my_rank) {
     server_addr.sin_family=AF_INET;             // TCP/IP
     server_addr.sin_addr.s_addr=INADDR_ANY;     // server addr--permit all connection
     // server_addr.sin_addr.s_addr=inet_addr("10.128.0.10"); 
     server_addr.sin_port=htons(port);           // server port
     length = sizeof(client_addr);
+    num_of_deployments_ = 0;
+    opt = true;
+    //initialise all client_socket[] to 0 so not checked 
+    for (int i = 0; i < MAX_CLIENTS; i++)  
+    {  
+        client_socket[i] = 0;  
+    }
 }
 
 
@@ -48,7 +55,6 @@ char* tcp_socket::receive() {
         // cout << "Read file metadata: " << recv_buf << endl; 
         break;
     }
-
     return recv_buf;
 }
 
@@ -80,6 +86,14 @@ Status tcp_socket::connect(const char* msg) {
                     return Status::IOError("socket error");
     }
 
+    //set master socket to allow multiple connections 
+    if( setsockopt(server_sockfd, SOL_SOCKET, SO_REUSEADDR, (char *)&opt, 
+          sizeof(opt)) < 0 )  
+    {  
+        perror("setsockopt");  
+        exit(EXIT_FAILURE);  
+    }  
+
     /* bind socket with server addr */
     if(bind(server_sockfd,(struct sockaddr *)&server_addr,sizeof(struct sockaddr))<0) {
                     perror("bind error");
@@ -93,27 +107,136 @@ Status tcp_socket::connect(const char* msg) {
     }
     // printf("listen success.\n");
 
+
+    //clear the socket set 
+    FD_ZERO(&readfds);  
+
+    //add master socket to set 
+    FD_SET(server_sockfd, &readfds);  
+    max_sd = server_sockfd;
+
+    //add child sockets to set 
+    for (int i = 0 ; i < MAX_CLIENTS ; i++)  
+    {  
+        //socket descriptor 
+        sd = client_socket[i];  
+             
+        //if valid socket descriptor then add to read list 
+        if(sd > 0)  
+            FD_SET( sd , &readfds);  
+             
+        //highest file descriptor number, need it for the select function 
+        if(sd > max_sd)  
+            max_sd = sd;  
+    } 
+
+    //wait for an activity on one of the sockets , timeout is NULL , 
+    //so wait indefinitely 
+    activity = select(max_sd + 1 , &readfds , NULL , NULL , NULL);  
+
+    if ((activity < 0) && (errno!=EINTR))  
+    {  
+        printf("select error");  
+    }
+
+
+    //If something happened on the master socket , 
+    //then its an incoming connection 
+    if (FD_ISSET(server_sockfd, &readfds))  
+    {  
+        if ((conn = accept(server_sockfd, 
+                (struct sockaddr *)&client_addr, (socklen_t*)&length))<0)  
+        {  
+            perror("accept");  
+            exit(EXIT_FAILURE);  
+        }  
+         
+        //inform user of socket number - used in send and receive commands 
+        printf("New connection, socket fd is %d, ip is : %s, port: %d\n", 
+            conn , inet_ntoa(client_addr.sin_addr), ntohs(client_addr.sin_port));  
+       
+        //send new connection greeting message 
+        // if( send(new_socket, message, strlen(message), 0) != strlen(message) )  
+        // {  
+        //     perror("send");  
+        // }  
+        // puts("Welcome message sent successfully");  
+             
+        //add new socket to array of sockets 
+        for (int i = 0; i < MAX_CLIENTS; i++)  
+        {  
+            //if position is empty 
+            if(client_socket[i] == 0 )  
+            {  
+                client_socket[i] = conn;  
+                printf("Client accepted at rank %d, Adding to list of sockets as %d\n",my_rank_, i);  
+                break;  
+            }  
+        }  
+    }
+
     char recv_buf[65536];
     memset(recv_buf, '\0', sizeof(recv_buf));
+    char client_ip[INET_ADDRSTRLEN] = "";
+
+    //else its some IO operation on some other socket
+    for (int i = 0; i < MAX_CLIENTS; i++)  
+    {  
+        sd = client_socket[i];  
+             
+        if (FD_ISSET(sd , &readfds))  
+        {   
+            /*
+            //Check if it was for closing , and also read the 
+            //incoming message 
+            if ((valread = read( sd , recv_buf, 1024)) == 0)  
+            {  
+                //Somebody disconnected , get his details and print 
+                getpeername(sd , (struct sockaddr*)&client_addr , \
+                    (socklen_t*)&length);  
+                printf("Host disconnected , ip %s , port %d \n" , 
+                      inet_ntoa(client_addr.sin_addr) , ntohs(client_addr.sin_port));  
+                     
+                //Close the socket and mark as 0 in list for reuse 
+                close( sd );  
+                client_socket[i] = 0;  
+            }  
+                 
+            //Echo back the message that came in 
+            else 
+            {  
+                //set the string terminating NULL byte on the end 
+                //of the data read 
+                buffer[valread] = '\0';  
+                send(sd , buffer , strlen(buffer) , 0 );  
+            }  
+            */
+            inet_ntop(AF_INET, &client_addr.sin_addr, client_ip, INET_ADDRSTRLEN);
+
+            while(recv(sd, recv_buf, sizeof(recv_buf), 0) > 0 ){
+                printf("recv: %s from serverless IndexFS (%s:%d). \n", recv_buf, client_ip, ntohs(client_addr.sin_port));
+                memset(recv_buf, '\0', strlen(recv_buf));
+                break;
+            }
+
+        }  
+    } 
+
+
 
     // block on accept until positive fd or error
-    conn = accept(server_sockfd, (struct sockaddr*)&client_addr,&length);
 
-    if(conn<0) {
-        perror("connect");
-        return Status::IOError("connect error");
-    }
+    // conn = accept(server_sockfd, (struct sockaddr*)&client_addr,&length);
 
-    printf("client accepted at rank %d\n", my_rank_);
+    // if(conn<0) {
+    //     perror("connect");
+    //     return Status::IOError("connect error");
+    // }
 
-    char client_ip[INET_ADDRSTRLEN] = "";
-    inet_ntop(AF_INET, &client_addr.sin_addr, client_ip, INET_ADDRSTRLEN);
 
-    while(recv(conn, recv_buf, sizeof(recv_buf), 0) > 0 ){
-        printf("recv: %s from serverless IndexFS (%s:%d). \n", recv_buf, client_ip, ntohs(client_addr.sin_port));
-        memset(recv_buf, '\0', strlen(recv_buf));
-        break;
-    }
+
+
+
 
     return Status::OK();
 }

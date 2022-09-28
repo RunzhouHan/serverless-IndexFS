@@ -17,6 +17,8 @@ DEFINE_int32(dirs,
     0, "Total number of directories to create");
 DEFINE_int32(files,
     0, "Total number of files to create");
+DEFINE_string(client_addr,
+    "127.0.0.1", "The IP address of IndexFS client");
 DEFINE_bool(share_dirs,
     false, "Set to enable clients to create files in each other's directories");
 DEFINE_bool(local_stat,
@@ -105,7 +107,8 @@ class TreeTest: public IOTask {
       "  ignore_errors -> %s\n"
       "  log_file -> %s\n"
       "  run_id -> %s\n"
-      "  run_prefix -> %s\n",
+      "  run_prefix -> %s\n"
+      "  client_addr -> %s\n",
       num_dirs_,
       num_files_,
       comm_sz_,
@@ -120,7 +123,8 @@ class TreeTest: public IOTask {
       GetBoolString(FLAGS_ignore_errors),
       FLAGS_log_file.c_str(),
       FLAGS_run_id.c_str(),
-      FLAGS_prefix.c_str());
+      FLAGS_prefix.c_str(),
+      FLAGS_client_addr.c_str());
   }
 
 # ifndef NDEBUG
@@ -133,11 +137,52 @@ class TreeTest: public IOTask {
   int num_dirs_; // Total number of directories to create
   int num_files_; // Total number of files to create
 
+  std::string client_addr; // IndexFS client IP address
+
  public:
 
   TreeTest(int my_rank, int comm_sz)
     : IOTask(my_rank, comm_sz)
-    , num_dirs_(FLAGS_dirs), num_files_(FLAGS_files) {
+    , num_dirs_(FLAGS_dirs), num_files_(FLAGS_files),
+    client_addr(FLAGS_client_addr) {
+  }
+
+  double Prepare_() {
+
+    double start, dura;
+    Status s = IO_->Init();
+    // TO-DO: pass client address to TCP class
+    if (!s.ok()) {
+      throw IOError("init", s.ToString());
+    }
+
+    start = MPI_Wtime();
+
+    if (FLAGS_enable_prepare) {
+      IOMeasurements::EnableMonitoring(IO_, false);
+      if (FLAGS_share_dirs && FLAGS_bulk_insert) {
+        for (int i = 0; i < num_dirs_; i++) {
+          try {
+            MakeDirectory(IO_, listener_, i);
+          } catch (IOError &err) {
+            if (!FLAGS_ignore_errors)
+              throw err;
+          }
+        }
+      } else {
+        for (int i = my_rank_; i < num_dirs_; i += comm_sz_) {
+          try {
+            MakeDirectory(IO_, listener_, i);
+          } catch (IOError &err) {
+            if (!FLAGS_ignore_errors)
+              throw err;
+          }
+        }
+      }
+      IOMeasurements::EnableMonitoring(IO_, true);
+    }
+    dura = MPI_Wtime() - start;
+    return dura;    
   }
 
   virtual void Prepare() {

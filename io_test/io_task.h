@@ -53,6 +53,7 @@ class IOTask {
 
   virtual ~IOTask();
   virtual void Prepare() = 0;
+  // virtual double Prepare_();
   virtual void PreRun() { }
   virtual void Run() = 0;
   virtual void PostRun() { }

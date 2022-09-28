@@ -643,7 +643,8 @@ client.lo: client.cc /usr/include/stdc-predef.h ../client/client.h \
  /usr/include/boost/mpl/aux_/preprocessed/gcc/full_lambda.hpp \
  /usr/include/boost/mpl/aux_/preprocessed/gcc/apply.hpp \
  ../thrift/indexfs_types.h ../thrift/MetaDBService.h ../util/str_hash.h \
- ../client/tcp_socket.h ../c/cli_types.h /usr/include/arpa/inet.h \
+ ../client/tcp_socket.h /usr/include/arpa/inet.h \
+ /usr/include/x86_64-linux-gnu/sys/time.h ../c/cli_types.h \
  ../common/dirlock.h ../common/dirguard.h ../common/dirctrl.h \
  ../common/didxcache.h ../common/gigaidx.h ../common/lookupcache.h
 
@@ -2141,9 +2142,11 @@ client.lo: client.cc /usr/include/stdc-predef.h ../client/client.h \
 
 ../client/tcp_socket.h:
 
-../c/cli_types.h:
-
 /usr/include/arpa/inet.h:
+
+/usr/include/x86_64-linux-gnu/sys/time.h:
+
+../c/cli_types.h:
 
 ../common/dirlock.h:
 
