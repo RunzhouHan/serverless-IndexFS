@@ -44,7 +44,7 @@ class tcp_socket {
 		//set of socket descriptors 
     	fd_set readfds;
 		int server_sockfd;      // master server socket fd 
-		int max_sd, sd, activity, new_socket; 
+		int max_sd, sd, activity, new_socket, valread; 
 		struct sockaddr_in server_addr;     // server info struct
 		socklen_t length;
 		struct sockaddr_in client_addr;
