@@ -188,7 +188,7 @@ Status tcp_socket::connect(const char* msg) {
                  
             if (FD_ISSET(sd , &readfds))  
             {   
-                /*
+                
                 //Check if it was for closing , and also read the 
                 //incoming message 
                 if ((valread = read( sd , recv_buf, 1024)) == 0)  
@@ -209,17 +209,19 @@ Status tcp_socket::connect(const char* msg) {
                 {  
                     //set the string terminating NULL byte on the end 
                     //of the data read 
-                    buffer[valread] = '\0';  
-                    send(sd , buffer , strlen(buffer) , 0 );  
-                }  
-                */
-                inet_ntop(AF_INET, &client_addr.sin_addr, client_ip, INET_ADDRSTRLEN);
-
-                while(recv(sd, recv_buf, sizeof(recv_buf), 0) > 0 ){
+                    // buffer[valread] = '\0';  
+                    // send(sd , buffer , strlen(buffer) , 0 );  
                     printf("recv: %s from serverless IndexFS (%s:%d). \n", recv_buf, client_ip, ntohs(client_addr.sin_port));
                     memset(recv_buf, '\0', strlen(recv_buf));
-                    break;
-                }
+                }  
+                
+                // inet_ntop(AF_INET, &client_addr.sin_addr, client_ip, INET_ADDRSTRLEN);
+
+                // while(recv(sd, recv_buf, sizeof(recv_buf), 0) > 0 ){
+                //     printf("recv: %s from serverless IndexFS (%s:%d). \n", recv_buf, client_ip, ntohs(client_addr.sin_port));
+                //     memset(recv_buf, '\0', strlen(recv_buf));
+                //     break;
+                // }
 
             }  
         } 
@@ -235,12 +237,6 @@ Status tcp_socket::connect(const char* msg) {
     //     perror("connect");
     //     return Status::IOError("connect error");
     // }
-
-
-
-
-
-
     return Status::OK();
 }
 
