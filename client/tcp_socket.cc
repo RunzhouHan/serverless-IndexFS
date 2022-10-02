@@ -62,7 +62,7 @@ char* tcp_socket::receive(int deployment) {
 
         break;
     }
-    cout << "Read file metadata: " << recv_buf << endl; 
+    // cout << "Read file metadata: " << recv_buf << endl; 
     return recv_buf;
 }
 
@@ -158,7 +158,7 @@ Status tcp_socket::connect(const char* msg) {
 
         printf("waiting for select\n");
 
-        // socket_count = select(max_sd + 1, &copy , NULL , NULL , NULL);  
+        socket_count = select(max_sd + 1, &copy , NULL , NULL , NULL);  
 
         printf("select finished\n");
 

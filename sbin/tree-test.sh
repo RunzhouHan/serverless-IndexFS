@@ -158,7 +158,7 @@ $MPIEXEC \
   --prefix=$INDEXFS_RUN_PREFIX \
   --task=tree\
   --dirs=1 \
-  --files=50000\
+  --files=5\
   --share_dirs \
   --ignore_errors=true \
   --file_dir=$FILE_ROOT \
