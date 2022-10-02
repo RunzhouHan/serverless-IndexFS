@@ -2,6 +2,7 @@ package main.java.indexfs.serverless;
 
 import java.io.BufferedReader;
 import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
@@ -61,7 +62,9 @@ public class ServerlessIndexFSTCPClient extends Thread {
     
     CountDownLatch latch;
 
+    private boolean DEPLOYMENT_NUM_SENT = false;
 	
+    private int deployment_num;
        
     /**
      * Constructor
@@ -81,6 +84,7 @@ public class ServerlessIndexFSTCPClient extends Thread {
     	// this.client_ip = config.GetClientIP();
     	// this.tcpClients = new ServerlessIndexFSTCPClient[config.GetClientNum()];
     	// this.deployement_id = config.GetSvrID();
+    	this.deployment_num = config.deployment_num;
         this.latch = latch;
     }
     
@@ -117,12 +121,22 @@ public class ServerlessIndexFSTCPClient extends Thread {
 		long duration = (endTime - startTime)/1000000;
 
         String ready = "ServerlessIndexFSTCPClient.connect: IndexFS TCP client has been established on port " 
-    			+ client_ip + ":" + client_port + " in: "  + duration + "ms";
-        // System.out.println(ready);
+    			+ client_ip + ":" + client_port + " in: "  + duration + " ms";
+        System.out.println(ready);
+
+        ready = String.valueOf(deployment_num);
         try {
-			PrintWriter outToClient = new PrintWriter(new OutputStreamWriter(clientSocket.getOutputStream()));
-	        outToClient.print(ready);
-            outToClient.flush();
+            if (!DEPLOYMENT_NUM_SENT) {
+            	
+            	System.out.println("Try to send deployment number");
+            	
+				PrintWriter outToClient = new PrintWriter(new OutputStreamWriter(clientSocket.getOutputStream()));
+		        outToClient.print(ready);
+	            outToClient.flush();
+	            outToClient.close();
+	            
+            	System.out.println("Deployment number sent");	            
+            }
 		} catch (IOException e) {
 			if (clientSocket != null) {
                 clientSocket.close();
@@ -210,9 +224,9 @@ public class ServerlessIndexFSTCPClient extends Thread {
 		try {
 			in = new DataInputStream(clientSocket.getInputStream());
 		} catch (IOException e1) {
-			System.out.println("ServerlessIndexFSTCPClient.run(): Thread " + THREAD_ID
-					+ " getInputStream() failed");
-			// e1.printStackTrace();
+//			System.out.println("ServerlessIndexFSTCPClient.run(): Thread " + THREAD_ID
+//					+ " getInputStream() failed");
+			 e1.printStackTrace();
 		}
     	PrintWriter strwriter = null;
 		try {
@@ -263,7 +277,7 @@ public class ServerlessIndexFSTCPClient extends Thread {
     			duration_proceed += duration_one;
     			if ((duration_one/1000000) > 5) {
     				System.out.println("Outlier opertaion: " + parsed_args.op_type + " " 
-    						+ parsed_args.path + " - " + duration_one/1000000 + "ms");
+    						+ parsed_args.path + " - " + duration_one/1000000 + " ms");
     			} 
 			}
 			long endTime = System.nanoTime();

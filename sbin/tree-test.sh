@@ -154,11 +154,11 @@ set -x
 #--share_dirs \
 
 $MPIEXEC \
-  -np $NUM_CLIENTS $INDEXFS_BUILD/io_test/io_driver \
+  -np $NUM_CLIENTS gdb -args $INDEXFS_BUILD/io_test/io_driver \
   --prefix=$INDEXFS_RUN_PREFIX \
   --task=tree\
   --dirs=1 \
-  --files=100\
+  --files=2\
   --share_dirs \
   --ignore_errors=true \
   --file_dir=$FILE_ROOT \

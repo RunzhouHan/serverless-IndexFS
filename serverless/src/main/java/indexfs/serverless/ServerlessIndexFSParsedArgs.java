@@ -9,6 +9,8 @@ public class ServerlessIndexFSParsedArgs {
 	
 	public int deployment_id;
 	
+	public int deployment_num;
+	
 	public String op_type;
 	
 	public String path;

@@ -96,6 +96,11 @@ public class ServerlessIndexFSConfig {
 	 */
 	public final int DefaultClientNum = 1; // need to check IndexFS setting
 
+	/**
+	 * Serverless IndexFS write-back cache commit time limit.
+	 */
+	public int deployment_num; // need to check IndexFS setting
+	
 	
 	/**
 	 * Constructor.
@@ -116,6 +121,7 @@ public class ServerlessIndexFSConfig {
 		this.port_map = BuildPortMap();
 		this.tcp_port= parsed_args.client_port;
 		this.client_ip = parsed_args.client_ip;
+		this.deployment_num = parsed_args.deployment_num;
 		if (parsed_args.client_num > 0) {
 			this.NumofClients = parsed_args.client_num;
 		}

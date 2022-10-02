@@ -88,6 +88,13 @@ public class ServerlessIndexFSInputParser {
 			LOG.info("Please provide deployment id for the serverless function.");
 		}
         
+	    if (args.has(ServerlessIndexFSKeys.deployment_num))  {
+		// Serverless function ID (IndexFS server ID). 
+	    	parsed_args.deployment_num = args.getAsJsonPrimitive(ServerlessIndexFSKeys.deployment_num).getAsInt(); 
+		} else {
+			LOG.info("Please provide deployment id for the serverless function.");
+		}
+	    
 		if (args.has(ServerlessIndexFSKeys.op_type))  {
 		// Operation type (a metadata operation parameter).
 			parsed_args.op_type = args.getAsJsonPrimitive(ServerlessIndexFSKeys.op_type).getAsString(); 

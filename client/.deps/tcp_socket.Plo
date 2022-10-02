@@ -450,7 +450,10 @@ tcp_socket.lo: tcp_socket.cc /usr/include/stdc-predef.h \
  /usr/include/c++/9/bits/random.h \
  /usr/include/x86_64-linux-gnu/c++/9/bits/opt_random.h \
  /usr/include/c++/9/bits/random.tcc /usr/include/c++/9/numeric \
- /usr/include/c++/9/bits/stl_numeric.h
+ /usr/include/c++/9/bits/stl_numeric.h /usr/include/c++/9/unordered_map \
+ /usr/include/c++/9/bits/hashtable.h \
+ /usr/include/c++/9/bits/hashtable_policy.h \
+ /usr/include/c++/9/bits/unordered_map.h
 
 /usr/include/stdc-predef.h:
 
@@ -1533,3 +1536,11 @@ tcp_socket.lo: tcp_socket.cc /usr/include/stdc-predef.h \
 /usr/include/c++/9/numeric:
 
 /usr/include/c++/9/bits/stl_numeric.h:
+
+/usr/include/c++/9/unordered_map:
+
+/usr/include/c++/9/bits/hashtable.h:
+
+/usr/include/c++/9/bits/hashtable_policy.h:
+
+/usr/include/c++/9/bits/unordered_map.h:

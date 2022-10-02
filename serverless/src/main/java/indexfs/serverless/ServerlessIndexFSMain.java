@@ -163,6 +163,7 @@ public class ServerlessIndexFSMain {
     	args1.addProperty("zeroth_port", 10086);
     	args1.addProperty("instance_id", 0);
     	args1.addProperty("deployment_id", 0);
+    	args1.addProperty("deployment_num", 1);
     	args1.addProperty("op_type", "Mknod");
     	args1.addProperty("path", file_path);
     	args1.addProperty("client_ip",  "127.0.0.1");

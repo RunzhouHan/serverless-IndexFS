@@ -16,6 +16,8 @@ using namespace std;
 
 namespace indexfs {
 
+#define MAX_CLIENTS 10
+
 /* tcp_socket class begin */
 class tcp_socket {
 	public:
@@ -24,11 +26,11 @@ class tcp_socket {
 
 		// Create a TCP connection
 		Status connect(const char* msg);
-		Status disconnect();
+		Status disconnect(int deployment);
 
-		Status send_payload(char* path_);
-		char* receive();
-		int CheckConnection();
+		Status send_payload(char* path_, int deployment);
+		char* receive(int deployment);
+		int CheckConnection(int deployment);
 
 		Status Mknod(int deployment, const std::string& path, const OID& oid, i16 perm);
 		Status Mkdir(int deployment, const std::string& path, const OID& oid, i16 perm);
@@ -42,13 +44,14 @@ class tcp_socket {
 		int num_of_deployments_;
 		int client_socket[30];
 		//set of socket descriptors 
-    	fd_set readfds;
-		int server_sockfd;      // master server socket fd 
-		int max_sd, sd, activity, new_socket, valread; 
+    	fd_set master_set;
+		int master_sockfd;      // master server socket fd 
+		int max_sd, sd, socket_count, new_socket, valread; 
+		int active_clients;
 		struct sockaddr_in server_addr;     // server info struct
 		socklen_t length;
 		struct sockaddr_in client_addr;
-		int conn; // TCP connection
+		int client; // TCP connection
 		int my_rank_;
 		const int MAX_BUF_LENGTH = 4096;
     	int opt;

@@ -67,7 +67,9 @@ Status ClientImpl::FlushWriteBufferTCP() {
     // int srv_id = 0;
     // for (; srv_id < config_->GetSrvNum(); srv_id += config_->GetNumClients()) {
       // rpc_->GetClient(srv_id)->FlushDB();
-      s = TCPEngine(deployment, socket_).Flush(deployment);
+      for (int i=0; i<MAX_CLIENTS; i++) {
+        s = TCPEngine(deployment, socket_).Flush(deployment);
+      }
       printf("ClientImpl::FlushWriteBufferTCP: Flush\n");
   //   }
   // }
@@ -75,13 +77,17 @@ Status ClientImpl::FlushWriteBufferTCP() {
 }
 
 Status ClientImpl::Dispose() {
+  Status s;
 # ifndef NDEBUG
   if (!mknod_bufmap_.empty()) {
     DLOG(WARNING) << "Client closed with un-flushed mknod_buffer";
   }
 # endif
   // return rpc_->Shutdown();
-  return socket_->disconnect();
+  for (int i=0; i<MAX_CLIENTS; i++) {
+    s = socket_->disconnect(i);
+  }
+  return s;
 }
 
 // -------------------------------------------------------------
