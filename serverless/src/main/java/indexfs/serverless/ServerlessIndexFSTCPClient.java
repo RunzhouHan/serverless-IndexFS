@@ -118,6 +118,8 @@ public class ServerlessIndexFSTCPClient extends Thread {
 
         String ready = "ServerlessIndexFSTCPClient.connect: IndexFS TCP client has been established on port " 
     			+ client_ip + ":" + client_port + " in: "  + duration + "ms";
+        
+        ready = "1";
         // System.out.println(ready);
         try {
 			PrintWriter outToClient = new PrintWriter(new OutputStreamWriter(clientSocket.getOutputStream()));
@@ -256,8 +258,8 @@ public class ServerlessIndexFSTCPClient extends Thread {
             		
     			if(op_type != 0) {
     				/* Read operation. Send result back to IndexFS client */
-    				 strwriter.write("0");
-    				  strwriter.flush();
+    				 strwriter.write(String.valueOf(op_type));
+    				 strwriter.flush();
     			}
     			duration_one = System.nanoTime() - tmp2;
     			duration_proceed += duration_one;

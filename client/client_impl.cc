@@ -81,7 +81,7 @@ Status ClientImpl::Dispose() {
   }
 # endif
   // return rpc_->Shutdown();
-  return socket_->disconnect();
+  return socket_->disconnect(0);
 }
 
 // -------------------------------------------------------------
