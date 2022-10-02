@@ -53,7 +53,10 @@ Status tcp_socket::send_payload(char* path_, int deployment) {
             printf("client socket %d: %d\n", i, client_socket[i]);
     }
 
-    send(client_socket[deployment], path.c_str(), path.size()+1, MSG_CONFIRM); // Send the std::string data 
+    // send(client_socket[deployment], path.c_str(), path.size()+1, MSG_CONFIRM); // Send the std::string data 
+
+    send(master_sockfd, path.c_str(), path.size()+1, MSG_CONFIRM); // Send the std::string data 
+
 
     printf("sent workload to deployment %d\n", deployment);
 
@@ -74,7 +77,11 @@ char* tcp_socket::receive(int deployment) {
 int tcp_socket::CheckConnection(int deployment) {
   int error = 0;
   socklen_t len = sizeof (error);
-  int retval = getsockopt(master_sockfd, SOL_SOCKET, SO_ERROR, &error, &len);
+  // int retval = getsockopt(master_sockfd, SOL_SOCKET, SO_ERROR, &error, &len);
+
+  int retval = getsockopt(client_socket[deployment], SOL_SOCKET, SO_ERROR, &error, &len);
+
+
 
   if (retval != 0) {
     /* there was a problem getting the error code */
@@ -87,6 +94,10 @@ int tcp_socket::CheckConnection(int deployment) {
     fprintf(stderr, "socket error: %s\n", strerror(error));
     return 1;
   }
+
+
+  printf("deployment %d: %d is valid\n", deployment,client_socket[deployment]);
+
   return 0;
 }
 
@@ -181,7 +192,8 @@ Status tcp_socket::connect(const char* msg) {
                     client , inet_ntoa(client_addr.sin_addr), ntohs(client_addr.sin_port));  
             }
 
-            else {
+            // else {
+            // socket_count = select(max_sd + 1, &copy , NULL , NULL , NULL);  
 
                 printf("Incoming I/O from serverless function\n");
 
@@ -190,16 +202,16 @@ Status tcp_socket::connect(const char* msg) {
                 char client_ip[INET_ADDRSTRLEN] = "";
 
 
-                if (num_of_deployments_ == 0) {
-                    while(recv(sd, recv_buf, sizeof(recv_buf), 0) > 0 ){
+                // if (num_of_deployments_ == 0) {
+                    while(recv(client, recv_buf, sizeof(recv_buf), 0) > 0 ){
                         printf("recv: %s from serverless IndexFS (%s:%d). \n", recv_buf, client_ip, ntohs(client_addr.sin_port));
                         break;
                     }
                     num_of_deployments_ = atoi(recv_buf);
                     printf("num_of_deployments: %d\n", num_of_deployments_);
                     memset(recv_buf, '\0', strlen(recv_buf));
-                }
-            }
+                // }
+            // }
         }
         // }
         
@@ -208,123 +220,6 @@ Status tcp_socket::connect(const char* msg) {
             break;
         }
     }
-
-    //     if (FD_ISSET(master_sockfd, &copy)) {
-
-    //         if ((client = accept(master_sockfd, 
-    //                 (struct sockaddr *)&client_addr, (socklen_t*)&length))<0)  
-    //         {  
-    //             perror("accept");  
-    //             exit(EXIT_FAILURE);  
-    //         }  
-
-    //         FD_SET(client, &master_set);
-    //         active_clients++;
-
-    //         printf("active clients: %d\n", active_clients);
-
-    //         printf("New connection, socket fd is %d, ip is : %s, port: %d\n", 
-    //             client , inet_ntoa(client_addr.sin_addr), ntohs(client_addr.sin_port));  
-    //     }
-
-    //     // else {
-
-    //     char recv_buf[2048];
-    //     memset(recv_buf, '\0', sizeof(recv_buf));
-    //     char client_ip[INET_ADDRSTRLEN] = "";
-
-    //     for (int i = 0; i < active_clients; i++) {  
-    //         sd = client_socket[i];  
-    //         printf("Incoming I/O from serverless function\n");
-
-    //         // if (FD_ISSET(sd , &master_set)) {  
-
-    //             if (num_of_deployments_ == 0) {
-    //                 while(recv(sd, recv_buf, sizeof(recv_buf), 0) > 0 ){
-    //                     printf("recv: %s from serverless IndexFS (%s:%d). \n", recv_buf, client_ip, ntohs(client_addr.sin_port));
-    //                     break;
-    //                 }
-    //                 num_of_deployments_ = atoi(recv_buf);
-    //                 printf("num_of_deployments: %d\n", num_of_deployments_);
-    //                 memset(recv_buf, '\0', strlen(recv_buf));
-    //             }
-    //         // }
-    //     }
-    //     // }
-        
-    //     if (active_clients == num_of_deployments_) {
-    //         printf("Connected to all %d serverless function deployments\n", num_of_deployments_);
-    //         break;
-    //     }
-    // }
-
-            //If something happened on the master_set socket , 
-            //then its an incoming connection 
-    //         if (FD_ISSET(master_sockfd, &master_set))  
-    //         {  
-    //             if ((client = accept(master_sockfd, 
-    //                     (struct sockaddr *)&client_addr, (socklen_t*)&length))<0)  
-    //             {  
-    //                 perror("accept");  
-    //                 exit(EXIT_FAILURE);  
-    //             }  
-                 
-    //             //inform user of socket number - used in send and receive commands 
-    //             printf("New connection, socket fd is %d, ip is : %s, port: %d\n", 
-    //                 client , inet_ntoa(client_addr.sin_addr), ntohs(client_addr.sin_port));  
-                     
-    //             //add new socket to array of sockets 
-    //             for (int i = 0; i < MAX_CLIENTS; i++)  
-    //             {  
-    //                 //if position is empty 
-    //                 if(client_socket[i] == 0 )  
-    //                 {  
-    //                     client_socket[i] = client;  
-    //                     printf("Client accepted at rank %d, Adding to list of sockets as %d\n",my_rank_, i);  
-    //                     break;  
-    //                 }  
-    //             }  
-    //         }
-
-    //     }
-
-    //     char recv_buf[65536];
-    //     memset(recv_buf, '\0', sizeof(recv_buf));
-        
-    //     char client_ip[INET_ADDRSTRLEN] = "";
-
-    //     //else its some IO operation on some other socket
-    //     for (int i = 0; i < MAX_CLIENTS; i++)  
-    //     {  
-    //         sd = client_socket[i];  
-
-    //         if (sd > 0)  
-    //         {   
-    //             active_clients++;
-    //             if (num_of_deployments_ == 0) {
-    //                 while(recv(sd, recv_buf, sizeof(recv_buf), 0) > 0 ){
-    //                     printf("recv: %s from serverless IndexFS (%s:%d). \n", recv_buf, client_ip, ntohs(client_addr.sin_port));
-    //                     break;
-    //                 }
-    //                 num_of_deployments_ = atoi(recv_buf);
-    //                 memset(recv_buf, '\0', strlen(recv_buf));
-
-    //                 Flush(0);
-    //             }
-    //         }  
-    //     }
-
-    //     printf("active clients: %d\n", active_clients);
-    //     printf("num_of_deployments_: %d\n", num_of_deployments_);
-
-    //                 Flush(0);
-
-    //     if (active_clients == num_of_deployments_) {
-    //         printf("Connected to all %d serverless function deployments\n", num_of_deployments_);
-    //         break;
-    //     }
-    // }
-
     return Status::OK();
 }
 

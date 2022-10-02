@@ -125,6 +125,7 @@ public class ServerlessIndexFSTCPClient extends Thread {
         System.out.println(ready);
 
         ready = String.valueOf(deployment_num);
+                
         try {
             if (!DEPLOYMENT_NUM_SENT) {
             	
@@ -135,7 +136,7 @@ public class ServerlessIndexFSTCPClient extends Thread {
 	            outToClient.flush();
 	            outToClient.close();
 	            
-            	System.out.println("Deployment number sent");	            
+            	System.out.println("Deployment number sent: " + ready);	            
             }
 		} catch (IOException e) {
 			if (clientSocket != null) {
@@ -224,8 +225,8 @@ public class ServerlessIndexFSTCPClient extends Thread {
 		try {
 			in = new DataInputStream(clientSocket.getInputStream());
 		} catch (IOException e1) {
-//			System.out.println("ServerlessIndexFSTCPClient.run(): Thread " + THREAD_ID
-//					+ " getInputStream() failed");
+			System.out.println("ServerlessIndexFSTCPClient.run(): Thread " + THREAD_ID
+					+ " getInputStream() failed");
 			 e1.printStackTrace();
 		}
     	PrintWriter strwriter = null;
@@ -234,7 +235,7 @@ public class ServerlessIndexFSTCPClient extends Thread {
 		} catch (IOException e1) {
 			System.out.println("ServerlessIndexFSTCPClient.run(): Thread " + THREAD_ID
 					+ " getOutputStream() failed");
-			// e1.printStackTrace();
+			 e1.printStackTrace();
 		}
     	InputStreamReader reader = new InputStreamReader(in);
     	BufferedReader b_reader = new BufferedReader(reader);    	

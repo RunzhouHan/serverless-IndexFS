@@ -1,4 +1,14 @@
-round(time.time()*1000)
+import subprocess
+import requests
+import time
+import socket
+import sys
+import json
+
+
+def current_milli_time():
+    return round(time.time()*1000)
+
 
 def first_request(serverless_function_url, deployment_id, num_of_deployment):
         url = serverless_function_url
