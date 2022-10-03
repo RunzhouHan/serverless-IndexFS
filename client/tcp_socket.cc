@@ -61,7 +61,7 @@ char* tcp_socket::receive(int deployment) {
     // while(recv(client, recv_buf, sizeof(recv_buf), 0) > 0 ){
         break;
     }
-    // cout << "Read file metadata: " << recv_buf << endl; 
+    cout << "Read file metadata: " << recv_buf << endl; 
     return recv_buf;
 }
 
@@ -200,7 +200,7 @@ Status tcp_socket::connect(const char* msg) {
                 char client_ip[INET_ADDRSTRLEN] = "";
                 inet_ntop(AF_INET, &client_addr.sin_addr, client_ip, INET_ADDRSTRLEN);
 
-                // if (num_of_deployments_ == 0) {
+                if (num_of_deployments_ == 0) {
                     while(recv(client, recv_buf, sizeof(recv_buf), 0) > 0 ){
                         printf("recv: %s from serverless IndexFS (%s:%d). \n", recv_buf, client_ip, ntohs(client_addr.sin_port));
                         break;
@@ -208,7 +208,7 @@ Status tcp_socket::connect(const char* msg) {
                     num_of_deployments_ = atoi(recv_buf);
                     // printf("num_of_deployments: %d\n", num_of_deployments_);
                     memset(recv_buf, '\0', strlen(recv_buf));
-                // }
+                }
             // }
         // }
         // }

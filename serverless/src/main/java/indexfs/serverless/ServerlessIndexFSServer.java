@@ -224,7 +224,8 @@ public class ServerlessIndexFSServer {
 		op.key.partition_id_ = (short) obj_idx;
 		op.key.file_name_ = obj_id.obj_name;
 		
-		queue.write_counter(server_id, op);
+//		queue.write_counter(server_id, op);
+		ctx.newDirectory(rpc_connections[server_id].mdb_client, op.key, (short) hint_server1, stat_.id);
 				
 		/**
 		 *  TASK-III: install the zeroth partition.
