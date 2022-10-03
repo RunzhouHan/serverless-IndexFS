@@ -46,9 +46,9 @@ Status tcp_socket::disconnect(int deployment) {
 Status tcp_socket::send_payload(char* path_, int deployment) {
     string path(path_);
 
-    // send(client_socket[deployment], path.c_str(), path.size()+1, MSG_CONFIRM); // Send the std::string data 
+    send(client_socket[deployment], path.c_str(), path.size()+1, MSG_CONFIRM); // Send the std::string data 
 
-    send(client, path.c_str(), path.size()+1, MSG_CONFIRM); // Send the std::string data 
+    // send(client, path.c_str(), path.size()+1, MSG_CONFIRM); // Send the std::string data 
 
 
     return Status::OK();
@@ -57,9 +57,8 @@ Status tcp_socket::send_payload(char* path_, int deployment) {
 
 char* tcp_socket::receive(int deployment) {
     char recv_buf[MAX_BUF_LENGTH];
-    // while(recv(client_socket[deployment], recv_buf, sizeof(recv_buf), 0) > 0 ){
-    while(recv(client, recv_buf, sizeof(recv_buf), 0) > 0 ){
-
+    while(recv(client_socket[deployment], recv_buf, sizeof(recv_buf), 0) > 0 ){
+    // while(recv(client, recv_buf, sizeof(recv_buf), 0) > 0 ){
         break;
     }
     // cout << "Read file metadata: " << recv_buf << endl; 
@@ -71,11 +70,11 @@ int tcp_socket::CheckConnection(int deployment) {
   int error = 0;
   socklen_t len = sizeof (error);
 
-  int retval = 0; 
+  // int retval = 0; 
   
   // int retval = getsockopt(master_sockfd, SOL_SOCKET, SO_ERROR, &error, &len);
 
-  // int retval = getsockopt(client_socket[deployment], SOL_SOCKET, SO_ERROR, &error, &len);
+  int retval = getsockopt(client_socket[deployment], SOL_SOCKET, SO_ERROR, &error, &len);
 
   // int retval = getsockopt(client, SOL_SOCKET, SO_ERROR, &error, &len);
 
@@ -156,13 +155,13 @@ Status tcp_socket::connect(const char* msg) {
 
         fd_set copy = master_set;
 
-        printf("waiting for select\n");
+        // printf("waiting for select\n");
 
         socket_count = select(max_sd + 1, &copy , NULL , NULL , NULL);  
 
-        printf("select finished\n");
+        // printf("select finished\n");
 
-        printf("socket_count: %d\n", socket_count);
+        // printf("socket_count: %d\n", socket_count);
 
 
         // for (int i = 0; i < socket_count; i++) {  
@@ -178,9 +177,14 @@ Status tcp_socket::connect(const char* msg) {
                 }  
 
                 FD_SET(client, &master_set);
+
+                client_socket[active_clients] = client;
+
+
                 active_clients++;
 
-                printf("active clients: %d\n", active_clients);
+
+                // printf("active clients: %d\n", active_clients);
 
                 printf("New connection, socket fd is %d, ip is : %s, port: %d\n", 
                     client , inet_ntoa(client_addr.sin_addr), ntohs(client_addr.sin_port));  
@@ -189,7 +193,7 @@ Status tcp_socket::connect(const char* msg) {
             // else {
             // socket_count = select(max_sd + 1, &copy , NULL , NULL , NULL);  
 
-                printf("Incoming I/O from serverless function\n");
+                // printf("Incoming I/O from serverless function\n");
 
                 char recv_buf[2048];
                 memset(recv_buf, '\0', sizeof(recv_buf));
@@ -202,7 +206,7 @@ Status tcp_socket::connect(const char* msg) {
                         break;
                     }
                     num_of_deployments_ = atoi(recv_buf);
-                    printf("num_of_deployments: %d\n", num_of_deployments_);
+                    // printf("num_of_deployments: %d\n", num_of_deployments_);
                     memset(recv_buf, '\0', strlen(recv_buf));
                 // }
             // }
@@ -301,9 +305,9 @@ Status tcp_socket::Mknod(int deployment, const std::string& path,
 
     hash<string> hasher;
     size_t hash = hasher(path);
-    // int deployment_ = hash%num_of_deployments_;
+    int deployment_ = hash%num_of_deployments_;
 
-    int deployment_ = 0;
+    // int deployment_ = 0;
 
 
   if (!CheckConnection(deployment_)) {
@@ -348,9 +352,9 @@ Status tcp_socket::Mkdir(int deployment, const std::string& path,
 
     hash<string> hasher;
     size_t hash = hasher(path);
-    // int deployment_ = hash%num_of_deployments_;
+    int deployment_ = hash%num_of_deployments_;
 
-    int deployment_ = 0;
+    // int deployment_ = 0;
 
 
   if (!CheckConnection(deployment_)) {
@@ -393,9 +397,9 @@ Status tcp_socket::Getattr(int deployment, const std::string& path,
 
     hash<string> hasher;
     size_t hash = hasher(path);
-    // int deployment_ = hash%num_of_deployments_;
+    int deployment_ = hash%num_of_deployments_;
 
-        int deployment_ = 0;
+        // int deployment_ = 0;
 
 
   if (!CheckConnection(deployment_)) {

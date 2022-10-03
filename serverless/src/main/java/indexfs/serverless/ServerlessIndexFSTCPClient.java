@@ -53,7 +53,7 @@ public class ServerlessIndexFSTCPClient extends Thread {
     
     // private int client_port;
     
-    // private int deployement_id;
+    private int deployement_num;
     
 	private int zeroth_port; 
 
@@ -87,10 +87,11 @@ public class ServerlessIndexFSTCPClient extends Thread {
     /**
      * Connect to IndexFS client (TCP server) with given IP & port
      * @param client_ip
-     * @param client_port
+     * @param client_port//import org.json.JSONException;
+
      * @throws IOException
      */
-    public void connect(String client_ip, int client_port) throws IOException {
+    public void connect(String client_ip, int client_port, int deployment_id) throws IOException {
     	// Wait for the server to start
 		long startTime = System.nanoTime();
 		
@@ -119,7 +120,7 @@ public class ServerlessIndexFSTCPClient extends Thread {
         String ready = "ServerlessIndexFSTCPClient.connect: IndexFS TCP client has been established on port " 
     			+ client_ip + ":" + client_port + " in: "  + duration + "ms";
         
-        ready = "1";
+        ready = String.valueOf(deployment_id);
         // System.out.println(ready);
         try {
 			PrintWriter outToClient = new PrintWriter(new OutputStreamWriter(clientSocket.getOutputStream()));

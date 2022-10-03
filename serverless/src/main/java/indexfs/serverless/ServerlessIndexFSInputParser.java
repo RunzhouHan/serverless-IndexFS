@@ -123,6 +123,13 @@ public class ServerlessIndexFSInputParser {
 	    	System.out.println("Please provide number of client threads." );
 	    }
 	    
+	    if (args.has(ServerlessIndexFSKeys.deployment_num))  {
+		// OID (a metadata operation parameter). 
+	    	parsed_args.deployment_num = args.getAsJsonPrimitive(ServerlessIndexFSKeys.deployment_num).getAsInt();
+	    } else {
+	    	System.out.println("Please provide number of deployments." );
+	    }
+	    
 	    if (args.has(ServerlessIndexFSKeys.OID))  {
 		// OID (a metadata operation parameter). 
 	    	parsed_args.obj_id = JsonToOID(args.getAsJsonObject(ServerlessIndexFSKeys.OID));

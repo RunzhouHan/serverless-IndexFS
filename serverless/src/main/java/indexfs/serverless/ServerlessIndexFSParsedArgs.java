@@ -20,6 +20,9 @@ public class ServerlessIndexFSParsedArgs {
 	public int client_port;
 	
 	public int client_num;
+	
+	public int deployment_num;
+
 	/**
 	 * Constructor.
 	 */

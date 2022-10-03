@@ -11,4 +11,5 @@ public class ServerlessIndexFSKeys {
 	public static final String client_ip = "client_ip";
 	public static final String client_port = "client_port";
 	public static final String client_num = "client_num";
+	public static final String deployment_num = "deployment_num";
 }
