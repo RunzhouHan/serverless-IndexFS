@@ -147,6 +147,8 @@ public class ServerlessIndexFSServer {
 	 */
 	private long NextInode(int server_id) {
 //		return 0;
+		System.out.println("NextInode(): server id: "+ server_id);
+		System.out.println("NextInode(): server: "+ rpc_connections[server_id].getServerAddr());
     	return ctx.NextInode(rpc_connections[server_id].mdb_client);
 	}
 	
