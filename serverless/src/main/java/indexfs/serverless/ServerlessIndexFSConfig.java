@@ -19,6 +19,12 @@ public class ServerlessIndexFSConfig {
 	 */
 	private int serverless_server_id;  
 	
+	
+	/**
+	 * Serverless IndexFS deployment ID. 
+	 */
+	private int deployment_num;  
+	
 	/**
 	 * IP of the server to handle the first request for MetaDB configuration
 	 */
@@ -109,6 +115,7 @@ public class ServerlessIndexFSConfig {
 		this.zeroth_server = parsed_args.zeroth_server;
 		this.zeroth_port = parsed_args.zeroth_port;
 		this.serverless_server_id = parsed_args.deployment_id;
+		this.deployment_num = parsed_args.deployment_num;
 		this.MetaDB_list = BuildMetaDBList();
 		this.port_list = BuildPortList();
 		this.NumofMetaDBs = CountMetaDBNum();
@@ -228,6 +235,14 @@ public class ServerlessIndexFSConfig {
 	 */
 	public int GetSvrID() {
 		return this.serverless_server_id;
+	}
+	
+	/**
+	 * A public API to get serverless IndexFS server ID.
+	 * @return serverless IndexFS server ID.
+	 */
+	public int GetDeploymentNum() {
+		return this.deployment_num;
 	}
 	
 	/**

@@ -48,7 +48,7 @@ public class ServerlessIndexFSMain {
 		for(int id=0; id<config.GetClientNum(); id++) {
 			try {
 				tcpClients[id] = new ServerlessIndexFSTCPClient(config, id, index_srv_, cache, latch);
-				tcpClients[id].connect(config.GetClientIP(), id+2004, 1);
+				tcpClients[id].connect(config.GetClientIP(), id+2004, deployment_num);
 				System.out.println("IndexFS IndexFS deployment " + config.GetSvrID()
 						+ "has established TCP connection with: " + config.GetClientIP() + ":" + (id+2004));
 			} catch (IOException e) {
@@ -74,6 +74,8 @@ public class ServerlessIndexFSMain {
 		if (config == null) {
 			config = new ServerlessIndexFSConfig(parsed_args);
 		}
+		
+		deployment_num = config.GetDeploymentNum();
 		
 		/**
 		 * Serverless IndexFS.
