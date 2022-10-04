@@ -166,7 +166,7 @@ public class ServerlessIndexFSTCPClient extends Thread {
 				op_type = 0;
 			}
 			else if (this.parsed_args.op_type.equals("Mkdir")) {
-				this.index_srv_.Mkdir(cache, this.parsed_args.path, obj_id, 0, index_srv_.server_id, 0, zeroth_port);
+				this.index_srv_.Mkdir(cache, this.parsed_args.path, obj_id, 0, zeroth_port);
 				op_type = 0;
 			}
 			

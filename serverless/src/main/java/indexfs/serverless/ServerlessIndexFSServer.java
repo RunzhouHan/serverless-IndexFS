@@ -51,7 +51,7 @@ public class ServerlessIndexFSServer {
 	
 	private ServerlessIndexFSRPCClient[] rpc_connections;
 
-	public int server_id = 0;
+	public int metadb_id = 0;
 	
 	private int obj_idx = 0;
 	
@@ -70,7 +70,7 @@ public class ServerlessIndexFSServer {
 	 */	
 	public ServerlessIndexFSServer(ServerlessIndexFSConfig config) {
 		
-		this.server_id = config.GetSvrID();
+		this.metadb_id = config.GetSvrID();
 		this.ctx = new ServerlessIndexFSCtx();
 		this.server_map = config.GetMetaDBMap();
 		this.mdb_num = config.GetMetaDBNum();
@@ -145,11 +145,11 @@ public class ServerlessIndexFSServer {
 	 *  Send RPC to grab the next available inode number.
 	 * @return inode number.
 	 */
-	private long NextInode(int server_id) {
+	private long NextInode(int metadb_id) {
 //		return 0;
-//		System.out.println("NextInode(): server id: "+ server_id);
-//		System.out.println("NextInode(): server: "+ rpc_connections[server_id].getServerAddr());
-    	return ctx.NextInode(rpc_connections[server_id].mdb_client);
+		System.out.println("NextInode(): server id: "+ metadb_id);
+		System.out.println("NextInode(): server: "+ rpc_connections[metadb_id].getServerAddr());
+    	return ctx.NextInode(rpc_connections[metadb_id].mdb_client);
 	}
 	
 	/**
@@ -167,10 +167,10 @@ public class ServerlessIndexFSServer {
 		StatInfo stat_ = new StatInfo();
 		
 		// Compute the server id based on file path.
-		server_id = didx.GetServer(path);
+		metadb_id = didx.GetServer(path);
 						
 		// Put file metadata into LRU_cache.	
-		fillInStat(stat_, true, NextInode(server_id), 0);
+		fillInStat(stat_, true, NextInode(metadb_id), 0);
 		
 		cache.put(path, stat_.id, stat_);
 					
@@ -180,8 +180,8 @@ public class ServerlessIndexFSServer {
 		op.key.partition_id_ = (short) obj_idx;
 		op.key.file_name_ = obj_id.obj_name;
 		
-//		queue.write_counter(server_id, op);
-		ctx.newFile(rpc_connections[server_id].mdb_client, op.key);
+//		queue.write_counter(metadb_id, op);
+		ctx.newFile(rpc_connections[metadb_id].mdb_client, op.key);
 		
 		/**
 		 *  Increase directory size.
@@ -206,14 +206,16 @@ public class ServerlessIndexFSServer {
 	 * @param port
 	 */
 	public void Mkdir(InMemoryStatInfoCache cache, String path, OID obj_id,
-		int perm, int hint_server1, int hint_server2, int port) {
+		int perm, int port) {
 				
 		ServerlessIndexFSOperationParameters op = new ServerlessIndexFSOperationParameters();
 		
 		StatInfo stat_ = new StatInfo();
 		
+		metadb_id = didx.GetServer(path);
+		
 		// Get Next available inode number and fill in directory metadata
-		fillInStat(stat_, false, NextInode(hint_server1), 0);
+		fillInStat(stat_, false, NextInode(metadb_id), 0);
 		
 		// Put directory metadata into LRU_cache.	
 		cache.put(path, stat_.id, stat_);
@@ -226,8 +228,8 @@ public class ServerlessIndexFSServer {
 		op.key.partition_id_ = (short) obj_idx;
 		op.key.file_name_ = obj_id.obj_name;
 		
-//		queue.write_counter(server_id, op);
-		ctx.newDirectory(rpc_connections[server_id].mdb_client, op.key, (short) hint_server1, stat_.id);
+//		queue.write_counter(metadb_id, op);
+		ctx.newDirectory(rpc_connections[metadb_id].mdb_client, op.key, (short) metadb_id, stat_.id);
 				
 		/**
 		 *  TASK-III: install the zeroth partition.
@@ -281,9 +283,9 @@ public class ServerlessIndexFSServer {
 			op.key.partition_id_ = (short) obj_idx;
 			op.key.file_name_ = obj_id.obj_name;
 			
-			int server_id = didx.GetServer(path);
+			int metadb_id = didx.GetServer(path);
 			
-			stat = ctx.GetEntry(rpc_connections[server_id].mdb_client, op.key);
+			stat = ctx.GetEntry(rpc_connections[metadb_id].mdb_client, op.key);
 			
 			// Object is found, put it in LRU cache.
 			if (stat != null) {
