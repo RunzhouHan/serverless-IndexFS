@@ -628,6 +628,7 @@ ac_includes_default="\
 # include <unistd.h>
 #endif"
 
+ac_unique_file="server/index_server.cc"
 ac_header_list=
 ac_subst_vars='am__EXEEXT_FALSE
 am__EXEEXT_TRUE
@@ -19992,7 +19993,7 @@ fi
 ## Generate Makefiles
 ## -------------------------------------------------------------------
 
-ac_config_files="$ac_config_files Makefile lib/leveldb/Makefile thrift/Makefile common/Makefile util/Makefile metadb/Makefile ipc/Makefile client/Makefile c/Makefile bin/Makefile io_test/Makefile md_test/Makefile"
+ac_config_files="$ac_config_files Makefile lib/leveldb/Makefile thrift/Makefile common/Makefile util/Makefile metadb/Makefile ipc/Makefile server/Makefile client/Makefile c/Makefile bin/Makefile io_test/Makefile md_test/Makefile"
 
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
@@ -21146,6 +21147,7 @@ do
     "util/Makefile") CONFIG_FILES="$CONFIG_FILES util/Makefile" ;;
     "metadb/Makefile") CONFIG_FILES="$CONFIG_FILES metadb/Makefile" ;;
     "ipc/Makefile") CONFIG_FILES="$CONFIG_FILES ipc/Makefile" ;;
+    "server/Makefile") CONFIG_FILES="$CONFIG_FILES server/Makefile" ;;
     "client/Makefile") CONFIG_FILES="$CONFIG_FILES client/Makefile" ;;
     "c/Makefile") CONFIG_FILES="$CONFIG_FILES c/Makefile" ;;
     "bin/Makefile") CONFIG_FILES="$CONFIG_FILES bin/Makefile" ;;

@@ -260,6 +260,9 @@ public class ServerlessIndexFSTCPClient extends Thread {
     			if(op_type != 0) {
     				/* Read operation. Send result back to IndexFS client */
     				 strwriter.write(String.valueOf(op_type));
+    				 
+					System.out.println(String.valueOf(op_type));
+
     				 strwriter.flush();
     			}
     			duration_one = System.nanoTime() - tmp2;

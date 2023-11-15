@@ -147,8 +147,8 @@ public class ServerlessIndexFSServer {
 	 */
 	private long NextInode(int metadb_id) {
 //		return 0;
-		System.out.println("NextInode(): server id: "+ metadb_id);
-		System.out.println("NextInode(): server: "+ rpc_connections[metadb_id].getServerAddr());
+//		System.out.println("NextInode(): server id: "+ metadb_id);
+//		System.out.println("NextInode(): server: "+ rpc_connections[metadb_id].getServerAddr());
     	return ctx.NextInode(rpc_connections[metadb_id].mdb_client);
 	}
 	
@@ -173,12 +173,19 @@ public class ServerlessIndexFSServer {
 		fillInStat(stat_, true, NextInode(metadb_id), 0);
 		
 		cache.put(path, stat_.id, stat_);
-					
+		
+//		System.out.println("Mknod: " + path + ": " + stat_.id);
+
+		
 		// file in operation parameters and put in writeback cache
 		op.op_type = 0;
 		op.key.parent_id_ = obj_id.dir_id;
 		op.key.partition_id_ = (short) obj_idx;
 		op.key.file_name_ = obj_id.obj_name;
+		
+		
+		System.out.println("Mknod key: " + op.key);
+
 		
 //		queue.write_counter(metadb_id, op);
 		ctx.newFile(rpc_connections[metadb_id].mdb_client, op.key);
@@ -283,9 +290,17 @@ public class ServerlessIndexFSServer {
 			op.key.partition_id_ = (short) obj_idx;
 			op.key.file_name_ = obj_id.obj_name;
 			
+			
+			System.out.println("Getattr key: " + op.key);
+
+			
 			int metadb_id = didx.GetServer(path);
 			
 			stat = ctx.GetEntry(rpc_connections[metadb_id].mdb_client, op.key);
+			
+			
+//			System.out.println("Getattr: " + path + ": " + stat.id);
+
 			
 			// Object is found, put it in LRU cache.
 			if (stat != null) {
@@ -307,6 +322,8 @@ public class ServerlessIndexFSServer {
 		//		System.out.println("Cache hit rate = " + this.cache_hit + "/" + (this.cache_hit+this.cache_miss) 
 		//				+ "=" + this.cache_hit/(this.cache_miss+this.cache_hit));
 
+//		System.out.println("Getattr: " + path + ": " + stat.id);
+		
 		return stat;
 	}
 	

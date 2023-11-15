@@ -35,6 +35,7 @@ fi
 
 mkdir -p build && cd build || exit 1
 ../configure CFLAGS="${OPT}" CXXFLAGS="${OPT}" ${MPI_OPT} ${FS_OPT} || exit 1
+/lib/metadb/cp_libmetadb.sh
 make -j8 --no-print-directory || exit 1
 
 exit 0

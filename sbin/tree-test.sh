@@ -128,7 +128,7 @@ fi
 MPIEXEC=mpirun
 
 # advanced tree test settings
-NUM_CLIENTS=${1-"1"}
+NUM_CLIENTS=${1-"4"}
 FILE_ROOT="$INDEXFS_ROOT/_DATA_"
 DB_ROOT="$INDEXFS_ROOT/_META_"
 case $INDEXFS_RUN_TYPE in
@@ -158,7 +158,7 @@ $MPIEXEC \
   --prefix=$INDEXFS_RUN_PREFIX \
   --task=tree\
   --dirs=1 \
-  --files=5\
+  --files=500000\
   --share_dirs \
   --ignore_errors=true \
   --file_dir=$FILE_ROOT \
