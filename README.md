@@ -1,8 +1,10 @@
 Serverless-IndexFS
 ===============
 
-This is an affiliate project of [**λFS**](https://github.com/ds2-lab/LambdaFS) which is an elastic, scalable, and high-performance metadata service for large-scale distributed file systems (DFSes). The adapted version of IndexFS uses serverless metadata management and caching by replacing the original server module with a serverless schema (in [serverless](https://github.com/RunzhouHan/serverless-IndexFS/tree/serverless_multi_deployment/serverless) folder). 
-We decoupled metadata caching and LevelDB backend by splitting them into two different server programs and wrapping function calls between them as Thrift RPC calls. In the ported version, metadata caching server acts like a client of LevelDB backend and they work collaborately to provide IndexFS metadata service.
+This is an affiliate project of [**λFS**](https://github.com/ds2-lab/LambdaFS) which is an elastic, scalable, and high-performance metadata service for large-scale distributed file systems (DFSes). 
+
+The adapted version of IndexFS uses serverless metadata management and caching by replacing the original server module with a serverless schema (in [serverless](https://github.com/RunzhouHan/serverless-IndexFS/tree/serverless_multi_deployment/serverless) folder). 
+We decoupled metadata caching and LevelDB backend by splitting them into two different server programs and wrapping function calls between them as Thrift RPC calls. In the adapted version, metadata caching server acts like a client of LevelDB backend and they work collaborately to provide IndexFS metadata service.
 
 To see source code of original IndexFS (SC'14): https://github.com/zhengqmark/indexfs-0.4
 
